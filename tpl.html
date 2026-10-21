@@ -44,6 +44,8 @@ section { padding-block: 56px; border-top: 1px solid var(--line); display: grid;
 .kicker { font-family: var(--mono); font-size: 13px; letter-spacing: .08em; color: var(--accent); }
 h2 { font-family: var(--display); font-weight: 900; font-size: clamp(28px, 4.6vw, 44px); line-height: 1.25; margin: 0; text-wrap: balance; }
 h2 em { font-style: normal; color: var(--accent); }
+h3 { font-family: var(--display); font-weight: 900; font-size: clamp(21px, 3.2vw, 28px); line-height: 1.3; margin: 16px 0 0; }
+h3 .n { color: var(--accent); }
 p.say { margin: 0; font-size: 18px; color: var(--muted); max-width: 36em; }
 p.say b { color: var(--ink); }
 
@@ -197,10 +199,20 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 <section>
   <div class="kicker">RNN 的毛病</div>
-  <h2>RNN 像<em>传话游戏</em></h2>
+  <h2>RNN 像<em>传话游戏</em>，有两个硬伤</h2>
+  <h3><span class="n">①</span> 必须排队，没法加速</h3>
+  <figure>
+{{QUEUE}}
+    <figcaption>h（hidden state，隐藏状态）就是读到每个词时的那本记忆笔记。要算 h₃，必须先有 h₂；要算 h₂，必须先有 h₁。显卡最擅长同时干几千件事，这里却只能一步一个词地排队。句子越长、数据越多，训练就越慢。就像 100 个人传话，第 100 个人只能干等前面 99 个人依次传完。</figcaption>
+  </figure>
+  <h3><span class="n">②</span> 离得越远，越记不清</h3>
   <figure>
 {{RNN}}
-    <figcaption>一个词一个词往后传。句子一长，前面的就记不清了；而且必须排队，没法加速。</figcaption>
+    <figcaption>“小狗”的信息要传到“它”，得经过 5 次笔记更新，每次都被冲淡一点。两个词隔得越远，要传的次数越多，丢得越厉害。</figcaption>
+  </figure>
+  <figure>
+{{FAR}}
+    <figcaption>再看一个英文例子：用 was 还是 were，取决于 12 个词之前的 cat。训练时，纠错信号（梯度，gradient）也得沿这 12 步原路传回去，同样越传越弱，所以 RNN 很难学会这种远距离的关系。</figcaption>
   </figure>
 </section>
 

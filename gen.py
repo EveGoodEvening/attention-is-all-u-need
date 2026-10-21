@@ -173,6 +173,61 @@ def gates():
     return "\n".join(s)
 
 
+# ---------- RNN flaw 1: no parallelism ----------
+def queue():
+    s = ['<svg class="fig" viewBox="0 0 800 320" role="img" aria-label="记忆 h₁ 到 h₉ 排成一条链，后一个必须等前一个算完。下方是显卡的计算单元，每一步只有一格在干活，其余都闲着。">']
+    s.append('<defs><marker id="ar8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>')
+    sub = "₁₂₃₄₅₆₇₈₉"
+    for i, x in enumerate(X9):
+        s.append(f'<circle class="mem" cx="{x}" cy="46" r="22"/>')
+        s.append(f'<text class="wtxt en" x="{x}" y="52" text-anchor="middle">h{sub[i]}</text>')
+        s.append(f'<text class="small" x="{x}" y="92" text-anchor="middle">{W9[i]}</text>')
+        if i < 8:
+            s.append(f'<line class="chain" x1="{x+24}" y1="46" x2="{X9[i+1]-26}" y2="46" marker-end="url(#ar8)"/>')
+    rows = 8
+    for r in range(rows):
+        for i, x in enumerate(X9):
+            on = r == 0
+            s.append(f'<rect class="{"tick on" if on else "tick"}" x="{x-30}" y="{112+r*20}" width="60" height="14" rx="4"/>')
+    s.append(f'<text class="step" x="{X9[0]}" y="290" text-anchor="middle">第 1 步</text>')
+    s.append(f'<text class="step" x="{X9[8]}" y="290" text-anchor="middle">第 9 步</text>')
+    s.append(f'<text class="small" x="{X9[1]-30}" y="290">↑ 显卡的计算单元（真实有几千个）：每一步只有一格在干活</text>')
+    s.append('</svg>')
+    return "\n".join(s)
+
+
+# ---------- RNN flaw 2: long distance, English example ----------
+def far():
+    words = ["The", "cat", "which", "I", "found", "in", "the", "garden", "last", "summer", "after", "the", "storm", "was", "hungry"]
+    src, dst = 1, 13
+    xs, x = [], 10
+    for w in words:
+        bw = len(w) * 9 + 16
+        xs.append((x, bw))
+        x += bw + 6
+    W = x + 4
+    s = [f'<svg class="fig" viewBox="0 0 {W} 190" role="img" aria-label="英文句子 The cat which I found in the garden last summer after the storm was hungry：cat 的信息要一格一格传 12 次才到 was，越传越淡。">']
+    s.append('<defs><marker id="ar9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>')
+    y = 96
+    for i, ((bx, bw), w) in enumerate(zip(xs, words)):
+        cls = "wbox hl" if i == src else ("wbox hl2" if i == dst else "wbox")
+        s.append(f'<rect class="{cls}" x="{bx}" y="{y}" width="{bw}" height="38" rx="8"/>')
+        s.append(f'<text class="{"wtxt en on" if i == src else "wtxt en"}" x="{bx+bw/2:.0f}" y="{y+25}" text-anchor="middle">{w}</text>')
+        if src <= i <= dst:
+            k = i - src
+            s.append(f'<circle class="memdot" cx="{bx+bw/2:.0f}" cy="{y-14}" r="7" fill-opacity="{max(0.08, 1 - k*0.08):.2f}"/>')
+        if src <= i < dst:
+            nx, nw = xs[i + 1]
+            s.append(f'<path class="chain" d="M{bx+bw/2+8:.0f} {y-18} Q{(bx+bw/2+nx+nw/2)/2:.0f} {y-34} {nx+nw/2-9:.0f} {y-18}" fill="none" marker-end="url(#ar9)"/>')
+    cx0 = xs[src][0] + xs[src][1] / 2
+    cx1 = xs[dst][0] + xs[dst][1] / 2
+    s.append(f'<text class="cap-in" x="{(cx0+cx1)/2:.0f}" y="36" text-anchor="middle">cat 的信息要传 12 次才到 was，每次都被冲淡一点</text>')
+    s.append(f'<text class="small" x="{cx1:.0f}" y="164" text-anchor="middle">用 was 还是 were？</text>')
+    s.append(f'<text class="small" x="{cx1:.0f}" y="182" text-anchor="middle">得记得前面是 cat</text>')
+    s.append('</svg>')
+    return "\n".join(s)
+
+
 # ---------- RNN chain ----------
 def rnn():
     s = ['<svg class="fig" viewBox="0 0 800 250" role="img" aria-label="九个词排成一排，记忆一格一格往后传；“小狗”的信息越传越淡，到“它”时几乎看不见了。">']
@@ -417,7 +472,7 @@ def legacy():
 tpl = open(sys.argv[2], encoding="utf-8").read()
 h1, h2, h3 = heads()
 rep = {
-    "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{PARTS}}": parts(), "{{RNN}}": rnn(), "{{GATES}}": gates(), "{{ATTN}}": attn(), "{{QKV}}": qkv(),
+    "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{PARTS}}": parts(), "{{QUEUE}}": queue(), "{{RNN}}": rnn(), "{{FAR}}": far(), "{{GATES}}": gates(), "{{ATTN}}": attn(), "{{QKV}}": qkv(),
     "{{HEAD1}}": h1, "{{HEAD2}}": h2, "{{HEAD3}}": h3, "{{POS}}": position(),
     "{{ARCH}}": arch(), "{{SPEED}}": speed(), "{{BLEU}}": bleu(), "{{LEGACY}}": legacy(),
 }

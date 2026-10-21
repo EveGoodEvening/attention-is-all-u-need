@@ -44,6 +44,8 @@ section { padding-block: 56px; border-top: 1px solid var(--line); display: grid;
 .kicker { font-family: var(--mono); font-size: 13px; letter-spacing: .08em; color: var(--accent); }
 h2 { font-family: var(--display); font-weight: 900; font-size: clamp(28px, 4.6vw, 44px); line-height: 1.25; margin: 0; text-wrap: balance; }
 h2 em { font-style: normal; color: var(--accent); }
+h3 { font-family: var(--display); font-weight: 900; font-size: clamp(21px, 3.2vw, 28px); line-height: 1.3; margin: 16px 0 0; }
+h3 .n { color: var(--accent); }
 p.say { margin: 0; font-size: 18px; color: var(--muted); max-width: 36em; }
 p.say b { color: var(--ink); }
 
@@ -389,7 +391,125 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 <section>
   <div class="kicker">RNN 的毛病</div>
-  <h2>RNN 像<em>传话游戏</em></h2>
+  <h2>RNN 像<em>传话游戏</em>，有两个硬伤</h2>
+  <h3><span class="n">①</span> 必须排队，没法加速</h3>
+  <figure>
+<svg class="fig" viewBox="0 0 800 320" role="img" aria-label="记忆 h₁ 到 h₉ 排成一条链，后一个必须等前一个算完。下方是显卡的计算单元，每一步只有一格在干活，其余都闲着。">
+<defs><marker id="ar8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>
+<circle class="mem" cx="56" cy="46" r="22"/>
+<text class="wtxt en" x="56" y="52" text-anchor="middle">h₁</text>
+<text class="small" x="56" y="92" text-anchor="middle">小狗</text>
+<line class="chain" x1="80" y1="46" x2="116" y2="46" marker-end="url(#ar8)"/>
+<circle class="mem" cx="142" cy="46" r="22"/>
+<text class="wtxt en" x="142" y="52" text-anchor="middle">h₂</text>
+<text class="small" x="142" y="92" text-anchor="middle">没有</text>
+<line class="chain" x1="166" y1="46" x2="202" y2="46" marker-end="url(#ar8)"/>
+<circle class="mem" cx="228" cy="46" r="22"/>
+<text class="wtxt en" x="228" y="52" text-anchor="middle">h₃</text>
+<text class="small" x="228" y="92" text-anchor="middle">过</text>
+<line class="chain" x1="252" y1="46" x2="288" y2="46" marker-end="url(#ar8)"/>
+<circle class="mem" cx="314" cy="46" r="22"/>
+<text class="wtxt en" x="314" y="52" text-anchor="middle">h₄</text>
+<text class="small" x="314" y="92" text-anchor="middle">马路</text>
+<line class="chain" x1="338" y1="46" x2="374" y2="46" marker-end="url(#ar8)"/>
+<circle class="mem" cx="400" cy="46" r="22"/>
+<text class="wtxt en" x="400" y="52" text-anchor="middle">h₅</text>
+<text class="small" x="400" y="92" text-anchor="middle">因为</text>
+<line class="chain" x1="424" y1="46" x2="460" y2="46" marker-end="url(#ar8)"/>
+<circle class="mem" cx="486" cy="46" r="22"/>
+<text class="wtxt en" x="486" y="52" text-anchor="middle">h₆</text>
+<text class="small" x="486" y="92" text-anchor="middle">它</text>
+<line class="chain" x1="510" y1="46" x2="546" y2="46" marker-end="url(#ar8)"/>
+<circle class="mem" cx="572" cy="46" r="22"/>
+<text class="wtxt en" x="572" y="52" text-anchor="middle">h₇</text>
+<text class="small" x="572" y="92" text-anchor="middle">太</text>
+<line class="chain" x1="596" y1="46" x2="632" y2="46" marker-end="url(#ar8)"/>
+<circle class="mem" cx="658" cy="46" r="22"/>
+<text class="wtxt en" x="658" y="52" text-anchor="middle">h₈</text>
+<text class="small" x="658" y="92" text-anchor="middle">累</text>
+<line class="chain" x1="682" y1="46" x2="718" y2="46" marker-end="url(#ar8)"/>
+<circle class="mem" cx="744" cy="46" r="22"/>
+<text class="wtxt en" x="744" y="52" text-anchor="middle">h₉</text>
+<text class="small" x="744" y="92" text-anchor="middle">了</text>
+<rect class="tick on" x="26" y="112" width="60" height="14" rx="4"/>
+<rect class="tick on" x="112" y="112" width="60" height="14" rx="4"/>
+<rect class="tick on" x="198" y="112" width="60" height="14" rx="4"/>
+<rect class="tick on" x="284" y="112" width="60" height="14" rx="4"/>
+<rect class="tick on" x="370" y="112" width="60" height="14" rx="4"/>
+<rect class="tick on" x="456" y="112" width="60" height="14" rx="4"/>
+<rect class="tick on" x="542" y="112" width="60" height="14" rx="4"/>
+<rect class="tick on" x="628" y="112" width="60" height="14" rx="4"/>
+<rect class="tick on" x="714" y="112" width="60" height="14" rx="4"/>
+<rect class="tick" x="26" y="132" width="60" height="14" rx="4"/>
+<rect class="tick" x="112" y="132" width="60" height="14" rx="4"/>
+<rect class="tick" x="198" y="132" width="60" height="14" rx="4"/>
+<rect class="tick" x="284" y="132" width="60" height="14" rx="4"/>
+<rect class="tick" x="370" y="132" width="60" height="14" rx="4"/>
+<rect class="tick" x="456" y="132" width="60" height="14" rx="4"/>
+<rect class="tick" x="542" y="132" width="60" height="14" rx="4"/>
+<rect class="tick" x="628" y="132" width="60" height="14" rx="4"/>
+<rect class="tick" x="714" y="132" width="60" height="14" rx="4"/>
+<rect class="tick" x="26" y="152" width="60" height="14" rx="4"/>
+<rect class="tick" x="112" y="152" width="60" height="14" rx="4"/>
+<rect class="tick" x="198" y="152" width="60" height="14" rx="4"/>
+<rect class="tick" x="284" y="152" width="60" height="14" rx="4"/>
+<rect class="tick" x="370" y="152" width="60" height="14" rx="4"/>
+<rect class="tick" x="456" y="152" width="60" height="14" rx="4"/>
+<rect class="tick" x="542" y="152" width="60" height="14" rx="4"/>
+<rect class="tick" x="628" y="152" width="60" height="14" rx="4"/>
+<rect class="tick" x="714" y="152" width="60" height="14" rx="4"/>
+<rect class="tick" x="26" y="172" width="60" height="14" rx="4"/>
+<rect class="tick" x="112" y="172" width="60" height="14" rx="4"/>
+<rect class="tick" x="198" y="172" width="60" height="14" rx="4"/>
+<rect class="tick" x="284" y="172" width="60" height="14" rx="4"/>
+<rect class="tick" x="370" y="172" width="60" height="14" rx="4"/>
+<rect class="tick" x="456" y="172" width="60" height="14" rx="4"/>
+<rect class="tick" x="542" y="172" width="60" height="14" rx="4"/>
+<rect class="tick" x="628" y="172" width="60" height="14" rx="4"/>
+<rect class="tick" x="714" y="172" width="60" height="14" rx="4"/>
+<rect class="tick" x="26" y="192" width="60" height="14" rx="4"/>
+<rect class="tick" x="112" y="192" width="60" height="14" rx="4"/>
+<rect class="tick" x="198" y="192" width="60" height="14" rx="4"/>
+<rect class="tick" x="284" y="192" width="60" height="14" rx="4"/>
+<rect class="tick" x="370" y="192" width="60" height="14" rx="4"/>
+<rect class="tick" x="456" y="192" width="60" height="14" rx="4"/>
+<rect class="tick" x="542" y="192" width="60" height="14" rx="4"/>
+<rect class="tick" x="628" y="192" width="60" height="14" rx="4"/>
+<rect class="tick" x="714" y="192" width="60" height="14" rx="4"/>
+<rect class="tick" x="26" y="212" width="60" height="14" rx="4"/>
+<rect class="tick" x="112" y="212" width="60" height="14" rx="4"/>
+<rect class="tick" x="198" y="212" width="60" height="14" rx="4"/>
+<rect class="tick" x="284" y="212" width="60" height="14" rx="4"/>
+<rect class="tick" x="370" y="212" width="60" height="14" rx="4"/>
+<rect class="tick" x="456" y="212" width="60" height="14" rx="4"/>
+<rect class="tick" x="542" y="212" width="60" height="14" rx="4"/>
+<rect class="tick" x="628" y="212" width="60" height="14" rx="4"/>
+<rect class="tick" x="714" y="212" width="60" height="14" rx="4"/>
+<rect class="tick" x="26" y="232" width="60" height="14" rx="4"/>
+<rect class="tick" x="112" y="232" width="60" height="14" rx="4"/>
+<rect class="tick" x="198" y="232" width="60" height="14" rx="4"/>
+<rect class="tick" x="284" y="232" width="60" height="14" rx="4"/>
+<rect class="tick" x="370" y="232" width="60" height="14" rx="4"/>
+<rect class="tick" x="456" y="232" width="60" height="14" rx="4"/>
+<rect class="tick" x="542" y="232" width="60" height="14" rx="4"/>
+<rect class="tick" x="628" y="232" width="60" height="14" rx="4"/>
+<rect class="tick" x="714" y="232" width="60" height="14" rx="4"/>
+<rect class="tick" x="26" y="252" width="60" height="14" rx="4"/>
+<rect class="tick" x="112" y="252" width="60" height="14" rx="4"/>
+<rect class="tick" x="198" y="252" width="60" height="14" rx="4"/>
+<rect class="tick" x="284" y="252" width="60" height="14" rx="4"/>
+<rect class="tick" x="370" y="252" width="60" height="14" rx="4"/>
+<rect class="tick" x="456" y="252" width="60" height="14" rx="4"/>
+<rect class="tick" x="542" y="252" width="60" height="14" rx="4"/>
+<rect class="tick" x="628" y="252" width="60" height="14" rx="4"/>
+<rect class="tick" x="714" y="252" width="60" height="14" rx="4"/>
+<text class="step" x="56" y="290" text-anchor="middle">第 1 步</text>
+<text class="step" x="744" y="290" text-anchor="middle">第 9 步</text>
+<text class="small" x="112" y="290">↑ 显卡的计算单元（真实有几千个）：每一步只有一格在干活</text>
+</svg>
+    <figcaption>h（hidden state，隐藏状态）就是读到每个词时的那本记忆笔记。要算 h₃，必须先有 h₂；要算 h₂，必须先有 h₁。显卡最擅长同时干几千件事，这里却只能一步一个词地排队。句子越长、数据越多，训练就越慢。就像 100 个人传话，第 100 个人只能干等前面 99 个人依次传完。</figcaption>
+  </figure>
+  <h3><span class="n">②</span> 离得越远，越记不清</h3>
   <figure>
 <svg class="fig" viewBox="0 0 800 250" role="img" aria-label="九个词排成一排，记忆一格一格往后传；“小狗”的信息越传越淡，到“它”时几乎看不见了。">
 <defs><marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>
@@ -451,7 +571,71 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <text class="step" x="56" y="226" text-anchor="middle">第 1 步</text>
 <text class="step" x="744" y="226" text-anchor="middle">第 9 步</text>
 </svg>
-    <figcaption>一个词一个词往后传。句子一长，前面的就记不清了；而且必须排队，没法加速。</figcaption>
+    <figcaption>“小狗”的信息要传到“它”，得经过 5 次笔记更新，每次都被冲淡一点。两个词隔得越远，要传的次数越多，丢得越厉害。</figcaption>
+  </figure>
+  <figure>
+<svg class="fig" viewBox="0 0 884 190" role="img" aria-label="英文句子 The cat which I found in the garden last summer after the storm was hungry：cat 的信息要一格一格传 12 次才到 was，越传越淡。">
+<defs><marker id="ar9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>
+<rect class="wbox" x="10" y="96" width="43" height="38" rx="8"/>
+<text class="wtxt en" x="32" y="121" text-anchor="middle">The</text>
+<rect class="wbox hl" x="59" y="96" width="43" height="38" rx="8"/>
+<text class="wtxt en on" x="80" y="121" text-anchor="middle">cat</text>
+<circle class="memdot" cx="80" cy="82" r="7" fill-opacity="1.00"/>
+<path class="chain" d="M88 78 Q110 62 130 78" fill="none" marker-end="url(#ar9)"/>
+<rect class="wbox" x="108" y="96" width="61" height="38" rx="8"/>
+<text class="wtxt en" x="138" y="121" text-anchor="middle">which</text>
+<circle class="memdot" cx="138" cy="82" r="7" fill-opacity="0.92"/>
+<path class="chain" d="M146 78 Q163 62 178 78" fill="none" marker-end="url(#ar9)"/>
+<rect class="wbox" x="175" y="96" width="25" height="38" rx="8"/>
+<text class="wtxt en" x="188" y="121" text-anchor="middle">I</text>
+<circle class="memdot" cx="188" cy="82" r="7" fill-opacity="0.84"/>
+<path class="chain" d="M196 78 Q212 62 228 78" fill="none" marker-end="url(#ar9)"/>
+<rect class="wbox" x="206" y="96" width="61" height="38" rx="8"/>
+<text class="wtxt en" x="236" y="121" text-anchor="middle">found</text>
+<circle class="memdot" cx="236" cy="82" r="7" fill-opacity="0.76"/>
+<path class="chain" d="M244 78 Q263 62 281 78" fill="none" marker-end="url(#ar9)"/>
+<rect class="wbox" x="273" y="96" width="34" height="38" rx="8"/>
+<text class="wtxt en" x="290" y="121" text-anchor="middle">in</text>
+<circle class="memdot" cx="290" cy="82" r="7" fill-opacity="0.68"/>
+<path class="chain" d="M298 78 Q312 62 326 78" fill="none" marker-end="url(#ar9)"/>
+<rect class="wbox" x="313" y="96" width="43" height="38" rx="8"/>
+<text class="wtxt en" x="334" y="121" text-anchor="middle">the</text>
+<circle class="memdot" cx="334" cy="82" r="7" fill-opacity="0.60"/>
+<path class="chain" d="M342 78 Q366 62 388 78" fill="none" marker-end="url(#ar9)"/>
+<rect class="wbox" x="362" y="96" width="70" height="38" rx="8"/>
+<text class="wtxt en" x="397" y="121" text-anchor="middle">garden</text>
+<circle class="memdot" cx="397" cy="82" r="7" fill-opacity="0.52"/>
+<path class="chain" d="M405 78 Q430 62 455 78" fill="none" marker-end="url(#ar9)"/>
+<rect class="wbox" x="438" y="96" width="52" height="38" rx="8"/>
+<text class="wtxt en" x="464" y="121" text-anchor="middle">last</text>
+<circle class="memdot" cx="464" cy="82" r="7" fill-opacity="0.44"/>
+<path class="chain" d="M472 78 Q498 62 522 78" fill="none" marker-end="url(#ar9)"/>
+<rect class="wbox" x="496" y="96" width="70" height="38" rx="8"/>
+<text class="wtxt en" x="531" y="121" text-anchor="middle">summer</text>
+<circle class="memdot" cx="531" cy="82" r="7" fill-opacity="0.36"/>
+<path class="chain" d="M539 78 Q567 62 594 78" fill="none" marker-end="url(#ar9)"/>
+<rect class="wbox" x="572" y="96" width="61" height="38" rx="8"/>
+<text class="wtxt en" x="602" y="121" text-anchor="middle">after</text>
+<circle class="memdot" cx="602" cy="82" r="7" fill-opacity="0.28"/>
+<path class="chain" d="M610 78 Q632 62 652 78" fill="none" marker-end="url(#ar9)"/>
+<rect class="wbox" x="639" y="96" width="43" height="38" rx="8"/>
+<text class="wtxt en" x="660" y="121" text-anchor="middle">the</text>
+<circle class="memdot" cx="660" cy="82" r="7" fill-opacity="0.20"/>
+<path class="chain" d="M668 78 Q690 62 710 78" fill="none" marker-end="url(#ar9)"/>
+<rect class="wbox" x="688" y="96" width="61" height="38" rx="8"/>
+<text class="wtxt en" x="718" y="121" text-anchor="middle">storm</text>
+<circle class="memdot" cx="718" cy="82" r="7" fill-opacity="0.12"/>
+<path class="chain" d="M726 78 Q748 62 768 78" fill="none" marker-end="url(#ar9)"/>
+<rect class="wbox hl2" x="755" y="96" width="43" height="38" rx="8"/>
+<text class="wtxt en" x="776" y="121" text-anchor="middle">was</text>
+<circle class="memdot" cx="776" cy="82" r="7" fill-opacity="0.08"/>
+<rect class="wbox" x="804" y="96" width="70" height="38" rx="8"/>
+<text class="wtxt en" x="839" y="121" text-anchor="middle">hungry</text>
+<text class="cap-in" x="428" y="36" text-anchor="middle">cat 的信息要传 12 次才到 was，每次都被冲淡一点</text>
+<text class="small" x="776" y="164" text-anchor="middle">用 was 还是 were？</text>
+<text class="small" x="776" y="182" text-anchor="middle">得记得前面是 cat</text>
+</svg>
+    <figcaption>再看一个英文例子：用 was 还是 were，取决于 12 个词之前的 cat。训练时，纠错信号（梯度，gradient）也得沿这 12 步原路传回去，同样越传越弱，所以 RNN 很难学会这种远距离的关系。</figcaption>
   </figure>
 </section>
 
