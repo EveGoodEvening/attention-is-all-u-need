@@ -121,6 +121,7 @@ header.hero svg.fig { min-width: 0; }
 .blab { fill: var(--muted); font-family: var(--body); font-size: 15px; }
 .blab.strong { fill: var(--ink); font-weight: 700; }
 .spine { stroke: var(--line); stroke-width: 3; }
+.brace { stroke: var(--muted); stroke-width: 2; fill: none; }
 .node { fill: var(--panel); stroke: var(--muted); stroke-width: 2.5; }
 .node.first { fill: var(--accent); stroke: var(--accent); }
 .yr { fill: var(--muted); font-family: var(--mono); font-size: 13px; }
@@ -264,8 +265,77 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 </header>
 
 <section>
-  <div class="kicker">以前</div>
-  <h2>旧方法像<em>传话游戏</em></h2>
+  <div class="kicker">要解决的问题</div>
+  <h2>一串词进，<em>另一串词</em>出</h2>
+  <figure>
+<svg class="fig" viewBox="0 0 830 200" role="img" aria-label="左边一串英文词 The cat is tired 进入一台翻译机，右边出来一串德文词 Die Katze ist müde。">
+<defs><marker id="ar6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>
+<text class="colh" x="141" y="50" text-anchor="middle">一串词进</text>
+<rect class="wbox" x="20" y="78" width="56" height="44" rx="9"/>
+<text class="wtxt en" x="48" y="106" text-anchor="middle">The</text>
+<rect class="wbox" x="82" y="78" width="56" height="44" rx="9"/>
+<text class="wtxt en" x="110" y="106" text-anchor="middle">cat</text>
+<rect class="wbox" x="144" y="78" width="56" height="44" rx="9"/>
+<text class="wtxt en" x="172" y="106" text-anchor="middle">is</text>
+<rect class="wbox" x="206" y="78" width="56" height="44" rx="9"/>
+<text class="wtxt en" x="234" y="106" text-anchor="middle">tired</text>
+<text class="small" x="141" y="154" text-anchor="middle">英文</text>
+<line class="chain" x1="272" y1="100" x2="322" y2="100" marker-end="url(#ar6)"/>
+<rect class="tower" x="330" y="50" width="140" height="100" rx="16"/>
+<text class="wtxt big" x="400" y="112" text-anchor="middle" style="fill:var(--accent)">？</text>
+<text class="small" x="400" y="178" text-anchor="middle">翻译机</text>
+<line class="chain" x1="478" y1="100" x2="528" y2="100" marker-end="url(#ar6)"/>
+<text class="colh" x="673" y="50" text-anchor="middle">另一串词出</text>
+<rect class="wbox" x="536" y="78" width="64" height="44" rx="9"/>
+<text class="wtxt en" x="568" y="106" text-anchor="middle">Die</text>
+<rect class="wbox" x="606" y="78" width="64" height="44" rx="9"/>
+<text class="wtxt en" x="638" y="106" text-anchor="middle">Katze</text>
+<rect class="wbox" x="676" y="78" width="64" height="44" rx="9"/>
+<text class="wtxt en" x="708" y="106" text-anchor="middle">ist</text>
+<rect class="wbox" x="746" y="78" width="64" height="44" rx="9"/>
+<text class="wtxt en" x="778" y="106" text-anchor="middle">müde</text>
+<text class="small" x="673" y="154" text-anchor="middle">德文</text>
+</svg>
+    <figcaption>论文主攻<b>机器翻译</b>：英译德、英译法。它的正式说法叫“序列转换”，语音转文字、写摘要也属于这一类。</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="kicker">2017 年以前</div>
+  <h2>大家主要用 <em>RNN</em></h2>
+  <figure>
+<svg class="fig" viewBox="0 0 860 230" role="img" aria-label="2017 年以前的翻译模型：先是统计翻译；2014 到 2016 年是 RNN（LSTM）当家，2015 年给 RNN 加上了注意力；2017 年有人改用卷积。">
+<path class="brace" d="M215 84 V66 H625 V84"/>
+<text class="colh" x="420" y="54" text-anchor="middle">RNN 当家：一个词一个词读</text>
+<line class="spine" x1="40" y1="110" x2="820" y2="110"/>
+<circle class="node" cx="90" cy="110" r="10"/>
+<text class="yr" x="90" y="150" text-anchor="middle">2000 年代</text>
+<text class="wtxt" x="90" y="178" text-anchor="middle">统计翻译</text>
+<text class="small" x="90" y="202" text-anchor="middle">按词组查表拼</text>
+<circle class="node" cx="255" cy="110" r="10"/>
+<text class="yr" x="255" y="150" text-anchor="middle">2014</text>
+<text class="wtxt" x="255" y="178" text-anchor="middle">Seq2Seq</text>
+<text class="small" x="255" y="202" text-anchor="middle">LSTM：一个读一个写</text>
+<circle class="node first" cx="420" cy="110" r="14"/>
+<text class="yr" x="420" y="150" text-anchor="middle">2015</text>
+<text class="wtxt strong" x="420" y="178" text-anchor="middle">RNN + 注意力</text>
+<text class="small" x="420" y="202" text-anchor="middle">写时回头看原文</text>
+<circle class="node" cx="585" cy="110" r="10"/>
+<text class="yr" x="585" y="150" text-anchor="middle">2016</text>
+<text class="wtxt" x="585" y="178" text-anchor="middle">谷歌翻译 GNMT</text>
+<text class="small" x="585" y="202" text-anchor="middle">8 层 LSTM 叠起来</text>
+<circle class="node" cx="750" cy="110" r="10"/>
+<text class="yr" x="750" y="150" text-anchor="middle">2017 年 5 月</text>
+<text class="wtxt" x="750" y="178" text-anchor="middle">ConvS2S</text>
+<text class="small" x="750" y="202" text-anchor="middle">改用卷积，想少排队</text>
+</svg>
+    <figcaption>RNN（循环神经网络，最常用的是 LSTM）一个词一个词地读。<b>注意力在 2015 年就有了</b>，但只是 RNN 的外挂。这篇论文的标题意思是：只留注意力，RNN 不要了。</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="kicker">RNN 的毛病</div>
+  <h2>RNN 像<em>传话游戏</em></h2>
   <figure>
 <svg class="fig" viewBox="0 0 800 250" role="img" aria-label="九个词排成一排，记忆一格一格往后传；“小狗”的信息越传越淡，到“它”时几乎看不见了。">
 <defs><marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>

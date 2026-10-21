@@ -66,6 +66,50 @@ def hero():
     return "\n".join(s)
 
 
+# ---------- the task ----------
+def task():
+    s = ['<svg class="fig" viewBox="0 0 830 200" role="img" aria-label="左边一串英文词 The cat is tired 进入一台翻译机，右边出来一串德文词 Die Katze ist müde。">']
+    s.append('<defs><marker id="ar6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>')
+    y = 78
+    s.append('<text class="colh" x="141" y="50" text-anchor="middle">一串词进</text>')
+    for i, w in enumerate(["The", "cat", "is", "tired"]):
+        s.append(f'<rect class="wbox" x="{20+i*62}" y="{y}" width="56" height="44" rx="9"/>')
+        s.append(f'<text class="wtxt en" x="{48+i*62}" y="{y+28}" text-anchor="middle">{w}</text>')
+    s.append(f'<text class="small" x="141" y="{y+76}" text-anchor="middle">英文</text>')
+    s.append(f'<line class="chain" x1="272" y1="{y+22}" x2="322" y2="{y+22}" marker-end="url(#ar6)"/>')
+    s.append(f'<rect class="tower" x="330" y="{y-28}" width="140" height="100" rx="16"/>')
+    s.append(f'<text class="wtxt big" x="400" y="{y+34}" text-anchor="middle" style="fill:var(--accent)">？</text>')
+    s.append(f'<text class="small" x="400" y="{y+100}" text-anchor="middle">翻译机</text>')
+    s.append(f'<line class="chain" x1="478" y1="{y+22}" x2="528" y2="{y+22}" marker-end="url(#ar6)"/>')
+    s.append('<text class="colh" x="673" y="50" text-anchor="middle">另一串词出</text>')
+    for i, w in enumerate(["Die", "Katze", "ist", "müde"]):
+        s.append(f'<rect class="wbox" x="{536+i*70}" y="{y}" width="64" height="44" rx="9"/>')
+        s.append(f'<text class="wtxt en" x="{568+i*70}" y="{y+28}" text-anchor="middle">{w}</text>')
+    s.append(f'<text class="small" x="673" y="{y+76}" text-anchor="middle">德文</text>')
+    s.append('</svg>')
+    return "\n".join(s)
+
+
+# ---------- what people used before 2017 ----------
+def before():
+    items = [("2000 年代", "统计翻译", "按词组查表拼"), ("2014", "Seq2Seq", "LSTM：一个读一个写"),
+             ("2015", "RNN + 注意力", "写时回头看原文"), ("2016", "谷歌翻译 GNMT", "8 层 LSTM 叠起来"),
+             ("2017 年 5 月", "ConvS2S", "改用卷积，想少排队")]
+    xs = [90 + i * 165 for i in range(5)]
+    s = ['<svg class="fig" viewBox="0 0 860 230" role="img" aria-label="2017 年以前的翻译模型：先是统计翻译；2014 到 2016 年是 RNN（LSTM）当家，2015 年给 RNN 加上了注意力；2017 年有人改用卷积。">']
+    s.append(f'<path class="brace" d="M{xs[1]-40} 84 V66 H{xs[3]+40} V84"/>')
+    s.append(f'<text class="colh" x="{xs[2]}" y="54" text-anchor="middle">RNN 当家：一个词一个词读</text>')
+    s.append(f'<line class="spine" x1="40" y1="110" x2="820" y2="110"/>')
+    for i, ((yr, name, sub), x) in enumerate(zip(items, xs)):
+        hot = i == 2
+        s.append(f'<circle class="{"node first" if hot else "node"}" cx="{x}" cy="110" r="{14 if hot else 10}"/>')
+        s.append(f'<text class="yr" x="{x}" y="150" text-anchor="middle">{yr}</text>')
+        s.append(f'<text class="{"wtxt strong" if hot else "wtxt"}" x="{x}" y="178" text-anchor="middle">{name}</text>')
+        s.append(f'<text class="small" x="{x}" y="202" text-anchor="middle">{sub}</text>')
+    s.append('</svg>')
+    return "\n".join(s)
+
+
 # ---------- RNN chain ----------
 def rnn():
     s = ['<svg class="fig" viewBox="0 0 800 250" role="img" aria-label="九个词排成一排，记忆一格一格往后传；“小狗”的信息越传越淡，到“它”时几乎看不见了。">']
@@ -310,7 +354,7 @@ def legacy():
 tpl = open(sys.argv[2], encoding="utf-8").read()
 h1, h2, h3 = heads()
 rep = {
-    "{{HERO}}": hero(), "{{RNN}}": rnn(), "{{ATTN}}": attn(), "{{QKV}}": qkv(),
+    "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{RNN}}": rnn(), "{{ATTN}}": attn(), "{{QKV}}": qkv(),
     "{{HEAD1}}": h1, "{{HEAD2}}": h2, "{{HEAD3}}": h3, "{{POS}}": position(),
     "{{ARCH}}": arch(), "{{SPEED}}": speed(), "{{BLEU}}": bleu(), "{{LEGACY}}": legacy(),
 }
