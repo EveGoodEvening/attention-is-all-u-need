@@ -122,6 +122,14 @@ header.hero svg.fig { min-width: 0; }
 .blab.strong { fill: var(--ink); font-weight: 700; }
 .spine { stroke: var(--line); stroke-width: 3; }
 .brace { stroke: var(--muted); stroke-width: 2; fill: none; }
+.slot { fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.card.hot { stroke: var(--accent); stroke-width: 2.5; }
+.gate { fill: var(--panel); stroke-width: 2; }
+.gate.g1 { stroke: var(--h1); } .gate.g2 { stroke: var(--h2); } .gate.g3 { stroke: var(--h3); }
+.gate.none { fill: none; stroke: var(--line); stroke-dasharray: 5 4; }
+.gtxt { fill: var(--muted); font-family: var(--body); font-size: 14px; }
+.gname { fill: var(--ink); font-weight: 700; }
+.dotoff { fill: var(--line); }
 .node { fill: var(--panel); stroke: var(--muted); stroke-width: 2.5; }
 .node.first { fill: var(--accent); stroke: var(--accent); }
 .yr { fill: var(--muted); font-family: var(--mono); font-size: 13px; }
@@ -179,11 +187,29 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 </section>
 
 <section>
+  <div class="kicker">理清关系</div>
+  <h2>RNN 是<em>零件</em>，Seq2Seq 是<em>组装方式</em></h2>
+  <figure>
+{{PARTS}}
+    <figcaption>Seq2Seq（Sequence to Sequence，序列到序列）规定“一个读、一个写”，里面插什么零件都行。Transformer 其实也是这种组装方式，只是把 RNN 零件整个换成了注意力。</figcaption>
+  </figure>
+</section>
+
+<section>
   <div class="kicker">RNN 的毛病</div>
   <h2>RNN 像<em>传话游戏</em></h2>
   <figure>
 {{RNN}}
     <figcaption>一个词一个词往后传。句子一长，前面的就记不清了；而且必须排队，没法加速。</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="kicker">改进版</div>
+  <h2>LSTM 和 GRU：给记忆<em>加几道门</em></h2>
+  <figure>
+{{GATES}}
+    <figcaption>三者都是一个词一个词地读，区别在“记忆笔记本”怎么改。LSTM 用三道门：忘记门（forget gate）、输入门（input gate）、输出门（output gate），想留的就能一直留着。GRU（Gated Recurrent Unit，门控循环单元）合并成两道：更新门（update gate）、重置门（reset gate），更简单，效果通常差不多。不过它们<b>还是得排队</b>。</figcaption>
   </figure>
 </section>
 

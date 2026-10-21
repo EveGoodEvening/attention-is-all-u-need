@@ -110,6 +110,69 @@ def before():
     return "\n".join(s)
 
 
+# ---------- parts vs. assembly ----------
+def parts():
+    s = ['<svg class="fig" viewBox="0 0 860 370" role="img" aria-label="Seq2Seq 是一种组装方式：一个编码器读、一个解码器写。里面插什么零件都行：插 RNN 类（简单 RNN、LSTM、GRU）是 2014 到 2016 年的主流；插卷积就是 ConvS2S；只用注意力就是 Transformer。">']
+    s.append('<defs><marker id="ar7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>')
+    s.append('<text class="colh" x="430" y="28" text-anchor="middle">组装方式：Seq2Seq（一个读，一个写）</text>')
+    for x, lab in [(180, "编码器 · 读"), (480, "解码器 · 写")]:
+        s.append(f'<rect class="tower" x="{x}" y="46" width="200" height="80" rx="14"/>')
+        s.append(f'<text class="subt" x="{x+100}" y="74" text-anchor="middle">{lab}</text>')
+        s.append(f'<rect class="slot" x="{x+40}" y="86" width="120" height="28" rx="7"/>')
+        s.append(f'<text class="small" x="{x+100}" y="105" text-anchor="middle">插零件</text>')
+    s.append('<line class="chain" x1="382" y1="86" x2="474" y2="86" marker-end="url(#ar7)"/>')
+    cols = [(150, "零件：RNN 类", ["简单 RNN", "LSTM", "GRU"], "Seq2Seq", "2014–2016 主流，2015 年起加注意力", False),
+            (430, "零件：卷积", ["CNN"], "ConvS2S", "2017 年 5 月", False),
+            (710, "零件：只用注意力", ["注意力"], "Transformer", "2017 年 6 月 · 本论文", True)]
+    for cx, head, chips, name, sub, hot in cols:
+        s.append(f'<path class="chain" d="M{cx} 198 C{cx} 160 430 170 430 132" fill="none" marker-end="url(#ar7)"/>')
+        s.append(f'<rect class="{"card hot" if hot else "card"}" x="{cx-128}" y="200" width="256" height="156" rx="14"/>')
+        s.append(f'<text class="colh" x="{cx}" y="230" text-anchor="middle">{head}</text>')
+        cw, gap = 74, 8
+        x0 = cx - (len(chips) * cw + (len(chips) - 1) * gap) / 2
+        for i, c in enumerate(chips):
+            x = x0 + i * (cw + gap)
+            cls = "wbox hl" if hot else "wbox"
+            s.append(f'<rect class="{cls}" x="{x:.0f}" y="246" width="{cw}" height="36" rx="8"/>')
+            s.append(f'<text class="{"small on" if hot else "small"}" x="{x+cw/2:.0f}" y="269" text-anchor="middle" style="font-weight:700">{c}</text>')
+        s.append(f'<text class="{"wtxt strong" if hot else "wtxt"}" x="{cx}" y="316" text-anchor="middle">= {name}</text>')
+        s.append(f'<text class="small" x="{cx}" y="340" text-anchor="middle">{sub}</text>')
+    s.append('</svg>')
+    return "\n".join(s)
+
+
+# ---------- LSTM / GRU gates ----------
+def gates():
+    panels = [("简单 RNN", "1980 年代末", [], 1),
+              ("LSTM", "1997", [("g1", "忘记门", "旧笔记擦掉多少"), ("g2", "输入门", "新内容记多少"), ("g3", "输出门", "这一步拿出多少用")], 4),
+              ("GRU", "2014", [("g1", "更新门", "旧的留多少、新的换多少"), ("g2", "重置门", "想新内容时参考多少旧的")], 4)]
+    s = ['<svg class="fig" viewBox="0 0 860 340" role="img" aria-label="三本记忆笔记本对比：简单 RNN 没有门，每读一个词整页重写，记性差；LSTM 有忘记门、输入门、输出门三道门，记性好；GRU 把门合并成更新门和重置门两道，记性也好。">']
+    for i, (name, yr, gs, mem) in enumerate(panels):
+        cx = 145 + i * 285
+        s.append(f'<rect class="card" x="{cx-135}" y="8" width="270" height="324" rx="14"/>')
+        s.append(f'<text class="{"wtxt strong" if gs else "wtxt"}" x="{cx}" y="42" text-anchor="middle">{name}</text>')
+        s.append(f'<text class="yr" x="{cx}" y="62" text-anchor="middle">{yr}</text>')
+        # the notebook = memory
+        s.append(f'<rect class="mem" x="{cx-56}" y="78" width="112" height="70" rx="8"/>')
+        for k in range(3):
+            s.append(f'<line class="grid" x1="{cx-40}" y1="{98+k*16}" x2="{cx+40}" y2="{98+k*16}"/>')
+        s.append(f'<text class="small" x="{cx}" y="166" text-anchor="middle">记忆笔记本</text>')
+        if not gs:
+            s.append(f'<rect class="gate none" x="{cx-120}" y="184" width="240" height="34" rx="17"/>')
+            s.append(f'<text class="gtxt" x="{cx}" y="206" text-anchor="middle">没有门</text>')
+            s.append(f'<text class="small" x="{cx}" y="244" text-anchor="middle">每读一个词，整页重写</text>')
+            s.append(f'<text class="small" x="{cx}" y="266" text-anchor="middle">旧内容很快被冲掉</text>')
+        for k, (c, g, d) in enumerate(gs):
+            y = 184 + k * 42
+            s.append(f'<rect class="gate {c}" x="{cx-125}" y="{y}" width="250" height="34" rx="17"/>')
+            s.append(f'<text class="gtxt" x="{cx-112}" y="{y+22}"><tspan class="gname">{g}</tspan> · {d}</text>')
+        s.append(f'<text class="small" x="{cx-50}" y="314" text-anchor="end">记性</text>')
+        for k in range(5):
+            s.append(f'<circle class="{"memdot" if k < mem else "dotoff"}" cx="{cx-34+k*20}" cy="309" r="7"/>')
+    s.append('</svg>')
+    return "\n".join(s)
+
+
 # ---------- RNN chain ----------
 def rnn():
     s = ['<svg class="fig" viewBox="0 0 800 250" role="img" aria-label="九个词排成一排，记忆一格一格往后传；“小狗”的信息越传越淡，到“它”时几乎看不见了。">']
@@ -354,7 +417,7 @@ def legacy():
 tpl = open(sys.argv[2], encoding="utf-8").read()
 h1, h2, h3 = heads()
 rep = {
-    "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{RNN}}": rnn(), "{{ATTN}}": attn(), "{{QKV}}": qkv(),
+    "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{PARTS}}": parts(), "{{RNN}}": rnn(), "{{GATES}}": gates(), "{{ATTN}}": attn(), "{{QKV}}": qkv(),
     "{{HEAD1}}": h1, "{{HEAD2}}": h2, "{{HEAD3}}": h3, "{{POS}}": position(),
     "{{ARCH}}": arch(), "{{SPEED}}": speed(), "{{BLEU}}": bleu(), "{{LEGACY}}": legacy(),
 }
