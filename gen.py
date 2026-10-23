@@ -502,21 +502,60 @@ def arch():
 
 
 def speed():
-    X = 224
-    s = ['<svg class="fig" viewBox="0 0 800 230" role="img" aria-label="旧方法要排队算 9 步；Transformer 9 个词一起算，一步完成。">']
-    s.append('<text class="colh" x="20" y="36">旧方法：排队</text>')
-    for i in range(9):
-        x = X + i * 62
-        s.append(f'<rect class="tick" x="{x}" y="14" width="52" height="34" rx="7"/>')
-        s.append(f'<text class="small" x="{x+26}" y="37" text-anchor="middle">{W9[i]}</text>')
-    s.append(f'<text class="num" x="{X}" y="74">⏱ 9 步</text>')
-    s.append('<text class="colh" x="20" y="142">新方法：一起上</text>')
-    for i in range(9):
-        x = X + i * 62
-        s.append(f'<rect class="tick on" x="{x}" y="120" width="52" height="34" rx="7"/>')
-        s.append(f'<text class="small on" x="{x+26}" y="143" text-anchor="middle">{W9[i]}</text>')
-    s.append(f'<rect class="bracket" x="{X-4}" y="114" width="562" height="46" rx="10" fill="none"/>')
-    s.append(f'<text class="num" x="{X}" y="186">⏱ 1 步（显卡最擅长同时干很多事）</text>')
+    # 2x2: training vs generation, RNN vs Transformer, on the German answer sentence
+    s = ['<svg class="fig" viewBox="0 0 860 424" role="img" aria-label="2 乘 2 对比。训练时答案已知：RNN 仍要 4 步，因为 hₜ 必须等 hₜ₋₁；Transformer 把整句答案一起喂进去，加上遮挡，1 步算完。生成时答案未知：RNN 和 Transformer 都要一个词一个词地出，各 4 步。">']
+    cols = [(170, "训练：答案已经知道"), (515, "生成：答案还不知道")]
+    rows = [(64, "RNN"), (244, "Transformer")]
+    for cx, lab in cols:
+        s.append(f'<text class="colh" x="{cx+167}" y="40" text-anchor="middle">{lab}</text>')
+    cells = {
+        (0, 0): (False, "⏱ 4 步", "答案已知，hₜ 还得等 hₜ₋₁"),
+        (1, 0): (True, "⏱ 1 步", "整句答案一起喂，加遮挡"),
+        (0, 1): (False, "⏱ 4 步", "下一个词要等上一个写出"),
+        (1, 1): (False, "⏱ 4 步", "这点和 RNN 一样"),
+    }
+    for r, (y, name) in enumerate(rows):
+        s.append(f'<text class="{"wtxt strong" if r else "wtxt"}" x="90" y="{y+90}" text-anchor="middle" style="font-family:var(--mono);font-size:16px">{name}</text>')
+        for c, (x, _) in enumerate(cols):
+            par, steps, why = cells[(r, c)]
+            s.append(f'<rect class="{"card hot" if par else "card"}" x="{x}" y="{y}" width="335" height="170" rx="14"/>')
+            gx = x + 100
+            for k in range(4):
+                s.append(f'<text class="step" x="{gx+k*52+21}" y="{y+24}" text-anchor="middle" style="font-size:12px">第 {k+1} 步</text>')
+            for i, w in enumerate(DE4):
+                yy = y + 34 + i * 24
+                s.append(f'<text class="wtxt en" x="{gx-12}" y="{yy+14}" text-anchor="end" style="font-size:13px">{w}</text>')
+                for k in range(4):
+                    on = (k == 0) if par else (k == i)
+                    s.append(f'<rect class="{"tick on" if on else "tick"}" x="{gx+k*52}" y="{yy}" width="42" height="18" rx="4"/>')
+            s.append(f'<text class="{"num strong" if par else "num"}" x="{x+20}" y="{y+154}">{steps}</text>')
+            s.append(f'<text class="small" x="{x+100}" y="{y+154}">{why}</text>')
+    s.append('</svg>')
+    return "\n".join(s)
+
+
+def mask():
+    toks = ["〈开始〉", "Die", "Katze", "ist"]
+    nxt = DE4
+    x0, y0, cw, ch = 170, 72, 70, 50
+    s = ['<svg class="fig" viewBox="0 0 760 310" role="img" aria-label="遮挡示意：4 乘 4 的格子，每一行只能看到自己和前面的词，右上方的格子被遮住。〈开始〉只看自己，猜 Die；看到 Die 猜 Katze；看到 Die Katze 猜 ist；看到 Die Katze ist 猜 müde。">']
+    s.append(f'<text class="hm-axis" x="{x0-14}" y="30" text-anchor="end">谁在算 ↓</text>')
+    s.append(f'<text class="hm-axis" x="{x0}" y="30">能看到的词 →</text>')
+    for j, t in enumerate(toks):
+        s.append(f'<text class="wtxt en" x="{x0+j*cw+30}" y="58" text-anchor="middle" style="font-size:13px">{t}</text>')
+    for i, t in enumerate(toks):
+        y = y0 + i * ch
+        s.append(f'<text class="wtxt en" x="{x0-14}" y="{y+26}" text-anchor="end" style="font-size:13px">{t}</text>')
+        for j in range(4):
+            if j <= i:
+                s.append(f'<rect class="hm" x="{x0+j*cw}" y="{y}" width="60" height="40" rx="7"/>')
+            else:
+                s.append(f'<rect class="slot" x="{x0+j*cw}" y="{y}" width="60" height="40" rx="7"/>')
+                s.append(f'<text class="small" x="{x0+j*cw+30}" y="{y+26}" text-anchor="middle">遮住</text>')
+        s.append(f'<text class="small" x="{x0+4*cw+16}" y="{y+26}">→ 猜下一个词：</text>')
+        s.append(f'<rect class="wbox hl" x="{x0+4*cw+120}" y="{y+5}" width="70" height="30" rx="7"/>')
+        s.append(f'<text class="wtxt en on" x="{x0+4*cw+155}" y="{y+25}" text-anchor="middle" style="font-size:13px">{nxt[i]}</text>')
+    s.append(f'<text class="small" x="{x0}" y="{y0+4*ch+22}">4 行同时算，但每行都看不到自己后面的答案</text>')
     s.append('</svg>')
     return "\n".join(s)
 
@@ -566,7 +605,7 @@ h1, h2, h3 = heads()
 rep = {
     "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{PARTS}}": parts(), "{{QUEUE}}": queue(), "{{RNN}}": rnn(), "{{FAR}}": far(), "{{GATES}}": gates(), "{{ADDON}}": addon(), "{{ADDON_STEP}}": addon_step(), "{{ATTN}}": attn(), "{{QKV}}": qkv(),
     "{{HEAD1}}": h1, "{{HEAD2}}": h2, "{{HEAD3}}": h3, "{{POS}}": position(),
-    "{{ARCH}}": arch(), "{{SPEED}}": speed(), "{{BLEU}}": bleu(), "{{LEGACY}}": legacy(),
+    "{{ARCH}}": arch(), "{{SPEED}}": speed(), "{{MASK}}": mask(), "{{BLEU}}": bleu(), "{{LEGACY}}": legacy(),
 }
 for k, v in rep.items():
     tpl = tpl.replace(k, v)

@@ -216,7 +216,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   <h3><span class="n">①</span> 必须排队，没法加速</h3>
   <figure>
 {{QUEUE}}
-    <figcaption>h（hidden state，隐藏状态）就是读到每个词时的那本记忆笔记。要算 h₃，必须先有 h₂；要算 h₂，必须先有 h₁。显卡最擅长同时干几千件事，这里却只能一步一个词地排队。句子越长、数据越多，训练就越慢。就像 100 个人传话，第 100 个人只能干等前面 99 个人依次传完。</figcaption>
+    <figcaption>h（hidden state，隐藏状态）就是读到每个词时的那本记忆笔记。要算 h₃，必须先有 h₂；要算 h₂，必须先有 h₁。哪怕是训练时、整句答案早就知道，也省不掉这一步。显卡最擅长同时干几千件事，这里却只能一步一个词地排队。句子越长、数据越多，训练就越慢。就像 100 个人传话，第 100 个人只能干等前面 99 个人依次传完。</figcaption>
   </figure>
   <h3><span class="n">②</span> 离得越远，越记不清</h3>
   <figure>
@@ -310,10 +310,16 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <section>
   <div class="kicker">结果</div>
   <h2>更<em>快</em>，也更<em>准</em></h2>
+  <h3><span class="n">①</span> 快在哪里：训练时能同时算</h3>
   <figure>
 {{SPEED}}
-    <figcaption>不用排队，显卡可以同时算所有词，所以训练快得多。</figcaption>
+    <figcaption>要分清两个阶段。<b>训练</b>时，答案句子早就知道了：Transformer 把整句答案一次喂给解码器，所有位置同时算，1 步完成。RNN 就算知道答案也做不到，因为 hₜ 必须等 hₜ₋₁ 算完。<b>生成</b>（推理，inference）时答案还不知道，下一个词要等上一个写出来才能接着算，所以 Transformer 也是一个词一个词地出，这点没变。另外，Transformer 的编码器读原文时，不管训练还是生成，都能一次读完整句。</figcaption>
   </figure>
+  <figure>
+{{MASK}}
+    <figcaption>整句答案一次喂进去，会不会偷看答案？靠<b>遮挡</b>（mask，掩码）：每个位置只能看它自己和前面的词，后面的格子都被遮住。这样 4 个位置同时算，结果和一个一个算完全一样。这也是“整台机器”图里，解码器那层“看已写好的词”只看前面的原因。训练时把整句标准答案喂给解码器的做法，叫 teacher forcing（教师强制）。</figcaption>
+  </figure>
+  <h3><span class="n">②</span> 准在哪里：翻译得分更高</h3>
   <figure>
 {{BLEU}}
     <figcaption>2014 年英译德翻译比赛的数据，比以前最好的还高 2 分。</figcaption>
@@ -334,7 +340,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 </section>
 
 <footer>
-  <div>一句话记住它：<b>不排队，大家同时互相看，看谁和自己最有关。</b></div>
+  <div>一句话记住它：<b>训练时不排队，大家同时互相看，看谁和自己最有关。</b></div>
   <div>原文：Vaswani 等，<a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a>，NeurIPS 2017。图中的注意力比例是为了说明而画的示意。</div>
 </footer>
 

@@ -541,7 +541,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <text class="step" x="744" y="290" text-anchor="middle">第 9 步</text>
 <text class="small" x="112" y="290">↑ 显卡的计算单元（真实有几千个）：每一步只有一格在干活</text>
 </svg>
-    <figcaption>h（hidden state，隐藏状态）就是读到每个词时的那本记忆笔记。要算 h₃，必须先有 h₂；要算 h₂，必须先有 h₁。显卡最擅长同时干几千件事，这里却只能一步一个词地排队。句子越长、数据越多，训练就越慢。就像 100 个人传话，第 100 个人只能干等前面 99 个人依次传完。</figcaption>
+    <figcaption>h（hidden state，隐藏状态）就是读到每个词时的那本记忆笔记。要算 h₃，必须先有 h₂；要算 h₂，必须先有 h₁。哪怕是训练时、整句答案早就知道，也省不掉这一步。显卡最擅长同时干几千件事，这里却只能一步一个词地排队。句子越长、数据越多，训练就越慢。就像 100 个人传话，第 100 个人只能干等前面 99 个人依次传完。</figcaption>
   </figure>
   <h3><span class="n">②</span> 离得越远，越记不清</h3>
   <figure>
@@ -1234,52 +1234,175 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <section>
   <div class="kicker">结果</div>
   <h2>更<em>快</em>，也更<em>准</em></h2>
+  <h3><span class="n">①</span> 快在哪里：训练时能同时算</h3>
   <figure>
-<svg class="fig" viewBox="0 0 800 230" role="img" aria-label="旧方法要排队算 9 步；Transformer 9 个词一起算，一步完成。">
-<text class="colh" x="20" y="36">旧方法：排队</text>
-<rect class="tick" x="224" y="14" width="52" height="34" rx="7"/>
-<text class="small" x="250" y="37" text-anchor="middle">小狗</text>
-<rect class="tick" x="286" y="14" width="52" height="34" rx="7"/>
-<text class="small" x="312" y="37" text-anchor="middle">没有</text>
-<rect class="tick" x="348" y="14" width="52" height="34" rx="7"/>
-<text class="small" x="374" y="37" text-anchor="middle">过</text>
-<rect class="tick" x="410" y="14" width="52" height="34" rx="7"/>
-<text class="small" x="436" y="37" text-anchor="middle">马路</text>
-<rect class="tick" x="472" y="14" width="52" height="34" rx="7"/>
-<text class="small" x="498" y="37" text-anchor="middle">因为</text>
-<rect class="tick" x="534" y="14" width="52" height="34" rx="7"/>
-<text class="small" x="560" y="37" text-anchor="middle">它</text>
-<rect class="tick" x="596" y="14" width="52" height="34" rx="7"/>
-<text class="small" x="622" y="37" text-anchor="middle">太</text>
-<rect class="tick" x="658" y="14" width="52" height="34" rx="7"/>
-<text class="small" x="684" y="37" text-anchor="middle">累</text>
-<rect class="tick" x="720" y="14" width="52" height="34" rx="7"/>
-<text class="small" x="746" y="37" text-anchor="middle">了</text>
-<text class="num" x="224" y="74">⏱ 9 步</text>
-<text class="colh" x="20" y="142">新方法：一起上</text>
-<rect class="tick on" x="224" y="120" width="52" height="34" rx="7"/>
-<text class="small on" x="250" y="143" text-anchor="middle">小狗</text>
-<rect class="tick on" x="286" y="120" width="52" height="34" rx="7"/>
-<text class="small on" x="312" y="143" text-anchor="middle">没有</text>
-<rect class="tick on" x="348" y="120" width="52" height="34" rx="7"/>
-<text class="small on" x="374" y="143" text-anchor="middle">过</text>
-<rect class="tick on" x="410" y="120" width="52" height="34" rx="7"/>
-<text class="small on" x="436" y="143" text-anchor="middle">马路</text>
-<rect class="tick on" x="472" y="120" width="52" height="34" rx="7"/>
-<text class="small on" x="498" y="143" text-anchor="middle">因为</text>
-<rect class="tick on" x="534" y="120" width="52" height="34" rx="7"/>
-<text class="small on" x="560" y="143" text-anchor="middle">它</text>
-<rect class="tick on" x="596" y="120" width="52" height="34" rx="7"/>
-<text class="small on" x="622" y="143" text-anchor="middle">太</text>
-<rect class="tick on" x="658" y="120" width="52" height="34" rx="7"/>
-<text class="small on" x="684" y="143" text-anchor="middle">累</text>
-<rect class="tick on" x="720" y="120" width="52" height="34" rx="7"/>
-<text class="small on" x="746" y="143" text-anchor="middle">了</text>
-<rect class="bracket" x="220" y="114" width="562" height="46" rx="10" fill="none"/>
-<text class="num" x="224" y="186">⏱ 1 步（显卡最擅长同时干很多事）</text>
+<svg class="fig" viewBox="0 0 860 424" role="img" aria-label="2 乘 2 对比。训练时答案已知：RNN 仍要 4 步，因为 hₜ 必须等 hₜ₋₁；Transformer 把整句答案一起喂进去，加上遮挡，1 步算完。生成时答案未知：RNN 和 Transformer 都要一个词一个词地出，各 4 步。">
+<text class="colh" x="337" y="40" text-anchor="middle">训练：答案已经知道</text>
+<text class="colh" x="682" y="40" text-anchor="middle">生成：答案还不知道</text>
+<text class="wtxt" x="90" y="154" text-anchor="middle" style="font-family:var(--mono);font-size:16px">RNN</text>
+<rect class="card" x="170" y="64" width="335" height="170" rx="14"/>
+<text class="step" x="291" y="88" text-anchor="middle" style="font-size:12px">第 1 步</text>
+<text class="step" x="343" y="88" text-anchor="middle" style="font-size:12px">第 2 步</text>
+<text class="step" x="395" y="88" text-anchor="middle" style="font-size:12px">第 3 步</text>
+<text class="step" x="447" y="88" text-anchor="middle" style="font-size:12px">第 4 步</text>
+<text class="wtxt en" x="258" y="112" text-anchor="end" style="font-size:13px">Die</text>
+<rect class="tick on" x="270" y="98" width="42" height="18" rx="4"/>
+<rect class="tick" x="322" y="98" width="42" height="18" rx="4"/>
+<rect class="tick" x="374" y="98" width="42" height="18" rx="4"/>
+<rect class="tick" x="426" y="98" width="42" height="18" rx="4"/>
+<text class="wtxt en" x="258" y="136" text-anchor="end" style="font-size:13px">Katze</text>
+<rect class="tick" x="270" y="122" width="42" height="18" rx="4"/>
+<rect class="tick on" x="322" y="122" width="42" height="18" rx="4"/>
+<rect class="tick" x="374" y="122" width="42" height="18" rx="4"/>
+<rect class="tick" x="426" y="122" width="42" height="18" rx="4"/>
+<text class="wtxt en" x="258" y="160" text-anchor="end" style="font-size:13px">ist</text>
+<rect class="tick" x="270" y="146" width="42" height="18" rx="4"/>
+<rect class="tick" x="322" y="146" width="42" height="18" rx="4"/>
+<rect class="tick on" x="374" y="146" width="42" height="18" rx="4"/>
+<rect class="tick" x="426" y="146" width="42" height="18" rx="4"/>
+<text class="wtxt en" x="258" y="184" text-anchor="end" style="font-size:13px">müde</text>
+<rect class="tick" x="270" y="170" width="42" height="18" rx="4"/>
+<rect class="tick" x="322" y="170" width="42" height="18" rx="4"/>
+<rect class="tick" x="374" y="170" width="42" height="18" rx="4"/>
+<rect class="tick on" x="426" y="170" width="42" height="18" rx="4"/>
+<text class="num" x="190" y="218">⏱ 4 步</text>
+<text class="small" x="270" y="218">答案已知，hₜ 还得等 hₜ₋₁</text>
+<rect class="card" x="515" y="64" width="335" height="170" rx="14"/>
+<text class="step" x="636" y="88" text-anchor="middle" style="font-size:12px">第 1 步</text>
+<text class="step" x="688" y="88" text-anchor="middle" style="font-size:12px">第 2 步</text>
+<text class="step" x="740" y="88" text-anchor="middle" style="font-size:12px">第 3 步</text>
+<text class="step" x="792" y="88" text-anchor="middle" style="font-size:12px">第 4 步</text>
+<text class="wtxt en" x="603" y="112" text-anchor="end" style="font-size:13px">Die</text>
+<rect class="tick on" x="615" y="98" width="42" height="18" rx="4"/>
+<rect class="tick" x="667" y="98" width="42" height="18" rx="4"/>
+<rect class="tick" x="719" y="98" width="42" height="18" rx="4"/>
+<rect class="tick" x="771" y="98" width="42" height="18" rx="4"/>
+<text class="wtxt en" x="603" y="136" text-anchor="end" style="font-size:13px">Katze</text>
+<rect class="tick" x="615" y="122" width="42" height="18" rx="4"/>
+<rect class="tick on" x="667" y="122" width="42" height="18" rx="4"/>
+<rect class="tick" x="719" y="122" width="42" height="18" rx="4"/>
+<rect class="tick" x="771" y="122" width="42" height="18" rx="4"/>
+<text class="wtxt en" x="603" y="160" text-anchor="end" style="font-size:13px">ist</text>
+<rect class="tick" x="615" y="146" width="42" height="18" rx="4"/>
+<rect class="tick" x="667" y="146" width="42" height="18" rx="4"/>
+<rect class="tick on" x="719" y="146" width="42" height="18" rx="4"/>
+<rect class="tick" x="771" y="146" width="42" height="18" rx="4"/>
+<text class="wtxt en" x="603" y="184" text-anchor="end" style="font-size:13px">müde</text>
+<rect class="tick" x="615" y="170" width="42" height="18" rx="4"/>
+<rect class="tick" x="667" y="170" width="42" height="18" rx="4"/>
+<rect class="tick" x="719" y="170" width="42" height="18" rx="4"/>
+<rect class="tick on" x="771" y="170" width="42" height="18" rx="4"/>
+<text class="num" x="535" y="218">⏱ 4 步</text>
+<text class="small" x="615" y="218">下一个词要等上一个写出</text>
+<text class="wtxt strong" x="90" y="334" text-anchor="middle" style="font-family:var(--mono);font-size:16px">Transformer</text>
+<rect class="card hot" x="170" y="244" width="335" height="170" rx="14"/>
+<text class="step" x="291" y="268" text-anchor="middle" style="font-size:12px">第 1 步</text>
+<text class="step" x="343" y="268" text-anchor="middle" style="font-size:12px">第 2 步</text>
+<text class="step" x="395" y="268" text-anchor="middle" style="font-size:12px">第 3 步</text>
+<text class="step" x="447" y="268" text-anchor="middle" style="font-size:12px">第 4 步</text>
+<text class="wtxt en" x="258" y="292" text-anchor="end" style="font-size:13px">Die</text>
+<rect class="tick on" x="270" y="278" width="42" height="18" rx="4"/>
+<rect class="tick" x="322" y="278" width="42" height="18" rx="4"/>
+<rect class="tick" x="374" y="278" width="42" height="18" rx="4"/>
+<rect class="tick" x="426" y="278" width="42" height="18" rx="4"/>
+<text class="wtxt en" x="258" y="316" text-anchor="end" style="font-size:13px">Katze</text>
+<rect class="tick on" x="270" y="302" width="42" height="18" rx="4"/>
+<rect class="tick" x="322" y="302" width="42" height="18" rx="4"/>
+<rect class="tick" x="374" y="302" width="42" height="18" rx="4"/>
+<rect class="tick" x="426" y="302" width="42" height="18" rx="4"/>
+<text class="wtxt en" x="258" y="340" text-anchor="end" style="font-size:13px">ist</text>
+<rect class="tick on" x="270" y="326" width="42" height="18" rx="4"/>
+<rect class="tick" x="322" y="326" width="42" height="18" rx="4"/>
+<rect class="tick" x="374" y="326" width="42" height="18" rx="4"/>
+<rect class="tick" x="426" y="326" width="42" height="18" rx="4"/>
+<text class="wtxt en" x="258" y="364" text-anchor="end" style="font-size:13px">müde</text>
+<rect class="tick on" x="270" y="350" width="42" height="18" rx="4"/>
+<rect class="tick" x="322" y="350" width="42" height="18" rx="4"/>
+<rect class="tick" x="374" y="350" width="42" height="18" rx="4"/>
+<rect class="tick" x="426" y="350" width="42" height="18" rx="4"/>
+<text class="num strong" x="190" y="398">⏱ 1 步</text>
+<text class="small" x="270" y="398">整句答案一起喂，加遮挡</text>
+<rect class="card" x="515" y="244" width="335" height="170" rx="14"/>
+<text class="step" x="636" y="268" text-anchor="middle" style="font-size:12px">第 1 步</text>
+<text class="step" x="688" y="268" text-anchor="middle" style="font-size:12px">第 2 步</text>
+<text class="step" x="740" y="268" text-anchor="middle" style="font-size:12px">第 3 步</text>
+<text class="step" x="792" y="268" text-anchor="middle" style="font-size:12px">第 4 步</text>
+<text class="wtxt en" x="603" y="292" text-anchor="end" style="font-size:13px">Die</text>
+<rect class="tick on" x="615" y="278" width="42" height="18" rx="4"/>
+<rect class="tick" x="667" y="278" width="42" height="18" rx="4"/>
+<rect class="tick" x="719" y="278" width="42" height="18" rx="4"/>
+<rect class="tick" x="771" y="278" width="42" height="18" rx="4"/>
+<text class="wtxt en" x="603" y="316" text-anchor="end" style="font-size:13px">Katze</text>
+<rect class="tick" x="615" y="302" width="42" height="18" rx="4"/>
+<rect class="tick on" x="667" y="302" width="42" height="18" rx="4"/>
+<rect class="tick" x="719" y="302" width="42" height="18" rx="4"/>
+<rect class="tick" x="771" y="302" width="42" height="18" rx="4"/>
+<text class="wtxt en" x="603" y="340" text-anchor="end" style="font-size:13px">ist</text>
+<rect class="tick" x="615" y="326" width="42" height="18" rx="4"/>
+<rect class="tick" x="667" y="326" width="42" height="18" rx="4"/>
+<rect class="tick on" x="719" y="326" width="42" height="18" rx="4"/>
+<rect class="tick" x="771" y="326" width="42" height="18" rx="4"/>
+<text class="wtxt en" x="603" y="364" text-anchor="end" style="font-size:13px">müde</text>
+<rect class="tick" x="615" y="350" width="42" height="18" rx="4"/>
+<rect class="tick" x="667" y="350" width="42" height="18" rx="4"/>
+<rect class="tick" x="719" y="350" width="42" height="18" rx="4"/>
+<rect class="tick on" x="771" y="350" width="42" height="18" rx="4"/>
+<text class="num" x="535" y="398">⏱ 4 步</text>
+<text class="small" x="615" y="398">这点和 RNN 一样</text>
 </svg>
-    <figcaption>不用排队，显卡可以同时算所有词，所以训练快得多。</figcaption>
+    <figcaption>要分清两个阶段。<b>训练</b>时，答案句子早就知道了：Transformer 把整句答案一次喂给解码器，所有位置同时算，1 步完成。RNN 就算知道答案也做不到，因为 hₜ 必须等 hₜ₋₁ 算完。<b>生成</b>（推理，inference）时答案还不知道，下一个词要等上一个写出来才能接着算，所以 Transformer 也是一个词一个词地出，这点没变。另外，Transformer 的编码器读原文时，不管训练还是生成，都能一次读完整句。</figcaption>
   </figure>
+  <figure>
+<svg class="fig" viewBox="0 0 760 310" role="img" aria-label="遮挡示意：4 乘 4 的格子，每一行只能看到自己和前面的词，右上方的格子被遮住。〈开始〉只看自己，猜 Die；看到 Die 猜 Katze；看到 Die Katze 猜 ist；看到 Die Katze ist 猜 müde。">
+<text class="hm-axis" x="156" y="30" text-anchor="end">谁在算 ↓</text>
+<text class="hm-axis" x="170" y="30">能看到的词 →</text>
+<text class="wtxt en" x="200" y="58" text-anchor="middle" style="font-size:13px">〈开始〉</text>
+<text class="wtxt en" x="270" y="58" text-anchor="middle" style="font-size:13px">Die</text>
+<text class="wtxt en" x="340" y="58" text-anchor="middle" style="font-size:13px">Katze</text>
+<text class="wtxt en" x="410" y="58" text-anchor="middle" style="font-size:13px">ist</text>
+<text class="wtxt en" x="156" y="98" text-anchor="end" style="font-size:13px">〈开始〉</text>
+<rect class="hm" x="170" y="72" width="60" height="40" rx="7"/>
+<rect class="slot" x="240" y="72" width="60" height="40" rx="7"/>
+<text class="small" x="270" y="98" text-anchor="middle">遮住</text>
+<rect class="slot" x="310" y="72" width="60" height="40" rx="7"/>
+<text class="small" x="340" y="98" text-anchor="middle">遮住</text>
+<rect class="slot" x="380" y="72" width="60" height="40" rx="7"/>
+<text class="small" x="410" y="98" text-anchor="middle">遮住</text>
+<text class="small" x="466" y="98">→ 猜下一个词：</text>
+<rect class="wbox hl" x="570" y="77" width="70" height="30" rx="7"/>
+<text class="wtxt en on" x="605" y="97" text-anchor="middle" style="font-size:13px">Die</text>
+<text class="wtxt en" x="156" y="148" text-anchor="end" style="font-size:13px">Die</text>
+<rect class="hm" x="170" y="122" width="60" height="40" rx="7"/>
+<rect class="hm" x="240" y="122" width="60" height="40" rx="7"/>
+<rect class="slot" x="310" y="122" width="60" height="40" rx="7"/>
+<text class="small" x="340" y="148" text-anchor="middle">遮住</text>
+<rect class="slot" x="380" y="122" width="60" height="40" rx="7"/>
+<text class="small" x="410" y="148" text-anchor="middle">遮住</text>
+<text class="small" x="466" y="148">→ 猜下一个词：</text>
+<rect class="wbox hl" x="570" y="127" width="70" height="30" rx="7"/>
+<text class="wtxt en on" x="605" y="147" text-anchor="middle" style="font-size:13px">Katze</text>
+<text class="wtxt en" x="156" y="198" text-anchor="end" style="font-size:13px">Katze</text>
+<rect class="hm" x="170" y="172" width="60" height="40" rx="7"/>
+<rect class="hm" x="240" y="172" width="60" height="40" rx="7"/>
+<rect class="hm" x="310" y="172" width="60" height="40" rx="7"/>
+<rect class="slot" x="380" y="172" width="60" height="40" rx="7"/>
+<text class="small" x="410" y="198" text-anchor="middle">遮住</text>
+<text class="small" x="466" y="198">→ 猜下一个词：</text>
+<rect class="wbox hl" x="570" y="177" width="70" height="30" rx="7"/>
+<text class="wtxt en on" x="605" y="197" text-anchor="middle" style="font-size:13px">ist</text>
+<text class="wtxt en" x="156" y="248" text-anchor="end" style="font-size:13px">ist</text>
+<rect class="hm" x="170" y="222" width="60" height="40" rx="7"/>
+<rect class="hm" x="240" y="222" width="60" height="40" rx="7"/>
+<rect class="hm" x="310" y="222" width="60" height="40" rx="7"/>
+<rect class="hm" x="380" y="222" width="60" height="40" rx="7"/>
+<text class="small" x="466" y="248">→ 猜下一个词：</text>
+<rect class="wbox hl" x="570" y="227" width="70" height="30" rx="7"/>
+<text class="wtxt en on" x="605" y="247" text-anchor="middle" style="font-size:13px">müde</text>
+<text class="small" x="170" y="294">4 行同时算，但每行都看不到自己后面的答案</text>
+</svg>
+    <figcaption>整句答案一次喂进去，会不会偷看答案？靠<b>遮挡</b>（mask，掩码）：每个位置只能看它自己和前面的词，后面的格子都被遮住。这样 4 个位置同时算，结果和一个一个算完全一样。这也是“整台机器”图里，解码器那层“看已写好的词”只看前面的原因。训练时把整句标准答案喂给解码器的做法，叫 teacher forcing（教师强制）。</figcaption>
+  </figure>
+  <h3><span class="n">②</span> 准在哪里：翻译得分更高</h3>
   <figure>
 <svg class="fig" viewBox="0 0 760 190" role="img" aria-label="英译德翻译得分：以前最好的 26.36，Transformer 28.4。">
 <line class="grid" x1="160.0" y1="14" x2="160.0" y2="140"/>
@@ -1348,7 +1471,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 </section>
 
 <footer>
-  <div>一句话记住它：<b>不排队，大家同时互相看，看谁和自己最有关。</b></div>
+  <div>一句话记住它：<b>训练时不排队，大家同时互相看，看谁和自己最有关。</b></div>
   <div>原文：Vaswani 等，<a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a>，NeurIPS 2017。图中的注意力比例是为了说明而画的示意。</div>
 </footer>
 

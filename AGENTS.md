@@ -10,3 +10,4 @@
 - ELI5 "why the old way fails" sections: a one-line summary was judged too vague. Give each flaw its own heading and figure, and spell out the mechanism (e.g. h₃ must wait for h₂), an analogy, and a concrete example sentence.
 - ELI5 wording: an abstract metaphor ("RNN 是零件，Seq2Seq 是组装方式") was judged harder to follow than precise terms. Prefer short formal definitions (架构 architecture vs 网络 network), and keep metaphors only when they are concrete.
 - ELI5: never name a mechanism in passing (e.g. "注意力是 RNN 的外挂"). If you mention it, explain what problem it solves, how it works step by step, why it can be bolted on, and what it still leaves unsolved.
+- ELI5 speed claims: always say which phase. Transformer is parallel in training (the answer is known, so teacher forcing + mask can run every position at once), but it still generates one word at a time at inference, like RNN. Never write a bare "不排队 / 1 步".
