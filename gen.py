@@ -320,6 +320,63 @@ def far():
     return "\n".join(s)
 
 
+# ---------- path length: RNN vs CNN vs attention ----------
+def paths():
+    n = 8
+    xs = [110 + i * 90 for i in range(n)]
+    s = ['<svg class="fig" viewBox="0 0 860 490" role="img" aria-label="同一句 8 个词，第 1 个词的信息怎么到第 8 个词。RNN：一格一格传，7 步。CNN：每层只看相邻 3 个，一层层往上叠，4 层才连上。注意力：一条线直连，1 步。">']
+    s.append('<defs><marker id="ar12" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>')
+
+    def words(y):
+        r = []
+        for i, x in enumerate(xs):
+            hl = i in (0, n - 1)
+            r.append(f'<rect class="{"wbox hl" if hl else "wbox"}" x="{x-32}" y="{y}" width="64" height="32" rx="8"/>')
+            r.append(f'<text class="{"small on" if hl else "small"}" x="{x}" y="{y+21}" text-anchor="middle" style="font-weight:700">词 {i+1}</text>')
+        return "\n".join(r)
+
+    # RNN
+    s.append('<text class="colh" x="20" y="24">RNN：一格一格往后传</text>')
+    y = 64
+    for i in range(n - 1):
+        s.append(f'<path class="arc-a" d="M{xs[i]+10} {y-2} Q{(xs[i]+xs[i+1])/2:.0f} {y-26} {xs[i+1]-12} {y-2}" stroke-width="2.5" fill="none" marker-end="url(#ar12)"/>')
+    s.append(words(y))
+    s.append(f'<text class="num strong" x="840" y="{y+21}" text-anchor="end">7 步</text>')
+
+    # CNN: kernel 3, stacked layers; highlight the two paths that meet at the top
+    s.append('<text class="colh" x="20" y="134">CNN（卷积）：每层只看相邻 3 个，一层层往上叠</text>')
+    wy = 286
+    ly = [wy - 30, wy - 62, wy - 94, wy - 126]   # layer 1..4 dot rows
+    for L in range(4):
+        below = wy if L == 0 else ly[L - 1]
+        for i, x in enumerate(xs):
+            for d in (-1, 0, 1):
+                j = i + d
+                if 0 <= j < n:
+                    s.append(f'<line class="grid" x1="{x}" y1="{ly[L]}" x2="{xs[j]}" y2="{below}"/>')
+    up_left = [0, 1, 2, 3, 4]
+    up_right = [7, 6, 5, 4, 4]
+    for path in (up_left, up_right):
+        pts = [(xs[path[0]], wy)] + [(xs[path[L + 1]], ly[L]) for L in range(4)]
+        s.append('<polyline class="arc-a" points="' + " ".join(f"{a},{b}" for a, b in pts) + '" stroke-width="3" fill="none" stroke-linejoin="round"/>')
+    for L in range(4):
+        for i, x in enumerate(xs):
+            on = (i == up_left[L + 1]) or (i == up_right[L + 1])
+            s.append(f'<circle class="{"memdot" if on else "dotoff"}" cx="{x}" cy="{ly[L]}" r="{6 if on else 4}"/>')
+        s.append(f'<text class="step" x="40" y="{ly[L]+5}">第 {L+1} 层</text>')
+    s.append(words(wy))
+    s.append(f'<text class="num strong" x="840" y="{ly[1]+5}" text-anchor="end">4 层</text>')
+
+    # attention
+    s.append('<text class="colh" x="20" y="364">只用注意力：任意两个词直接连线</text>')
+    y = 440
+    s.append(f'<path class="arc-a" d="M{xs[0]} {y-2} Q{(xs[0]+xs[-1])/2:.0f} {y-110} {xs[-1]} {y-2}" stroke-width="4" fill="none" stroke-linecap="round"/>')
+    s.append(words(y))
+    s.append(f'<text class="num strong" x="840" y="{y-30}" text-anchor="end">1 步</text>')
+    s.append('</svg>')
+    return "\n".join(s)
+
+
 # ---------- RNN chain ----------
 def rnn():
     s = ['<svg class="fig" viewBox="0 0 800 250" role="img" aria-label="九个词排成一排，记忆一格一格往后传；“小狗”的信息越传越淡，到“它”时几乎看不见了。">']
@@ -603,7 +660,7 @@ def legacy():
 tpl = open(sys.argv[2], encoding="utf-8").read()
 h1, h2, h3 = heads()
 rep = {
-    "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{PARTS}}": parts(), "{{QUEUE}}": queue(), "{{RNN}}": rnn(), "{{FAR}}": far(), "{{GATES}}": gates(), "{{ADDON}}": addon(), "{{ADDON_STEP}}": addon_step(), "{{ATTN}}": attn(), "{{QKV}}": qkv(),
+    "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{PARTS}}": parts(), "{{QUEUE}}": queue(), "{{RNN}}": rnn(), "{{FAR}}": far(), "{{GATES}}": gates(), "{{ADDON}}": addon(), "{{ADDON_STEP}}": addon_step(), "{{PATHS}}": paths(), "{{ATTN}}": attn(), "{{QKV}}": qkv(),
     "{{HEAD1}}": h1, "{{HEAD2}}": h2, "{{HEAD3}}": h3, "{{POS}}": position(),
     "{{ARCH}}": arch(), "{{SPEED}}": speed(), "{{MASK}}": mask(), "{{BLEU}}": bleu(), "{{LEGACY}}": legacy(),
 }

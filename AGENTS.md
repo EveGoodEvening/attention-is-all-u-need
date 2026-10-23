@@ -11,3 +11,4 @@
 - ELI5 wording: an abstract metaphor ("RNN 是零件，Seq2Seq 是组装方式") was judged harder to follow than precise terms. Prefer short formal definitions (架构 architecture vs 网络 network), and keep metaphors only when they are concrete.
 - ELI5: never name a mechanism in passing (e.g. "注意力是 RNN 的外挂"). If you mention it, explain what problem it solves, how it works step by step, why it can be bolted on, and what it still leaves unsolved.
 - ELI5 speed claims: always say which phase. Transformer is parallel in training (the answer is known, so teacher forcing + mask can run every position at once), but it still generates one word at a time at inference, like RNN. Never write a bare "不排队 / 1 步".
+- ELI5 paper explainers: state the paper's core question and how it answers it, not just its mechanisms. For this paper that is the RNN / RNN+attention / CNN / attention comparison (training parallelism and path length, i.e. Table 1). Anything compared, such as CNN, must also be explained.

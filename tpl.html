@@ -140,6 +140,20 @@ header.hero svg.fig { min-width: 0; }
 .defs dt, .note h4 { font-weight: 700; color: var(--ink); margin: 0 0 4px; font-size: 16px; }
 .defs dd, .note p { margin: 0; color: var(--muted); font-size: 15px; }
 .defs b, .note b { color: var(--ink); }
+
+.tbl { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; }
+table.cmp { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 15px; }
+.cmp th, .cmp td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.cmp th { color: var(--muted); font-weight: 700; font-size: 14px; }
+.cmp td { color: var(--muted); }
+.cmp td:first-child { color: var(--ink); font-weight: 700; white-space: nowrap; }
+.cmp tr:last-child td { border-bottom: 0; }
+.cmp tr.hot td:first-child { color: var(--accent); }
+.cmp .yes { color: var(--h3); font-weight: 700; }
+.cmp .no { color: var(--h1); font-weight: 700; }
+.cmp .o { font-family: var(--mono); color: var(--ink); white-space: nowrap; }
+.punch { margin: 0; font-family: var(--display); font-weight: 900; font-size: clamp(20px, 3vw, 26px); line-height: 1.5; border-left: 4px solid var(--accent); padding-left: 16px; }
+.punch em { font-style: normal; color: var(--accent); }
 .node { fill: var(--panel); stroke: var(--muted); stroke-width: 2.5; }
 .node.first { fill: var(--accent); stroke: var(--accent); }
 .yr { fill: var(--muted); font-family: var(--mono); font-size: 13px; }
@@ -192,7 +206,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   <h2>大家主要用 <em>RNN</em></h2>
   <figure>
 {{BEFORE}}
-    <figcaption>RNN（Recurrent Neural Network，循环神经网络）一个词一个词地读。最常用的是 1997 年提出的改进版 LSTM（Long Short-Term Memory，长短期记忆网络），记得更久。<b>注意力在 2015 年就有了</b>，但只是给 RNN 加的外挂（后面细讲）。这篇论文的标题意思是：只留注意力，RNN 不要了。</figcaption>
+    <figcaption>RNN（Recurrent Neural Network，循环神经网络）一个词一个词地读。最常用的是 1997 年提出的改进版 LSTM（Long Short-Term Memory，长短期记忆网络），记得更久。<b>注意力在 2015 年就有了</b>，但只是给 RNN 加的外挂（后面细讲）。这篇论文的标题意思是：只留注意力，RNN 和卷积都不要了。</figcaption>
   </figure>
 </section>
 
@@ -254,7 +268,29 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     <div class="note"><h4>为什么能当“外挂”</h4><p>编码器、解码器的 RNN <b>一点都没改</b>，只是在两者之间加了一个小模块，每一步多给解码器输入一个向量 c。把它拿掉，就退回原版 Seq2Seq。这个小模块和 RNN 一起训练，不用单独教。</p></div>
     <div class="note"><h4>还剩什么问题</h4><p>它只补救了“解码器看不清原文”这一点。编码器、解码器内部还是 RNN，<b>还得排队</b>（硬伤 ①）；原文的词和词之间，也还是靠 RNN 一格一格传话（硬伤 ②）。</p></div>
   </div>
-  <p class="say">Transformer 的想法是：既然注意力这么好用，就<b>让它当主角</b>。原文的词和词之间也用注意力互相看，RNN 整个拿掉。</p>
+  <p class="say">那能不能干脆连 RNN 都不要？先把几种方案摆在一起比一比。</p>
+</section>
+
+<section>
+  <div class="kicker">论文的核心问题</div>
+  <h2>能不能<em>又快</em>、<em>又直连</em>？</h2>
+  <figure>
+{{PATHS}}
+    <figcaption>同一句 8 个词，看词 1 的信息要经过几步才能到词 8，这个步数叫<b>路径长度</b>（path length）。路径越长，信息和训练时的纠错信号丢得越多。卷积（convolution）每次只看相邻几个词，所以要一层层往上叠才能连上远处；如果改成“跳着看”的空洞卷积（dilated convolution），层数会少很多，但仍然不是 1。</figcaption>
+  </figure>
+  <div class="tbl">
+    <table class="cmp">
+      <thead><tr><th>方案</th><th>训练时能同时算吗？</th><th>远处两个词要传几步？</th></tr></thead>
+      <tbody>
+        <tr><td>RNN</td><td><span class="no">✘ 不能</span>：hₜ 要等 hₜ₋₁</td><td>和句子长度成正比 <span class="o">O(n)</span></td></tr>
+        <tr><td>RNN + 注意力外挂</td><td><span class="no">✘ 不能</span>：里面还是 RNN</td><td>解码器 → 原文任一个词：1 步；原文词和词之间：还是 <span class="o">O(n)</span></td></tr>
+        <tr><td>CNN（卷积）</td><td><span class="yes">✔ 能</span>：同一层的位置互不等待</td><td>要叠好几层：普通卷积 <span class="o">O(n/k)</span>，空洞卷积 <span class="o">O(logₖ n)</span></td></tr>
+        <tr class="hot"><td>只用注意力（Transformer）</td><td><span class="yes">✔ 能</span></td><td>任意两个词都是 1 步 <span class="o">O(1)</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="say">O(…) 的读法：n 是句子有几个词，k 是卷积一次看几个相邻的词。<b>O(n)</b> = 和句子长度成正比；<b>O(logₖ n)</b> = 涨得很慢（k = 2 时，句子长一倍才多 1 层）；<b>O(1)</b> = 不管句子多长都一样。这张表对应论文里的 Table 1。注意力也有代价：每两个词都要比一次，句子很长时计算量按 n² 增长，论文里也提到了这一点。</p>
+  <p class="punch">作者的想法：既然注意力能让任意两个词一步直连，训练时又能同时算，那就把 RNN 和 CNN <em>全部扔掉</em>，只留注意力。这就是标题的意思：Attention is <em>ALL</em> you need。</p>
 </section>
 
 <section>
