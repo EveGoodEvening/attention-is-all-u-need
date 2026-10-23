@@ -377,26 +377,6 @@ def paths():
     return "\n".join(s)
 
 
-# ---------- RNN chain ----------
-def rnn():
-    s = ['<svg class="fig" viewBox="0 0 800 250" role="img" aria-label="九个词排成一排，记忆一格一格往后传；“小狗”的信息越传越淡，到“它”时几乎看不见了。">']
-    s.append('<defs><marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>')
-    for i, x in enumerate(X9):
-        op = max(0.06, 1 - i * 0.17)
-        s.append(f'<circle class="mem" cx="{x}" cy="70" r="26"/>')
-        s.append(f'<circle class="memdot" cx="{x}" cy="70" r="12" fill-opacity="{op:.2f}"/>')
-        s.append(f'<line class="up" x1="{x}" y1="150" x2="{x}" y2="100" marker-end="url(#ar1)"/>')
-        if i < 8:
-            s.append(f'<line class="chain" x1="{x+28}" y1="70" x2="{X9[i+1]-30}" y2="70" marker-end="url(#ar1)"/>')
-    s.append(words_row(152, hl={0: "hl", 5: "hl2"}))
-    s.append(f'<text class="cap-in" x="{X9[0]}" y="28" text-anchor="middle">记得很清楚</text>')
-    s.append(f'<text class="cap-in" x="{X9[5]}" y="28" text-anchor="middle">“小狗”是谁来着？</text>')
-    s.append(f'<text class="step" x="{X9[0]}" y="226" text-anchor="middle">第 1 步</text>')
-    s.append(f'<text class="step" x="{X9[8]}" y="226" text-anchor="middle">第 9 步</text>')
-    s.append('</svg>')
-    return "\n".join(s)
-
-
 # ---------- attention arcs ----------
 def attn():
     w = {0: 0.62, 1: 0.03, 2: 0.03, 3: 0.08, 4: 0.04, 6: 0.03, 7: 0.10, 8: 0.02}
@@ -660,7 +640,7 @@ def legacy():
 tpl = open(sys.argv[2], encoding="utf-8").read()
 h1, h2, h3 = heads()
 rep = {
-    "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{PARTS}}": parts(), "{{QUEUE}}": queue(), "{{RNN}}": rnn(), "{{FAR}}": far(), "{{GATES}}": gates(), "{{ADDON}}": addon(), "{{ADDON_STEP}}": addon_step(), "{{PATHS}}": paths(), "{{ATTN}}": attn(), "{{QKV}}": qkv(),
+    "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{PARTS}}": parts(), "{{QUEUE}}": queue(), "{{FAR}}": far(), "{{GATES}}": gates(), "{{ADDON}}": addon(), "{{ADDON_STEP}}": addon_step(), "{{PATHS}}": paths(), "{{ATTN}}": attn(), "{{QKV}}": qkv(),
     "{{HEAD1}}": h1, "{{HEAD2}}": h2, "{{HEAD3}}": h3, "{{POS}}": position(),
     "{{ARCH}}": arch(), "{{SPEED}}": speed(), "{{MASK}}": mask(), "{{BLEU}}": bleu(), "{{LEGACY}}": legacy(),
 }

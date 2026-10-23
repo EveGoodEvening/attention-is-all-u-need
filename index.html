@@ -297,7 +297,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 </header>
 
 <section>
-  <div class="kicker">要解决的问题</div>
+  <div class="kicker">1 · 要解决的问题</div>
   <h2>一串词进，<em>另一串词</em>出</h2>
   <figure>
 <svg class="fig" viewBox="0 0 830 200" role="img" aria-label="左边一串英文词 The cat is tired 进入一台翻译机，右边出来一串德文词 Die Katze ist müde。">
@@ -328,13 +328,14 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <text class="wtxt en" x="778" y="106" text-anchor="middle">müde</text>
 <text class="small" x="673" y="154" text-anchor="middle">德文</text>
 </svg>
-    <figcaption>论文主攻<b>机器翻译</b>：英译德、英译法。它的正式说法叫“序列转换”（sequence transduction），语音转文字、写摘要也属于这一类。</figcaption>
+    <figcaption>论文主攻<b>机器翻译</b>（英译德、英译法），正式说法叫“序列转换”（sequence transduction）。</figcaption>
   </figure>
+  <p class="say">下面按这个顺序讲：<b>旧方法</b>怎么做 → 它有<b>两个硬伤</b> → 大家做过<b>两次修补</b>，还剩什么 → 论文要回答的<b>核心问题</b> → 论文的<b>答案</b> → <b>结果</b>。</p>
 </section>
 
 <section>
-  <div class="kicker">2017 年以前</div>
-  <h2>大家主要用 <em>RNN</em></h2>
+  <div class="kicker">2 · 2017 年以前怎么做</div>
+  <h2><em>编码器-解码器</em>，里面装 RNN</h2>
   <figure>
 <svg class="fig" viewBox="0 0 860 230" role="img" aria-label="2017 年以前的翻译模型：先是统计翻译；2014 到 2016 年是 RNN（LSTM）当家，2015 年给 RNN 加上了注意力；2017 年有人改用卷积。">
 <path class="brace" d="M215 84 V66 H625 V84"/>
@@ -361,17 +362,11 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <text class="wtxt" x="750" y="178" text-anchor="middle">ConvS2S</text>
 <text class="small" x="750" y="202" text-anchor="middle">改用卷积，想少排队</text>
 </svg>
-    <figcaption>RNN（Recurrent Neural Network，循环神经网络）一个词一个词地读。最常用的是 1997 年提出的改进版 LSTM（Long Short-Term Memory，长短期记忆网络），记得更久。<b>注意力在 2015 年就有了</b>，但只是给 RNN 加的外挂（后面细讲）。这篇论文的标题意思是：只留注意力，RNN 和卷积都不要了。</figcaption>
+    <figcaption>从 2014 年起，主流做法是 Seq2Seq（Sequence to Sequence，序列到序列），里面用的网络是 RNN（Recurrent Neural Network，循环神经网络）。</figcaption>
   </figure>
-</section>
-
-<section>
-  <div class="kicker">理清关系</div>
-  <h2>Seq2Seq 是一种<em>架构</em>，RNN 是实现它的<em>网络</em></h2>
   <dl class="defs">
-    <div><dt>架构（architecture）</dt><dd>模型由哪几个部分组成、数据按什么顺序流过它们。Seq2Seq（Sequence to Sequence，序列到序列）的架构是<b>编码器-解码器</b>（encoder-decoder）：编码器把输入句子读成向量，解码器根据这些向量逐词写出输出句子。</dd></div>
-    <div><dt>网络（network）</dt><dd>每个部分内部具体怎么计算。RNN、LSTM、GRU 都属于<b>循环网络</b>：按顺序一次处理一个词。</dd></div>
-    <div><dt>两者的关系</dt><dd>同一个架构，可以用不同的网络来实现。说“一个用 LSTM 实现的 Seq2Seq 模型”，就同时说清了架构和网络。</dd></div>
+    <div><dt>架构（architecture）：Seq2Seq</dt><dd>模型由哪几部分组成。Seq2Seq 分两半：<b>编码器</b>（encoder）把原文读成向量，<b>解码器</b>（decoder）根据这些向量逐词写出译文。</dd></div>
+    <div><dt>网络（network）：RNN</dt><dd>每一半内部具体怎么算。RNN 一次读一个词，边读边改写一本“记忆笔记” h（hidden state，隐藏状态）。实际最常用的是它的两个改进版 <b>LSTM</b>（1997）和 <b>GRU</b>（2014），改了什么见第 4 节。</dd></div>
   </dl>
   <figure>
 <svg class="fig" viewBox="0 0 860 414" role="img" aria-label="上半部分：Seq2Seq 架构由编码器和解码器组成，编码器把英文句子读成向量，解码器根据向量逐词写出德文。下半部分：编码器和解码器内部可以用不同的网络实现：用循环网络是经典 Seq2Seq，用卷积网络是 ConvS2S，只用注意力是 Transformer。">
@@ -433,14 +428,14 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <text class="wtxt strong" x="710" y="366" text-anchor="middle">= Transformer</text>
 <text class="small" x="710" y="390" text-anchor="middle">2017 年 6 月 · 本论文</text>
 </svg>
-    <figcaption>Transformer 仍然是编码器-解码器架构，只是内部不再用循环网络，而是全部用注意力来实现。</figcaption>
+    <figcaption>同一个架构可以换不同的网络。2017 年有人换成卷积（ConvS2S），这篇论文换成了只用注意力（Transformer）。</figcaption>
   </figure>
 </section>
 
 <section>
-  <div class="kicker">RNN 的毛病</div>
-  <h2>RNN 像<em>传话游戏</em>，有两个硬伤</h2>
-  <h3><span class="n">①</span> 必须排队，没法加速</h3>
+  <div class="kicker">3 · RNN 的两个硬伤</div>
+  <h2>RNN 像<em>传话游戏</em></h2>
+  <h3><span class="n">①</span> 必须排队，训练没法加速</h3>
   <figure>
 <svg class="fig" viewBox="0 0 800 320" role="img" aria-label="记忆 h₁ 到 h₉ 排成一条链，后一个必须等前一个算完。下方是显卡的计算单元，每一步只有一格在干活，其余都闲着。">
 <defs><marker id="ar8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>
@@ -555,72 +550,9 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <text class="step" x="744" y="290" text-anchor="middle">第 9 步</text>
 <text class="small" x="112" y="290">↑ 显卡的计算单元（真实有几千个）：每一步只有一格在干活</text>
 </svg>
-    <figcaption>h（hidden state，隐藏状态）就是读到每个词时的那本记忆笔记。要算 h₃，必须先有 h₂；要算 h₂，必须先有 h₁。哪怕是训练时、整句答案早就知道，也省不掉这一步。显卡最擅长同时干几千件事，这里却只能一步一个词地排队。句子越长、数据越多，训练就越慢。就像 100 个人传话，第 100 个人只能干等前面 99 个人依次传完。</figcaption>
+    <figcaption>要算 h₃，必须先有 h₂；要算 h₂，必须先有 h₁。哪怕训练时整句答案都已知，也只能一个词一个词地算，显卡几千个计算单元大多在干等。句子越长，训练越慢。</figcaption>
   </figure>
   <h3><span class="n">②</span> 离得越远，越记不清</h3>
-  <figure>
-<svg class="fig" viewBox="0 0 800 250" role="img" aria-label="九个词排成一排，记忆一格一格往后传；“小狗”的信息越传越淡，到“它”时几乎看不见了。">
-<defs><marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>
-<circle class="mem" cx="56" cy="70" r="26"/>
-<circle class="memdot" cx="56" cy="70" r="12" fill-opacity="1.00"/>
-<line class="up" x1="56" y1="150" x2="56" y2="100" marker-end="url(#ar1)"/>
-<line class="chain" x1="84" y1="70" x2="112" y2="70" marker-end="url(#ar1)"/>
-<circle class="mem" cx="142" cy="70" r="26"/>
-<circle class="memdot" cx="142" cy="70" r="12" fill-opacity="0.83"/>
-<line class="up" x1="142" y1="150" x2="142" y2="100" marker-end="url(#ar1)"/>
-<line class="chain" x1="170" y1="70" x2="198" y2="70" marker-end="url(#ar1)"/>
-<circle class="mem" cx="228" cy="70" r="26"/>
-<circle class="memdot" cx="228" cy="70" r="12" fill-opacity="0.66"/>
-<line class="up" x1="228" y1="150" x2="228" y2="100" marker-end="url(#ar1)"/>
-<line class="chain" x1="256" y1="70" x2="284" y2="70" marker-end="url(#ar1)"/>
-<circle class="mem" cx="314" cy="70" r="26"/>
-<circle class="memdot" cx="314" cy="70" r="12" fill-opacity="0.49"/>
-<line class="up" x1="314" y1="150" x2="314" y2="100" marker-end="url(#ar1)"/>
-<line class="chain" x1="342" y1="70" x2="370" y2="70" marker-end="url(#ar1)"/>
-<circle class="mem" cx="400" cy="70" r="26"/>
-<circle class="memdot" cx="400" cy="70" r="12" fill-opacity="0.32"/>
-<line class="up" x1="400" y1="150" x2="400" y2="100" marker-end="url(#ar1)"/>
-<line class="chain" x1="428" y1="70" x2="456" y2="70" marker-end="url(#ar1)"/>
-<circle class="mem" cx="486" cy="70" r="26"/>
-<circle class="memdot" cx="486" cy="70" r="12" fill-opacity="0.15"/>
-<line class="up" x1="486" y1="150" x2="486" y2="100" marker-end="url(#ar1)"/>
-<line class="chain" x1="514" y1="70" x2="542" y2="70" marker-end="url(#ar1)"/>
-<circle class="mem" cx="572" cy="70" r="26"/>
-<circle class="memdot" cx="572" cy="70" r="12" fill-opacity="0.06"/>
-<line class="up" x1="572" y1="150" x2="572" y2="100" marker-end="url(#ar1)"/>
-<line class="chain" x1="600" y1="70" x2="628" y2="70" marker-end="url(#ar1)"/>
-<circle class="mem" cx="658" cy="70" r="26"/>
-<circle class="memdot" cx="658" cy="70" r="12" fill-opacity="0.06"/>
-<line class="up" x1="658" y1="150" x2="658" y2="100" marker-end="url(#ar1)"/>
-<line class="chain" x1="686" y1="70" x2="714" y2="70" marker-end="url(#ar1)"/>
-<circle class="mem" cx="744" cy="70" r="26"/>
-<circle class="memdot" cx="744" cy="70" r="12" fill-opacity="0.06"/>
-<line class="up" x1="744" y1="150" x2="744" y2="100" marker-end="url(#ar1)"/>
-<rect class="wbox hl" x="20.0" y="152" width="72" height="44" rx="10"/>
-<text class="wtxt on" x="56" y="181.0" text-anchor="middle">小狗</text>
-<rect class="wbox" x="106.0" y="152" width="72" height="44" rx="10"/>
-<text class="wtxt" x="142" y="181.0" text-anchor="middle">没有</text>
-<rect class="wbox" x="192.0" y="152" width="72" height="44" rx="10"/>
-<text class="wtxt" x="228" y="181.0" text-anchor="middle">过</text>
-<rect class="wbox" x="278.0" y="152" width="72" height="44" rx="10"/>
-<text class="wtxt" x="314" y="181.0" text-anchor="middle">马路</text>
-<rect class="wbox" x="364.0" y="152" width="72" height="44" rx="10"/>
-<text class="wtxt" x="400" y="181.0" text-anchor="middle">因为</text>
-<rect class="wbox hl2" x="450.0" y="152" width="72" height="44" rx="10"/>
-<text class="wtxt" x="486" y="181.0" text-anchor="middle">它</text>
-<rect class="wbox" x="536.0" y="152" width="72" height="44" rx="10"/>
-<text class="wtxt" x="572" y="181.0" text-anchor="middle">太</text>
-<rect class="wbox" x="622.0" y="152" width="72" height="44" rx="10"/>
-<text class="wtxt" x="658" y="181.0" text-anchor="middle">累</text>
-<rect class="wbox" x="708.0" y="152" width="72" height="44" rx="10"/>
-<text class="wtxt" x="744" y="181.0" text-anchor="middle">了</text>
-<text class="cap-in" x="56" y="28" text-anchor="middle">记得很清楚</text>
-<text class="cap-in" x="486" y="28" text-anchor="middle">“小狗”是谁来着？</text>
-<text class="step" x="56" y="226" text-anchor="middle">第 1 步</text>
-<text class="step" x="744" y="226" text-anchor="middle">第 9 步</text>
-</svg>
-    <figcaption>“小狗”的信息要传到“它”，得经过 5 次笔记更新，每次都被冲淡一点。两个词隔得越远，要传的次数越多，丢得越厉害。</figcaption>
-  </figure>
   <figure>
 <svg class="fig" viewBox="0 0 884 190" role="img" aria-label="英文句子 The cat which I found in the garden last summer after the storm was hungry：cat 的信息要一格一格传 12 次才到 was，越传越淡。">
 <defs><marker id="ar9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>
@@ -683,13 +615,14 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <text class="small" x="776" y="164" text-anchor="middle">用 was 还是 were？</text>
 <text class="small" x="776" y="182" text-anchor="middle">得记得前面是 cat</text>
 </svg>
-    <figcaption>再看一个英文例子：用 was 还是 were，取决于 12 个词之前的 cat。训练时，纠错信号（梯度，gradient）也得沿这 12 步原路传回去，同样越传越弱，所以 RNN 很难学会这种远距离的关系。</figcaption>
+    <figcaption>用 was 还是 were，要看 12 个词之前的 cat。cat 的信息要经过 12 次笔记更新才到 was，每次都被冲淡一点；训练时的纠错信号（梯度，gradient）也要沿这 12 步传回去，同样越传越弱。</figcaption>
   </figure>
 </section>
 
 <section>
-  <div class="kicker">改进版</div>
-  <h2>LSTM 和 GRU：给记忆<em>加几道门</em></h2>
+  <div class="kicker">4 · 两次修补</div>
+  <h2>都在治硬伤 ②，<em>没人治 ①</em></h2>
+  <h3><span class="n">修补 1</span> LSTM、GRU：给记忆笔记加几道门</h3>
   <figure>
 <svg class="fig" viewBox="0 0 860 340" role="img" aria-label="三本记忆笔记本对比：简单 RNN 没有门，每读一个词整页重写，记性差；LSTM 有忘记门、输入门、输出门三道门，记性好；GRU 把门合并成更新门和重置门两道，记性也好。">
 <rect class="card" x="10" y="8" width="270" height="324" rx="14"/>
@@ -749,13 +682,13 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <circle class="memdot" cx="741" cy="309" r="7"/>
 <circle class="dotoff" cx="761" cy="309" r="7"/>
 </svg>
-    <figcaption>三者都是一个词一个词地读，区别在“记忆笔记本”怎么改。LSTM 用三道门：忘记门（forget gate）、输入门（input gate）、输出门（output gate），想留的就能一直留着。GRU（Gated Recurrent Unit，门控循环单元）合并成两道：更新门（update gate）、重置门（reset gate），更简单，效果通常差不多。不过它们<b>还是得排队</b>。</figcaption>
+    <figcaption>LSTM（Long Short-Term Memory，长短期记忆网络）有忘记门（forget gate）、输入门（input gate）、输出门（output gate）。GRU（Gated Recurrent Unit，门控循环单元）把它们合并成更新门（update gate）和重置门（reset gate），更简单，效果差不多。</figcaption>
   </figure>
-</section>
-
-<section>
-  <div class="kicker">注意力外挂（2015）</div>
-  <h2>给 Seq2Seq 加上<em>注意力</em></h2>
+  <div class="notes">
+    <div class="note"><h4>补了什么</h4><p>门决定每一步留多少旧内容、记多少新内容，所以重要的信息不会每读一个词就被冲掉，<b>记得更久</b>。</p></div>
+    <div class="note"><h4>还剩什么</h4><p>信息还是一格一格地传，只是丢得少了。也还是得排队（硬伤 ①）。</p></div>
+  </div>
+  <h3><span class="n">修补 2</span> 注意力外挂（2015）：写的时候回头看原文</h3>
   <figure>
 <svg class="fig" viewBox="0 0 860 410" role="img" aria-label="上：2014 年原版 Seq2Seq，编码器读完整句后，只把最后一步的记忆 h₄ 交给解码器。下：2015 年加了注意力，解码器写 Katze 时，回头看原文全部 4 个词的记忆，其中 80% 看 cat。">
 <defs><marker id="ar10" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>
@@ -852,9 +785,8 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <text class="num" x="330" y="402" text-anchor="middle">5%</text>
 <text class="small" x="620" y="402" text-anchor="middle">正在写这个词</text>
 </svg>
-    <figcaption>原版 Seq2Seq 让编码器读完整句后，只把最后一步的记忆 h₄（一个固定长度的向量）交给解码器，句子再长也得挤进这一个向量。加了注意力以后，编码器每个词的记忆 h₁…h₄ 都留着；解码器每写一个词，都重新决定该看原文哪里。写 Katze 时，80% 看 cat。</figcaption>
+    <figcaption>原版只把最后一步的记忆 h₄ 交给解码器，整句挤进一个向量。加了注意力以后，h₁…h₄ 都留着，解码器每写一个词，都重新决定看原文哪里。</figcaption>
   </figure>
-  <h3>具体怎么用：每写一个词，做一遍这 5 步</h3>
   <figure>
 <svg class="fig" viewBox="0 0 860 310" role="img" aria-label="解码器写第 2 个词的一步：拿当前状态 s₁ 和原文 4 个词的记忆 h₁ 到 h₄ 逐个比对，得到合计 100% 的匹配度（cat 80%），按比例混合成上下文向量 c₂，再写出 Katze。">
 <defs><marker id="ar11" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>
@@ -905,17 +837,16 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <rect class="wbox hl" x="770" y="160" width="76" height="40" rx="9"/>
 <text class="wtxt en on" x="808" y="186" text-anchor="middle">Katze</text>
 </svg>
-    <figcaption>① 拿解码器现在的状态 s₁；② 和原文每个词的记忆 h 逐个比对；③ 算出匹配度，换算成合计 100% 的比例，叫注意力权重（attention weights）；④ 按比例把各个 h 混合成这一步专属的上下文向量（context vector）c₂；⑤ 解码器结合 c₂ 写出 Katze。下一步写 ist 时，再重新算一遍。</figcaption>
+    <figcaption>每写一个词都做一遍这 5 步。③ 算出的比例叫注意力权重（attention weights），④ 混合出的向量叫上下文向量（context vector）。</figcaption>
   </figure>
   <div class="notes">
-    <div class="note"><h4>为什么能当“外挂”</h4><p>编码器、解码器的 RNN <b>一点都没改</b>，只是在两者之间加了一个小模块，每一步多给解码器输入一个向量 c。把它拿掉，就退回原版 Seq2Seq。这个小模块和 RNN 一起训练，不用单独教。</p></div>
-    <div class="note"><h4>还剩什么问题</h4><p>它只补救了“解码器看不清原文”这一点。编码器、解码器内部还是 RNN，<b>还得排队</b>（硬伤 ①）；原文的词和词之间，也还是靠 RNN 一格一格传话（硬伤 ②）。</p></div>
+    <div class="note"><h4>为什么叫“外挂”</h4><p>编码器、解码器的 RNN <b>一点没改</b>，只是在两者之间加了一个小模块，每一步多给解码器一个向量 c。拿掉它，就退回原版。</p></div>
+    <div class="note"><h4>补了什么，还剩什么</h4><p>解码器到原文任何一个词，<b>只要 1 步</b>。但原文的词和词之间，还是靠 RNN 一格一格传；也还是得排队。</p></div>
   </div>
-  <p class="say">那能不能干脆连 RNN 都不要？先把几种方案摆在一起比一比。</p>
 </section>
 
 <section>
-  <div class="kicker">论文的核心问题</div>
+  <div class="kicker">5 · 论文的核心问题</div>
   <h2>能不能<em>又快</em>、<em>又直连</em>？</h2>
   <figure>
 <svg class="fig" viewBox="0 0 860 490" role="img" aria-label="同一句 8 个词，第 1 个词的信息怎么到第 8 个词。RNN：一格一格传，7 步。CNN：每层只看相邻 3 个，一层层往上叠，4 层才连上。注意力：一条线直连，1 步。">
@@ -1109,25 +1040,25 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <text class="small on" x="740" y="461" text-anchor="middle" style="font-weight:700">词 8</text>
 <text class="num strong" x="840" y="410" text-anchor="end">1 步</text>
 </svg>
-    <figcaption>同一句 8 个词，看词 1 的信息要经过几步才能到词 8，这个步数叫<b>路径长度</b>（path length）。路径越长，信息和训练时的纠错信号丢得越多。卷积（convolution）每次只看相邻几个词，所以要一层层往上叠才能连上远处；如果改成“跳着看”的空洞卷积（dilated convolution），层数会少很多，但仍然不是 1。</figcaption>
+    <figcaption>词 1 的信息要经过几步才能到词 8，叫<b>路径长度</b>（path length）。路径越长，信息和纠错信号丢得越多。卷积（convolution）每层只看相邻几个词，要一层层叠才能连到远处；改成“跳着看”的空洞卷积（dilated convolution）层数会少很多，但仍然不是 1。</figcaption>
   </figure>
   <div class="tbl">
     <table class="cmp">
       <thead><tr><th>方案</th><th>训练时能同时算吗？</th><th>远处两个词要传几步？</th></tr></thead>
       <tbody>
-        <tr><td>RNN</td><td><span class="no">✘ 不能</span>：hₜ 要等 hₜ₋₁</td><td>和句子长度成正比 <span class="o">O(n)</span></td></tr>
-        <tr><td>RNN + 注意力外挂</td><td><span class="no">✘ 不能</span>：里面还是 RNN</td><td>解码器 → 原文任一个词：1 步；原文词和词之间：还是 <span class="o">O(n)</span></td></tr>
+        <tr><td>RNN（含 LSTM、GRU）</td><td><span class="no">✘ 不能</span>：hₜ 要等 hₜ₋₁</td><td>和句子长度成正比 <span class="o">O(n)</span></td></tr>
+        <tr><td>RNN + 注意力外挂</td><td><span class="no">✘ 不能</span>：里面还是 RNN</td><td>解码器 → 原文：1 步；原文词和词之间：还是 <span class="o">O(n)</span></td></tr>
         <tr><td>CNN（卷积）</td><td><span class="yes">✔ 能</span>：同一层的位置互不等待</td><td>要叠好几层：普通卷积 <span class="o">O(n/k)</span>，空洞卷积 <span class="o">O(logₖ n)</span></td></tr>
         <tr class="hot"><td>只用注意力（Transformer）</td><td><span class="yes">✔ 能</span></td><td>任意两个词都是 1 步 <span class="o">O(1)</span></td></tr>
       </tbody>
     </table>
   </div>
-  <p class="say">O(…) 的读法：n 是句子有几个词，k 是卷积一次看几个相邻的词。<b>O(n)</b> = 和句子长度成正比；<b>O(logₖ n)</b> = 涨得很慢（k = 2 时，句子长一倍才多 1 层）；<b>O(1)</b> = 不管句子多长都一样。这张表对应论文里的 Table 1。注意力也有代价：每两个词都要比一次，句子很长时计算量按 n² 增长，论文里也提到了这一点。</p>
-  <p class="punch">作者的想法：既然注意力能让任意两个词一步直连，训练时又能同时算，那就把 RNN 和 CNN <em>全部扔掉</em>，只留注意力。这就是标题的意思：Attention is <em>ALL</em> you need。</p>
+  <p class="say">n 是句子的词数，k 是卷积一次看几个词。<b>O(n)</b> = 和句子长度成正比；<b>O(logₖ n)</b> = 涨得很慢；<b>O(1)</b> = 不管多长都一样。这张表对应论文的 Table 1。代价是每两个词都要比一次，句子很长时计算量按 n² 增长。</p>
+  <p class="punch">作者的答案：把修补 2 里的注意力推广到所有地方，RNN 和 CNN <em>全部扔掉</em>。这就是标题的意思：Attention is <em>ALL</em> you need。</p>
 </section>
 
 <section>
-  <div class="kicker">新点子</div>
+  <div class="kicker">6 · 论文的答案 ①：自注意力</div>
   <h2>每个词<em>同时</em>看所有词</h2>
   <figure>
 <svg class="fig" viewBox="0 -30 800 330" role="img" aria-label="“它”同时连线到所有词，连到“小狗”的线最粗。">
@@ -1159,13 +1090,8 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <text class="wtxt" x="744" y="261.0" text-anchor="middle">了</text>
 <text class="pct" x="271.0" y="3.3" text-anchor="middle">62%</text>
 </svg>
-    <figcaption>“它”指的是谁？“它”一眼扫过整句话，发现和“小狗”最相关。线越粗 = 越注意。</figcaption>
+    <figcaption>外挂只让解码器回头看原文。Transformer 让原文里<b>每个词也去看同一句的所有词</b>，叫自注意力（self-attention）。“小狗没有过马路，因为它太累了”：“它”一眼扫过整句，发现和“小狗”最相关。所有词一起算，不用排队。</figcaption>
   </figure>
-</section>
-
-<section>
-  <div class="kicker">怎么“看”</div>
-  <h2>提问、对标签、<em>按比例混合</em></h2>
   <figure>
 <svg class="fig" viewBox="0 0 900 380" role="img" aria-label="“它”拿着一张问题卡片，去和每个词的标签比对；匹配度最高的是“小狗”，于是“它”的新含义大部分来自“小狗”。">
 <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>
@@ -1225,13 +1151,13 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <text class="wtxt big" x="830" y="199" text-anchor="middle" style="fill:var(--on-accent)">它</text>
 <text class="small" x="830" y="254" text-anchor="middle">≈ 小狗</text>
 </svg>
-    <figcaption>像在图书馆找书：拿着问题去对每本书的标签，越对得上，就越多地拿走那本书的内容。</figcaption>
+    <figcaption>怎么“看”，和外挂的 5 步一样：比对 → 换算成比例 → 按比例混合。只是每个词准备三样东西：提问 Query、标签 Key、内容 Value。像在图书馆拿着问题对书的标签，越对得上，就越多地拿走那本书的内容。</figcaption>
   </figure>
   <div class="formula">论文里的写法：<b>softmax</b>( Q·Kᵀ / √d<sub>k</sub> ) · V</div>
 </section>
 
 <section>
-  <div class="kicker">多头注意力</div>
+  <div class="kicker">6 · 论文的答案 ②：多头注意力</div>
   <h2>好几双眼睛，<em>各看各的</em></h2>
   <figure>
     <div class="heads">
@@ -1307,12 +1233,12 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <text class="wtxt" x="690" y="165.0" text-anchor="middle">了</text>
 </svg>
     </div>
-    <figcaption>一双眼睛只能盯一件事。论文用了 8 个“头”同时看，各自关心不同的关系，最后把看到的拼起来。</figcaption>
+    <figcaption>一组注意力只能盯一种关系。论文用 8 个“头”同时看，各自关心不同的关系，最后拼起来。</figcaption>
   </figure>
 </section>
 
 <section>
-  <div class="kicker">位置编码</div>
+  <div class="kicker">6 · 论文的答案 ③：位置编码</div>
   <h2>大家一起看，就得<em>贴座位号</em></h2>
   <figure>
 <svg class="fig" viewBox="0 0 800 380" role="img" aria-label="“狗咬人”和“人咬狗”倒进同一个袋子，看起来一模一样；给每个字贴上座位号后就能分清。座位号是在几条快慢不同的波上，各取一个读数。">
@@ -1388,13 +1314,13 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <circle class="dot-wave3" cx="400" cy="343.2" r="5"/>
 <circle class="dot-wave3" cx="640" cy="320.3" r="5"/>
 </svg>
-    <figcaption>同时看所有词，顺序就丢了。所以在几条快慢不同的波上，给每个位置各读一个数，这组数独一无二，就是它的座位号。</figcaption>
+    <figcaption>RNN 按顺序读，天然知道谁先谁后；所有词同时看，顺序就丢了。所以给每个位置一组独一无二的数当座位号：在几条快慢不同的波上各读一个数。</figcaption>
   </figure>
 </section>
 
 <section>
-  <div class="kicker">整台机器</div>
-  <h2>一边<em>读懂</em>，一边<em>写出</em></h2>
+  <div class="kicker">6 · 论文的答案 ④：整台机器</div>
+  <h2>还是编码器-解码器，<em>里面全换成注意力</em></h2>
   <figure>
 <svg class="fig" viewBox="0 0 960 520" role="img" aria-label="左边是编码器，一次读懂整句英文；右边是解码器，看着已写好的德文词和读懂的内容，写出下一个词。两边各叠 6 层。">
 <defs><marker id="ar4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker><marker id="ar5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk2"/></marker></defs>
@@ -1453,12 +1379,12 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <path class="loop" d="M932 206 C955 316 900 410 758 447" fill="none" marker-end="url(#ar4)"/>
 <text class="small" x="790" y="482">写完放回去，接着写</text>
 </svg>
-    <figcaption>论文拿翻译做实验：英文进，德文出。左边一次读懂整句英文；右边看着已写好的词，再回头看原文，写出下一个词。</figcaption>
+    <figcaption>左边编码器用自注意力一次读完整句英文；右边解码器先看已写好的德文词，再回头看原文（就是外挂那种注意力），写出下一个词。</figcaption>
   </figure>
 </section>
 
 <section>
-  <div class="kicker">结果</div>
+  <div class="kicker">7 · 结果</div>
   <h2>更<em>快</em>，也更<em>准</em></h2>
   <h3><span class="n">①</span> 快在哪里：训练时能同时算</h3>
   <figure>
@@ -1576,7 +1502,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <text class="num" x="535" y="398">⏱ 4 步</text>
 <text class="small" x="615" y="398">这点和 RNN 一样</text>
 </svg>
-    <figcaption>要分清两个阶段。<b>训练</b>时，答案句子早就知道了：Transformer 把整句答案一次喂给解码器，所有位置同时算，1 步完成。RNN 就算知道答案也做不到，因为 hₜ 必须等 hₜ₋₁ 算完。<b>生成</b>（推理，inference）时答案还不知道，下一个词要等上一个写出来才能接着算，所以 Transformer 也是一个词一个词地出，这点没变。另外，Transformer 的编码器读原文时，不管训练还是生成，都能一次读完整句。</figcaption>
+    <figcaption><b>训练</b>时答案已知，Transformer 把整句答案一次喂给解码器，所有位置同时算完；RNN 就算知道答案，hₜ 也得等 hₜ₋₁。<b>生成</b>（推理，inference）时答案未知，两者都得一个词一个词地出。</figcaption>
   </figure>
   <figure>
 <svg class="fig" viewBox="0 0 760 310" role="img" aria-label="遮挡示意：4 乘 4 的格子，每一行只能看到自己和前面的词，右上方的格子被遮住。〈开始〉只看自己，猜 Die；看到 Die 猜 Katze；看到 Die Katze 猜 ist；看到 Die Katze ist 猜 müde。">
@@ -1626,7 +1552,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <text class="wtxt en on" x="605" y="247" text-anchor="middle" style="font-size:13px">müde</text>
 <text class="small" x="170" y="294">4 行同时算，但每行都看不到自己后面的答案</text>
 </svg>
-    <figcaption>整句答案一次喂进去，会不会偷看答案？靠<b>遮挡</b>（mask，掩码）：每个位置只能看它自己和前面的词，后面的格子都被遮住。这样 4 个位置同时算，结果和一个一个算完全一样。这也是“整台机器”图里，解码器那层“看已写好的词”只看前面的原因。训练时把整句标准答案喂给解码器的做法，叫 teacher forcing（教师强制）。</figcaption>
+    <figcaption>一次喂进整句答案，怎么防止偷看？靠<b>遮挡</b>（mask，掩码）：每个位置只能看自己和前面的词。训练时直接喂标准答案的做法叫 teacher forcing（教师强制）。</figcaption>
   </figure>
   <h3><span class="n">②</span> 准在哪里：翻译得分更高</h3>
   <figure>
@@ -1656,7 +1582,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 </section>
 
 <section>
-  <div class="kicker">后来</div>
+  <div class="kicker">8 · 后来</div>
   <h2>一整个家族<em>从这里长出来</em></h2>
   <figure>
 <svg class="fig" viewBox="0 0 860 240" role="img" aria-label="从 2017 年的 Transformer 出发，长出了 GPT、BERT、ChatGPT、Claude 等一大家子。">
@@ -1695,6 +1621,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     <figcaption>GPT 里的 “T”，就是 Transformer。</figcaption>
   </figure>
 </section>
+
 
 <footer>
   <div>一句话记住它：<b>训练时不排队，大家同时互相看，看谁和自己最有关。</b></div>
