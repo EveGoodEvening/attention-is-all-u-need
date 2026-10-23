@@ -114,6 +114,7 @@ header.hero svg.fig { min-width: 0; }
 .subt { fill: var(--ink); font-family: var(--body); font-size: 16px; font-weight: 700; }
 .times { fill: var(--muted); font-family: var(--mono); font-size: 15px; font-weight: 700; }
 .cross { stroke: var(--h2); stroke-width: 3; }
+.back { stroke: var(--h2); stroke-width: 2.5; }
 .crosst { fill: var(--h2); font-family: var(--body); font-size: 14px; font-weight: 700; }
 .tick { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; }
 .tick.on { fill: var(--accent); stroke: var(--accent); }
@@ -552,7 +553,8 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 </svg>
     <figcaption>要算 h₃，必须先有 h₂；要算 h₂，必须先有 h₁。哪怕训练时整句答案都已知，也只能一个词一个词地算，显卡几千个计算单元大多在干等。句子越长，训练越慢。</figcaption>
   </figure>
-  <h3><span class="n">②</span> 离得越远，越记不清</h3>
+  <h3><span class="n">②</span> 离得越远，越难学会</h3>
+  <p class="say">两个词隔得越远，中间要传的步数越多。坏处有两层：往前传，信息被冲淡；往回传，学习信号消失。<b>后一层更关键。</b></p>
   <figure>
 <svg class="fig" viewBox="0 0 884 190" role="img" aria-label="英文句子 The cat which I found in the garden last summer after the storm was hungry：cat 的信息要一格一格传 12 次才到 was，越传越淡。">
 <defs><marker id="ar9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>
@@ -615,7 +617,52 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <text class="small" x="776" y="164" text-anchor="middle">用 was 还是 were？</text>
 <text class="small" x="776" y="182" text-anchor="middle">得记得前面是 cat</text>
 </svg>
-    <figcaption>用 was 还是 were，要看 12 个词之前的 cat。cat 的信息要经过 12 次笔记更新才到 was，每次都被冲淡一点；训练时的纠错信号（梯度，gradient）也要沿这 12 步传回去，同样越传越弱。</figcaption>
+    <figcaption><b>往前传</b>：用 was 还是 were，要看 12 个词之前的 cat。cat 的信息要经过 12 次笔记更新才到 was，每次都被压缩、丢掉一点。</figcaption>
+  </figure>
+  <figure>
+<svg class="fig" viewBox="0 0 860 362" role="img" aria-label="模型把 was 错猜成 were，老师纠正后，纠错信号从 were 一步步倒着传回 cat，每传一步乘 0.9。下方条形图：隔 1 步还剩 0.90，隔 10 步剩 0.35，隔 50 步只剩 0.005。">
+<defs><marker id="ar13" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" class="mk2"/></marker></defs>
+<text class="colh" x="20" y="30">猜错了：纠错信号沿原路倒着传回 cat</text>
+<rect class="wbox hl" x="46" y="82" width="88" height="38" rx="8"/>
+<text class="wtxt en on" x="90" y="107" text-anchor="middle">cat</text>
+<line class="back" x1="178" y1="101" x2="140" y2="101" marker-end="url(#ar13)"/>
+<text class="num" x="158" y="74" text-anchor="middle">×0.9</text>
+<rect class="wbox" x="182" y="82" width="88" height="38" rx="8"/>
+<text class="wtxt en" x="226" y="107" text-anchor="middle">which</text>
+<line class="back" x1="314" y1="101" x2="276" y2="101" marker-end="url(#ar13)"/>
+<text class="num" x="294" y="74" text-anchor="middle">×0.9</text>
+<rect class="wbox" x="318" y="82" width="88" height="38" rx="8"/>
+<text class="wtxt en" x="362" y="107" text-anchor="middle">…</text>
+<line class="back" x1="450" y1="101" x2="412" y2="101" marker-end="url(#ar13)"/>
+<text class="num" x="430" y="74" text-anchor="middle">×0.9</text>
+<rect class="wbox" x="454" y="82" width="88" height="38" rx="8"/>
+<text class="wtxt en" x="498" y="107" text-anchor="middle">the</text>
+<line class="back" x1="586" y1="101" x2="548" y2="101" marker-end="url(#ar13)"/>
+<text class="num" x="566" y="74" text-anchor="middle">×0.9</text>
+<rect class="wbox" x="590" y="82" width="88" height="38" rx="8"/>
+<text class="wtxt en" x="634" y="107" text-anchor="middle">storm</text>
+<line class="back" x1="722" y1="101" x2="684" y2="101" marker-end="url(#ar13)"/>
+<text class="num" x="702" y="74" text-anchor="middle">×0.9</text>
+<rect class="wbox hl2" x="726" y="82" width="88" height="38" rx="8"/>
+<text class="wtxt en" x="770" y="107" text-anchor="middle">were</text>
+<text class="small" x="770" y="144" text-anchor="middle">✘ 老师：应该是 was</text>
+<text class="small" x="90" y="144" text-anchor="middle">“当时该把 cat 记牢”</text>
+<text class="colh" x="20" y="200">每往回传一步，信号大约 ×0.9。还剩多少？</text>
+<text class="blab strong" x="238" y="242" text-anchor="end">隔 1 步（Transformer）</text>
+<rect class="bar dim" x="250" y="222" width="400" height="28" rx="6"/>
+<rect class="bar" x="250" y="222" width="360.0" height="28" rx="6"/>
+<text class="num strong" x="662" y="242">0.90</text>
+<text class="blab" x="238" y="284" text-anchor="end">隔 10 步</text>
+<rect class="bar dim" x="250" y="264" width="400" height="28" rx="6"/>
+<rect class="bar" x="250" y="264" width="139.5" height="28" rx="6"/>
+<text class="num" x="662" y="284">0.35</text>
+<text class="blab" x="238" y="326" text-anchor="end">隔 50 步</text>
+<rect class="bar dim" x="250" y="306" width="400" height="28" rx="6"/>
+<rect class="bar" x="250" y="306" width="2.1" height="28" rx="6"/>
+<text class="num" x="662" y="326">0.005 几乎没了</text>
+<text class="axis" x="650" y="352" text-anchor="end">整条 = 刚出发时的信号（1）</text>
+</svg>
+    <figcaption><b>往回传</b>：模型是这样学的：先猜一个答案，猜错了，老师给出“往这个方向改一点”的信号，叫梯度（gradient）。这个信号要沿原路倒着传，一直传回当初读 cat 的那一步。每传一步，大约要乘上一个系数：系数小于 1，信号越传越小，叫<b>梯度消失</b>（vanishing gradient）；大于 1，又会越传越大，叫<b>梯度爆炸</b>（exploding gradient）。结果是，隔得远的两个词之间收不到足够的学习信号，模型就学不会它们的关系。</figcaption>
   </figure>
 </section>
 
@@ -686,7 +733,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   </figure>
   <div class="notes">
     <div class="note"><h4>补了什么</h4><p>门决定每一步留多少旧内容、记多少新内容，所以重要的信息不会每读一个词就被冲掉，<b>记得更久</b>。</p></div>
-    <div class="note"><h4>还剩什么</h4><p>信息还是一格一格地传，只是丢得少了。也还是得排队（硬伤 ①）。</p></div>
+    <div class="note"><h4>还剩什么</h4><p>门让信息和学习信号衰减得慢一些，但路径还是 n 步，隔得越远照样越弱。也还是得排队（硬伤 ①）。</p></div>
   </div>
   <h3><span class="n">修补 2</span> 注意力外挂（2015）：写的时候回头看原文</h3>
   <figure>
@@ -1040,7 +1087,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <text class="small on" x="740" y="461" text-anchor="middle" style="font-weight:700">词 8</text>
 <text class="num strong" x="840" y="410" text-anchor="end">1 步</text>
 </svg>
-    <figcaption>词 1 的信息要经过几步才能到词 8，叫<b>路径长度</b>（path length）。路径越长，信息和纠错信号丢得越多。卷积（convolution）每层只看相邻几个词，要一层层叠才能连到远处；改成“跳着看”的空洞卷积（dilated convolution）层数会少很多，但仍然不是 1。</figcaption>
+    <figcaption>词 1 的信息要经过几步才能到词 8，叫<b>路径长度</b>（path length）。路径短有两层好处：信息不被冲淡；更关键的是，学习信号只乘一次，不会消失。卷积（convolution）每层只看相邻几个词，要一层层叠才能连到远处；改成“跳着看”的空洞卷积（dilated convolution）层数会少很多，但仍然不是 1。</figcaption>
   </figure>
   <div class="tbl">
     <table class="cmp">

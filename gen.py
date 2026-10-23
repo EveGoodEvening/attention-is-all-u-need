@@ -320,6 +320,36 @@ def far():
     return "\n".join(s)
 
 
+# ---------- RNN flaw 2, backward: the learning signal fades ----------
+def grad():
+    words = ["cat", "which", "…", "the", "storm", "were"]
+    xs = [90 + i * 136 for i in range(6)]
+    s = ['<svg class="fig" viewBox="0 0 860 362" role="img" aria-label="模型把 was 错猜成 were，老师纠正后，纠错信号从 were 一步步倒着传回 cat，每传一步乘 0.9。下方条形图：隔 1 步还剩 0.90，隔 10 步剩 0.35，隔 50 步只剩 0.005。">']
+    s.append('<defs><marker id="ar13" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" class="mk2"/></marker></defs>')
+    s.append('<text class="colh" x="20" y="30">猜错了：纠错信号沿原路倒着传回 cat</text>')
+    y = 82
+    for i, (x, w) in enumerate(zip(xs, words)):
+        cls = "wbox hl" if i == 0 else ("wbox hl2" if i == 5 else "wbox")
+        s.append(f'<rect class="{cls}" x="{x-44}" y="{y}" width="88" height="38" rx="8"/>')
+        s.append(f'<text class="{"wtxt en on" if i == 0 else "wtxt en"}" x="{x}" y="{y+25}" text-anchor="middle">{w}</text>')
+        if i < 5:
+            s.append(f'<line class="back" x1="{xs[i+1]-48}" y1="{y+19}" x2="{x+50}" y2="{y+19}" marker-end="url(#ar13)"/>')
+            s.append(f'<text class="num" x="{(x+xs[i+1])/2:.0f}" y="{y-8}" text-anchor="middle">×0.9</text>')
+    s.append(f'<text class="small" x="{xs[5]}" y="{y+62}" text-anchor="middle">✘ 老师：应该是 was</text>')
+    s.append(f'<text class="small" x="{xs[0]}" y="{y+62}" text-anchor="middle">“当时该把 cat 记牢”</text>')
+    s.append('<text class="colh" x="20" y="200">每往回传一步，信号大约 ×0.9。还剩多少？</text>')
+    x0, bw = 250, 400
+    for i, (lab, v, txt) in enumerate([("隔 1 步（Transformer）", 0.9, "0.90"), ("隔 10 步", 0.9 ** 10, "0.35"), ("隔 50 步", 0.9 ** 50, "0.005 几乎没了")]):
+        yy = 222 + i * 42
+        s.append(f'<text class="blab{" strong" if i == 0 else ""}" x="{x0-12}" y="{yy+20}" text-anchor="end">{lab}</text>')
+        s.append(f'<rect class="bar dim" x="{x0}" y="{yy}" width="{bw}" height="28" rx="6"/>')
+        s.append(f'<rect class="bar" x="{x0}" y="{yy}" width="{max(2, bw*v):.1f}" height="28" rx="6"/>')
+        s.append(f'<text class="{"num strong" if i == 0 else "num"}" x="{x0+bw+12}" y="{yy+20}">{txt}</text>')
+    s.append(f'<text class="axis" x="{x0+bw}" y="{222+3*42+4}" text-anchor="end">整条 = 刚出发时的信号（1）</text>')
+    s.append('</svg>')
+    return "\n".join(s)
+
+
 # ---------- path length: RNN vs CNN vs attention ----------
 def paths():
     n = 8
@@ -640,7 +670,7 @@ def legacy():
 tpl = open(sys.argv[2], encoding="utf-8").read()
 h1, h2, h3 = heads()
 rep = {
-    "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{PARTS}}": parts(), "{{QUEUE}}": queue(), "{{FAR}}": far(), "{{GATES}}": gates(), "{{ADDON}}": addon(), "{{ADDON_STEP}}": addon_step(), "{{PATHS}}": paths(), "{{ATTN}}": attn(), "{{QKV}}": qkv(),
+    "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{PARTS}}": parts(), "{{QUEUE}}": queue(), "{{FAR}}": far(), "{{GRAD}}": grad(), "{{GATES}}": gates(), "{{ADDON}}": addon(), "{{ADDON_STEP}}": addon_step(), "{{PATHS}}": paths(), "{{ATTN}}": attn(), "{{QKV}}": qkv(),
     "{{HEAD1}}": h1, "{{HEAD2}}": h2, "{{HEAD3}}": h3, "{{POS}}": position(),
     "{{ARCH}}": arch(), "{{SPEED}}": speed(), "{{MASK}}": mask(), "{{BLEU}}": bleu(), "{{LEGACY}}": legacy(),
 }
