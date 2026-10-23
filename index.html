@@ -132,6 +132,14 @@ header.hero svg.fig { min-width: 0; }
 .gtxt { fill: var(--muted); font-family: var(--body); font-size: 14px; }
 .gname { fill: var(--ink); font-weight: 700; }
 .dotoff { fill: var(--line); }
+.mem.hot { stroke: var(--accent); stroke-width: 3; }
+
+.defs, .notes { display: grid; gap: 12px; margin: 0; }
+.notes { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.defs > div, .note { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; min-width: 0; }
+.defs dt, .note h4 { font-weight: 700; color: var(--ink); margin: 0 0 4px; font-size: 16px; }
+.defs dd, .note p { margin: 0; color: var(--muted); font-size: 15px; }
+.defs b, .note b { color: var(--ink); }
 .node { fill: var(--panel); stroke: var(--muted); stroke-width: 2.5; }
 .node.first { fill: var(--accent); stroke: var(--accent); }
 .yr { fill: var(--muted); font-family: var(--mono); font-size: 13px; }
@@ -149,7 +157,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 @media (max-width: 720px) {
   header.hero { grid-template-columns: 1fr; }
-  .stats { grid-template-columns: 1fr; }
+  .stats, .notes { grid-template-columns: 1fr; }
   section { padding-block: 40px; }
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -339,53 +347,79 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <text class="wtxt" x="750" y="178" text-anchor="middle">ConvS2S</text>
 <text class="small" x="750" y="202" text-anchor="middle">改用卷积，想少排队</text>
 </svg>
-    <figcaption>RNN（Recurrent Neural Network，循环神经网络）一个词一个词地读。最常用的是 1997 年提出的改进版 LSTM（Long Short-Term Memory，长短期记忆网络），记得更久。<b>注意力在 2015 年就有了</b>，但只是 RNN 的外挂。这篇论文的标题意思是：只留注意力，RNN 不要了。</figcaption>
+    <figcaption>RNN（Recurrent Neural Network，循环神经网络）一个词一个词地读。最常用的是 1997 年提出的改进版 LSTM（Long Short-Term Memory，长短期记忆网络），记得更久。<b>注意力在 2015 年就有了</b>，但只是给 RNN 加的外挂（后面细讲）。这篇论文的标题意思是：只留注意力，RNN 不要了。</figcaption>
   </figure>
 </section>
 
 <section>
   <div class="kicker">理清关系</div>
-  <h2>RNN 是<em>零件</em>，Seq2Seq 是<em>组装方式</em></h2>
+  <h2>Seq2Seq 是一种<em>架构</em>，RNN 是实现它的<em>网络</em></h2>
+  <dl class="defs">
+    <div><dt>架构（architecture）</dt><dd>模型由哪几个部分组成、数据按什么顺序流过它们。Seq2Seq（Sequence to Sequence，序列到序列）的架构是<b>编码器-解码器</b>（encoder-decoder）：编码器把输入句子读成向量，解码器根据这些向量逐词写出输出句子。</dd></div>
+    <div><dt>网络（network）</dt><dd>每个部分内部具体怎么计算。RNN、LSTM、GRU 都属于<b>循环网络</b>：按顺序一次处理一个词。</dd></div>
+    <div><dt>两者的关系</dt><dd>同一个架构，可以用不同的网络来实现。说“一个用 LSTM 实现的 Seq2Seq 模型”，就同时说清了架构和网络。</dd></div>
+  </dl>
   <figure>
-<svg class="fig" viewBox="0 0 860 370" role="img" aria-label="Seq2Seq 是一种组装方式：一个编码器读、一个解码器写。里面插什么零件都行：插 RNN 类（简单 RNN、LSTM、GRU）是 2014 到 2016 年的主流；插卷积就是 ConvS2S；只用注意力就是 Transformer。">
+<svg class="fig" viewBox="0 0 860 414" role="img" aria-label="上半部分：Seq2Seq 架构由编码器和解码器组成，编码器把英文句子读成向量，解码器根据向量逐词写出德文。下半部分：编码器和解码器内部可以用不同的网络实现：用循环网络是经典 Seq2Seq，用卷积网络是 ConvS2S，只用注意力是 Transformer。">
 <defs><marker id="ar7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>
-<text class="colh" x="430" y="28" text-anchor="middle">组装方式：Seq2Seq（一个读，一个写）</text>
-<rect class="tower" x="180" y="46" width="200" height="80" rx="14"/>
-<text class="subt" x="280" y="74" text-anchor="middle">编码器 · 读</text>
-<rect class="slot" x="220" y="86" width="120" height="28" rx="7"/>
-<text class="small" x="280" y="105" text-anchor="middle">插零件</text>
-<rect class="tower" x="480" y="46" width="200" height="80" rx="14"/>
-<text class="subt" x="580" y="74" text-anchor="middle">解码器 · 写</text>
-<rect class="slot" x="520" y="86" width="120" height="28" rx="7"/>
-<text class="small" x="580" y="105" text-anchor="middle">插零件</text>
-<line class="chain" x1="382" y1="86" x2="474" y2="86" marker-end="url(#ar7)"/>
-<path class="chain" d="M150 198 C150 160 430 170 430 132" fill="none" marker-end="url(#ar7)"/>
-<rect class="card" x="22" y="200" width="256" height="156" rx="14"/>
-<text class="colh" x="150" y="230" text-anchor="middle">零件：RNN 类</text>
-<rect class="wbox" x="31" y="246" width="74" height="36" rx="8"/>
-<text class="small" x="68" y="269" text-anchor="middle" style="font-weight:700">简单 RNN</text>
-<rect class="wbox" x="113" y="246" width="74" height="36" rx="8"/>
-<text class="small" x="150" y="269" text-anchor="middle" style="font-weight:700">LSTM</text>
-<rect class="wbox" x="195" y="246" width="74" height="36" rx="8"/>
-<text class="small" x="232" y="269" text-anchor="middle" style="font-weight:700">GRU</text>
-<text class="wtxt" x="150" y="316" text-anchor="middle">= Seq2Seq</text>
-<text class="small" x="150" y="340" text-anchor="middle">2014–2016 主流，2015 年起加注意力</text>
-<path class="chain" d="M430 198 C430 160 430 170 430 132" fill="none" marker-end="url(#ar7)"/>
-<rect class="card" x="302" y="200" width="256" height="156" rx="14"/>
-<text class="colh" x="430" y="230" text-anchor="middle">零件：卷积</text>
-<rect class="wbox" x="393" y="246" width="74" height="36" rx="8"/>
-<text class="small" x="430" y="269" text-anchor="middle" style="font-weight:700">CNN</text>
-<text class="wtxt" x="430" y="316" text-anchor="middle">= ConvS2S</text>
-<text class="small" x="430" y="340" text-anchor="middle">2017 年 5 月</text>
-<path class="chain" d="M710 198 C710 160 430 170 430 132" fill="none" marker-end="url(#ar7)"/>
-<rect class="card hot" x="582" y="200" width="256" height="156" rx="14"/>
-<text class="colh" x="710" y="230" text-anchor="middle">零件：只用注意力</text>
-<rect class="wbox hl" x="673" y="246" width="74" height="36" rx="8"/>
-<text class="small on" x="710" y="269" text-anchor="middle" style="font-weight:700">注意力</text>
-<text class="wtxt strong" x="710" y="316" text-anchor="middle">= Transformer</text>
-<text class="small" x="710" y="340" text-anchor="middle">2017 年 6 月 · 本论文</text>
+<text class="colh" x="430" y="26" text-anchor="middle">架构（architecture）：Seq2Seq = 编码器 + 解码器</text>
+<rect class="tower" x="100" y="46" width="240" height="98" rx="14"/>
+<text class="subt" x="220" y="74" text-anchor="middle">编码器（encoder）</text>
+<text class="small" x="220" y="96" text-anchor="middle">把输入句子读成向量</text>
+<rect class="slot" x="130" y="108" width="180" height="26" rx="7"/>
+<text class="small" x="220" y="126" text-anchor="middle">内部用什么网络实现？</text>
+<rect class="tower" x="520" y="46" width="240" height="98" rx="14"/>
+<text class="subt" x="640" y="74" text-anchor="middle">解码器（decoder）</text>
+<text class="small" x="640" y="96" text-anchor="middle">根据向量逐词写出</text>
+<rect class="slot" x="550" y="108" width="180" height="26" rx="7"/>
+<text class="small" x="640" y="126" text-anchor="middle">内部用什么网络实现？</text>
+<line class="chain" x1="342" y1="94" x2="408" y2="94" marker-end="url(#ar7)"/>
+<circle class="mix" cx="430" cy="94" r="14"/>
+<line class="chain" x1="446" y1="94" x2="514" y2="94" marker-end="url(#ar7)"/>
+<text class="small" x="430" y="132" text-anchor="middle">读懂的内容（向量）</text>
+<rect class="wbox" x="115" y="172" width="48" height="32" rx="8"/>
+<text class="wtxt en" x="139" y="193" text-anchor="middle" style="font-size:13px">The</text>
+<rect class="wbox" x="169" y="172" width="48" height="32" rx="8"/>
+<text class="wtxt en" x="193" y="193" text-anchor="middle" style="font-size:13px">cat</text>
+<rect class="wbox" x="223" y="172" width="48" height="32" rx="8"/>
+<text class="wtxt en" x="247" y="193" text-anchor="middle" style="font-size:13px">is</text>
+<rect class="wbox" x="277" y="172" width="48" height="32" rx="8"/>
+<text class="wtxt en" x="301" y="193" text-anchor="middle" style="font-size:13px">tired</text>
+<rect class="wbox" x="535" y="172" width="48" height="32" rx="8"/>
+<text class="wtxt en" x="559" y="193" text-anchor="middle" style="font-size:13px">Die</text>
+<rect class="wbox" x="589" y="172" width="48" height="32" rx="8"/>
+<text class="wtxt en" x="613" y="193" text-anchor="middle" style="font-size:13px">Katze</text>
+<rect class="wbox" x="643" y="172" width="48" height="32" rx="8"/>
+<text class="wtxt en" x="667" y="193" text-anchor="middle" style="font-size:13px">ist</text>
+<rect class="wbox" x="697" y="172" width="48" height="32" rx="8"/>
+<text class="wtxt en" x="721" y="193" text-anchor="middle" style="font-size:13px">müde</text>
+<line class="chain" x1="220" y1="170" x2="220" y2="150" marker-end="url(#ar7)"/>
+<line class="chain" x1="640" y1="146" x2="640" y2="166" marker-end="url(#ar7)"/>
+<text class="colh" x="430" y="238" text-anchor="middle">编码器、解码器内部，可以用不同的网络来实现：</text>
+<rect class="card" x="22" y="252" width="256" height="150" rx="14"/>
+<text class="colh" x="150" y="282" text-anchor="middle">循环网络（RNN 类）</text>
+<rect class="wbox" x="31" y="298" width="74" height="36" rx="8"/>
+<text class="small" x="68" y="321" text-anchor="middle" style="font-weight:700">简单 RNN</text>
+<rect class="wbox" x="113" y="298" width="74" height="36" rx="8"/>
+<text class="small" x="150" y="321" text-anchor="middle" style="font-weight:700">LSTM</text>
+<rect class="wbox" x="195" y="298" width="74" height="36" rx="8"/>
+<text class="small" x="232" y="321" text-anchor="middle" style="font-weight:700">GRU</text>
+<text class="wtxt" x="150" y="366" text-anchor="middle">= 经典 Seq2Seq</text>
+<text class="small" x="150" y="390" text-anchor="middle">2014–2016 主流</text>
+<rect class="card" x="302" y="252" width="256" height="150" rx="14"/>
+<text class="colh" x="430" y="282" text-anchor="middle">卷积网络（CNN）</text>
+<rect class="wbox" x="393" y="298" width="74" height="36" rx="8"/>
+<text class="small" x="430" y="321" text-anchor="middle" style="font-weight:700">CNN</text>
+<text class="wtxt" x="430" y="366" text-anchor="middle">= ConvS2S</text>
+<text class="small" x="430" y="390" text-anchor="middle">2017 年 5 月</text>
+<rect class="card hot" x="582" y="252" width="256" height="150" rx="14"/>
+<text class="colh" x="710" y="282" text-anchor="middle">只用注意力</text>
+<rect class="wbox hl" x="673" y="298" width="74" height="36" rx="8"/>
+<text class="small on" x="710" y="321" text-anchor="middle" style="font-weight:700">注意力</text>
+<text class="wtxt strong" x="710" y="366" text-anchor="middle">= Transformer</text>
+<text class="small" x="710" y="390" text-anchor="middle">2017 年 6 月 · 本论文</text>
 </svg>
-    <figcaption>Seq2Seq（Sequence to Sequence，序列到序列）规定“一个读、一个写”，里面插什么零件都行。Transformer 其实也是这种组装方式，只是把 RNN 零件整个换成了注意力。</figcaption>
+    <figcaption>Transformer 仍然是编码器-解码器架构，只是内部不再用循环网络，而是全部用注意力来实现。</figcaption>
   </figure>
 </section>
 
@@ -703,6 +737,167 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 </svg>
     <figcaption>三者都是一个词一个词地读，区别在“记忆笔记本”怎么改。LSTM 用三道门：忘记门（forget gate）、输入门（input gate）、输出门（output gate），想留的就能一直留着。GRU（Gated Recurrent Unit，门控循环单元）合并成两道：更新门（update gate）、重置门（reset gate），更简单，效果通常差不多。不过它们<b>还是得排队</b>。</figcaption>
   </figure>
+</section>
+
+<section>
+  <div class="kicker">注意力外挂（2015）</div>
+  <h2>给 Seq2Seq 加上<em>注意力</em></h2>
+  <figure>
+<svg class="fig" viewBox="0 0 860 410" role="img" aria-label="上：2014 年原版 Seq2Seq，编码器读完整句后，只把最后一步的记忆 h₄ 交给解码器。下：2015 年加了注意力，解码器写 Katze 时，回头看原文全部 4 个词的记忆，其中 80% 看 cat。">
+<defs><marker id="ar10" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>
+<text class="colh" x="20" y="34">2014 原版：读完整句，只交出最后一步的记忆</text>
+<circle class="mem" cx="60" cy="100" r="22"/>
+<text class="wtxt en" x="60" y="106" text-anchor="middle">h₁</text>
+<rect class="wbox" x="32" y="132" width="56" height="28" rx="7"/>
+<text class="wtxt en" x="60" y="151" text-anchor="middle" style="font-size:13px">The</text>
+<line class="chain" x1="84" y1="100" x2="124" y2="100" marker-end="url(#ar10)"/>
+<circle class="mem" cx="150" cy="100" r="22"/>
+<text class="wtxt en" x="150" y="106" text-anchor="middle">h₂</text>
+<rect class="wbox" x="122" y="132" width="56" height="28" rx="7"/>
+<text class="wtxt en" x="150" y="151" text-anchor="middle" style="font-size:13px">cat</text>
+<line class="chain" x1="174" y1="100" x2="214" y2="100" marker-end="url(#ar10)"/>
+<circle class="mem" cx="240" cy="100" r="22"/>
+<text class="wtxt en" x="240" y="106" text-anchor="middle">h₃</text>
+<rect class="wbox" x="212" y="132" width="56" height="28" rx="7"/>
+<text class="wtxt en" x="240" y="151" text-anchor="middle" style="font-size:13px">is</text>
+<line class="chain" x1="264" y1="100" x2="304" y2="100" marker-end="url(#ar10)"/>
+<circle class="mem" cx="330" cy="100" r="22"/>
+<text class="wtxt en" x="330" y="106" text-anchor="middle">h₄</text>
+<rect class="wbox" x="302" y="132" width="56" height="28" rx="7"/>
+<text class="wtxt en" x="330" y="151" text-anchor="middle" style="font-size:13px">tired</text>
+<circle class="mem" cx="530" cy="100" r="22"/>
+<text class="wtxt en" x="530" y="106" text-anchor="middle">s₁</text>
+<rect class="wbox" x="502" y="132" width="56" height="28" rx="7"/>
+<text class="wtxt en" x="530" y="151" text-anchor="middle" style="font-size:13px">Die</text>
+<line class="chain" x1="554" y1="100" x2="594" y2="100" marker-end="url(#ar10)"/>
+<circle class="mem" cx="620" cy="100" r="22"/>
+<text class="wtxt en" x="620" y="106" text-anchor="middle">s₂</text>
+<rect class="wbox" x="592" y="132" width="56" height="28" rx="7"/>
+<text class="wtxt en" x="620" y="151" text-anchor="middle" style="font-size:13px">Katze</text>
+<line class="chain" x1="644" y1="100" x2="684" y2="100" marker-end="url(#ar10)"/>
+<circle class="mem" cx="710" cy="100" r="22"/>
+<text class="wtxt en" x="710" y="106" text-anchor="middle">s₃</text>
+<rect class="wbox" x="682" y="132" width="56" height="28" rx="7"/>
+<text class="wtxt en" x="710" y="151" text-anchor="middle" style="font-size:13px">ist</text>
+<line class="chain" x1="734" y1="100" x2="774" y2="100" marker-end="url(#ar10)"/>
+<circle class="mem" cx="800" cy="100" r="22"/>
+<text class="wtxt en" x="800" y="106" text-anchor="middle">s₄</text>
+<rect class="wbox" x="772" y="132" width="56" height="28" rx="7"/>
+<text class="wtxt en" x="800" y="151" text-anchor="middle" style="font-size:13px">müde</text>
+<line class="chain" x1="354" y1="100" x2="504" y2="100" marker-end="url(#ar10)"/>
+<text class="small" x="430" y="88" text-anchor="middle">整句压成 1 个向量</text>
+<text class="small" x="195" y="184" text-anchor="middle">编码器</text>
+<text class="small" x="665" y="184" text-anchor="middle">解码器</text>
+<text class="colh" x="20" y="210">2015 加注意力：每写一个词，都回头看原文的每个词</text>
+<path class="arc-a" d="M60 296 Q340.0 158 620 296" stroke-width="1.5" stroke-opacity="0.39" fill="none" stroke-linecap="round"/>
+<path class="arc-a" d="M150 296 Q385.0 170 620 296" stroke-width="11.2" stroke-opacity="1.00" fill="none" stroke-linecap="round"/>
+<path class="arc-a" d="M240 296 Q430.0 183 620 296" stroke-width="1.5" stroke-opacity="0.34" fill="none" stroke-linecap="round"/>
+<path class="arc-a" d="M330 296 Q475.0 195 620 296" stroke-width="1.5" stroke-opacity="0.34" fill="none" stroke-linecap="round"/>
+<circle class="mem" cx="60" cy="320" r="22"/>
+<text class="wtxt en" x="60" y="326" text-anchor="middle">h₁</text>
+<rect class="wbox" x="32" y="352" width="56" height="28" rx="7"/>
+<text class="wtxt en" x="60" y="371" text-anchor="middle" style="font-size:13px">The</text>
+<line class="chain" x1="84" y1="320" x2="124" y2="320" marker-end="url(#ar10)"/>
+<circle class="mem" cx="150" cy="320" r="22"/>
+<text class="wtxt en" x="150" y="326" text-anchor="middle">h₂</text>
+<rect class="wbox" x="122" y="352" width="56" height="28" rx="7"/>
+<text class="wtxt en" x="150" y="371" text-anchor="middle" style="font-size:13px">cat</text>
+<line class="chain" x1="174" y1="320" x2="214" y2="320" marker-end="url(#ar10)"/>
+<circle class="mem" cx="240" cy="320" r="22"/>
+<text class="wtxt en" x="240" y="326" text-anchor="middle">h₃</text>
+<rect class="wbox" x="212" y="352" width="56" height="28" rx="7"/>
+<text class="wtxt en" x="240" y="371" text-anchor="middle" style="font-size:13px">is</text>
+<line class="chain" x1="264" y1="320" x2="304" y2="320" marker-end="url(#ar10)"/>
+<circle class="mem" cx="330" cy="320" r="22"/>
+<text class="wtxt en" x="330" y="326" text-anchor="middle">h₄</text>
+<rect class="wbox" x="302" y="352" width="56" height="28" rx="7"/>
+<text class="wtxt en" x="330" y="371" text-anchor="middle" style="font-size:13px">tired</text>
+<circle class="mem" cx="530" cy="320" r="22"/>
+<text class="wtxt en" x="530" y="326" text-anchor="middle">s₁</text>
+<rect class="wbox" x="502" y="352" width="56" height="28" rx="7"/>
+<text class="wtxt en" x="530" y="371" text-anchor="middle" style="font-size:13px">Die</text>
+<line class="chain" x1="554" y1="320" x2="594" y2="320" marker-end="url(#ar10)"/>
+<circle class="mem hot" cx="620" cy="320" r="22"/>
+<text class="wtxt en" x="620" y="326" text-anchor="middle">s₂</text>
+<rect class="wbox hl" x="592" y="352" width="56" height="28" rx="7"/>
+<text class="wtxt en on" x="620" y="371" text-anchor="middle" style="font-size:13px">Katze</text>
+<line class="chain" x1="644" y1="320" x2="684" y2="320" marker-end="url(#ar10)"/>
+<circle class="mem" cx="710" cy="320" r="22"/>
+<text class="wtxt en" x="710" y="326" text-anchor="middle">s₃</text>
+<rect class="wbox" x="682" y="352" width="56" height="28" rx="7"/>
+<text class="wtxt en" x="710" y="371" text-anchor="middle" style="font-size:13px">ist</text>
+<line class="chain" x1="734" y1="320" x2="774" y2="320" marker-end="url(#ar10)"/>
+<circle class="mem" cx="800" cy="320" r="22"/>
+<text class="wtxt en" x="800" y="326" text-anchor="middle">s₄</text>
+<rect class="wbox" x="772" y="352" width="56" height="28" rx="7"/>
+<text class="wtxt en" x="800" y="371" text-anchor="middle" style="font-size:13px">müde</text>
+<line class="chain" x1="354" y1="320" x2="504" y2="320" marker-end="url(#ar10)"/>
+<text class="num" x="60" y="402" text-anchor="middle">10%</text>
+<text class="num strong" x="150" y="402" text-anchor="middle">80%</text>
+<text class="num" x="240" y="402" text-anchor="middle">5%</text>
+<text class="num" x="330" y="402" text-anchor="middle">5%</text>
+<text class="small" x="620" y="402" text-anchor="middle">正在写这个词</text>
+</svg>
+    <figcaption>原版 Seq2Seq 让编码器读完整句后，只把最后一步的记忆 h₄（一个固定长度的向量）交给解码器，句子再长也得挤进这一个向量。加了注意力以后，编码器每个词的记忆 h₁…h₄ 都留着；解码器每写一个词，都重新决定该看原文哪里。写 Katze 时，80% 看 cat。</figcaption>
+  </figure>
+  <h3>具体怎么用：每写一个词，做一遍这 5 步</h3>
+  <figure>
+<svg class="fig" viewBox="0 0 860 310" role="img" aria-label="解码器写第 2 个词的一步：拿当前状态 s₁ 和原文 4 个词的记忆 h₁ 到 h₄ 逐个比对，得到合计 100% 的匹配度（cat 80%），按比例混合成上下文向量 c₂，再写出 Katze。">
+<defs><marker id="ar11" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>
+<text class="colh" x="110" y="24" text-anchor="middle">① 解码器现在</text>
+<text class="colsub" x="110" y="44" text-anchor="middle">s₁</text>
+<text class="colh" x="340" y="24" text-anchor="middle">② 原文的记忆</text>
+<text class="colsub" x="340" y="44" text-anchor="middle">h₁ … h₄</text>
+<text class="colh" x="510" y="24" text-anchor="middle">③ 匹配度</text>
+<text class="colsub" x="510" y="44" text-anchor="middle">合计 100%</text>
+<text class="colh" x="690" y="24" text-anchor="middle">④ 混合</text>
+<text class="colsub" x="690" y="44" text-anchor="middle">上下文向量 c₂</text>
+<text class="colh" x="808" y="24" text-anchor="middle">⑤ 写出</text>
+<rect class="card q" x="30" y="128" width="160" height="104" rx="14"/>
+<text class="wtxt big" x="110" y="172" text-anchor="middle" style="font-family:var(--mono)">s₁</text>
+<text class="small" x="110" y="198" text-anchor="middle">刚写完 Die</text>
+<text class="small" x="110" y="218" text-anchor="middle">下一个写什么？</text>
+<path class="link" d="M190 180 C240 180 240 90 290 90" fill="none" stroke-width="1.6" stroke-opacity="0.39"/>
+<rect class="card k" x="290" y="68" width="100" height="44" rx="10"/>
+<text class="wtxt en" x="340" y="95" text-anchor="middle">h₁ The</text>
+<rect class="barbg" x="440" y="81" width="120" height="18" rx="5"/>
+<rect class="bar" x="440" y="81" width="12.0" height="18" rx="5"/>
+<text class="num" x="568" y="95">10%</text>
+<line class="link" x1="608" y1="90" x2="656" y2="180" stroke-width="1.6" stroke-opacity="0.39"/>
+<path class="link" d="M190 180 C240 180 240 150 290 150" fill="none" stroke-width="5.8" stroke-opacity="1.00"/>
+<rect class="card k" x="290" y="128" width="100" height="44" rx="10"/>
+<text class="wtxt en" x="340" y="155" text-anchor="middle">h₂ cat</text>
+<rect class="barbg" x="440" y="141" width="120" height="18" rx="5"/>
+<rect class="bar" x="440" y="141" width="96.0" height="18" rx="5"/>
+<text class="num" x="568" y="155">80%</text>
+<line class="link" x1="608" y1="150" x2="656" y2="180" stroke-width="5.8" stroke-opacity="1.00"/>
+<path class="link" d="M190 180 C240 180 240 210 290 210" fill="none" stroke-width="1.3" stroke-opacity="0.34"/>
+<rect class="card k" x="290" y="188" width="100" height="44" rx="10"/>
+<text class="wtxt en" x="340" y="215" text-anchor="middle">h₃ is</text>
+<rect class="barbg" x="440" y="201" width="120" height="18" rx="5"/>
+<rect class="bar" x="440" y="201" width="6.0" height="18" rx="5"/>
+<text class="num" x="568" y="215">5%</text>
+<line class="link" x1="608" y1="210" x2="656" y2="180" stroke-width="1.3" stroke-opacity="0.34"/>
+<path class="link" d="M190 180 C240 180 240 270 290 270" fill="none" stroke-width="1.3" stroke-opacity="0.34"/>
+<rect class="card k" x="290" y="248" width="100" height="44" rx="10"/>
+<text class="wtxt en" x="340" y="275" text-anchor="middle">h₄ tired</text>
+<rect class="barbg" x="440" y="261" width="120" height="18" rx="5"/>
+<rect class="bar" x="440" y="261" width="6.0" height="18" rx="5"/>
+<text class="num" x="568" y="275">5%</text>
+<line class="link" x1="608" y1="270" x2="656" y2="180" stroke-width="1.3" stroke-opacity="0.34"/>
+<circle class="mix" cx="690" cy="180" r="34"/>
+<text class="wtxt en" x="690" y="187" text-anchor="middle" style="fill:var(--on-accent);font-size:20px">c₂</text>
+<line class="chain" x1="726" y1="180" x2="766" y2="180" marker-end="url(#ar11)"/>
+<rect class="wbox hl" x="770" y="160" width="76" height="40" rx="9"/>
+<text class="wtxt en on" x="808" y="186" text-anchor="middle">Katze</text>
+</svg>
+    <figcaption>① 拿解码器现在的状态 s₁；② 和原文每个词的记忆 h 逐个比对；③ 算出匹配度，换算成合计 100% 的比例，叫注意力权重（attention weights）；④ 按比例把各个 h 混合成这一步专属的上下文向量（context vector）c₂；⑤ 解码器结合 c₂ 写出 Katze。下一步写 ist 时，再重新算一遍。</figcaption>
+  </figure>
+  <div class="notes">
+    <div class="note"><h4>为什么能当“外挂”</h4><p>编码器、解码器的 RNN <b>一点都没改</b>，只是在两者之间加了一个小模块，每一步多给解码器输入一个向量 c。把它拿掉，就退回原版 Seq2Seq。这个小模块和 RNN 一起训练，不用单独教。</p></div>
+    <div class="note"><h4>还剩什么问题</h4><p>它只补救了“解码器看不清原文”这一点。编码器、解码器内部还是 RNN，<b>还得排队</b>（硬伤 ①）；原文的词和词之间，也还是靠 RNN 一格一格传话（硬伤 ②）。</p></div>
+  </div>
+  <p class="say">Transformer 的想法是：既然注意力这么好用，就<b>让它当主角</b>。原文的词和词之间也用注意力互相看，RNN 整个拿掉。</p>
 </section>
 
 <section>

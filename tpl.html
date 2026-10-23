@@ -132,6 +132,14 @@ header.hero svg.fig { min-width: 0; }
 .gtxt { fill: var(--muted); font-family: var(--body); font-size: 14px; }
 .gname { fill: var(--ink); font-weight: 700; }
 .dotoff { fill: var(--line); }
+.mem.hot { stroke: var(--accent); stroke-width: 3; }
+
+.defs, .notes { display: grid; gap: 12px; margin: 0; }
+.notes { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.defs > div, .note { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; min-width: 0; }
+.defs dt, .note h4 { font-weight: 700; color: var(--ink); margin: 0 0 4px; font-size: 16px; }
+.defs dd, .note p { margin: 0; color: var(--muted); font-size: 15px; }
+.defs b, .note b { color: var(--ink); }
 .node { fill: var(--panel); stroke: var(--muted); stroke-width: 2.5; }
 .node.first { fill: var(--accent); stroke: var(--accent); }
 .yr { fill: var(--muted); font-family: var(--mono); font-size: 13px; }
@@ -149,7 +157,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 @media (max-width: 720px) {
   header.hero { grid-template-columns: 1fr; }
-  .stats { grid-template-columns: 1fr; }
+  .stats, .notes { grid-template-columns: 1fr; }
   section { padding-block: 40px; }
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -184,16 +192,21 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   <h2>大家主要用 <em>RNN</em></h2>
   <figure>
 {{BEFORE}}
-    <figcaption>RNN（Recurrent Neural Network，循环神经网络）一个词一个词地读。最常用的是 1997 年提出的改进版 LSTM（Long Short-Term Memory，长短期记忆网络），记得更久。<b>注意力在 2015 年就有了</b>，但只是 RNN 的外挂。这篇论文的标题意思是：只留注意力，RNN 不要了。</figcaption>
+    <figcaption>RNN（Recurrent Neural Network，循环神经网络）一个词一个词地读。最常用的是 1997 年提出的改进版 LSTM（Long Short-Term Memory，长短期记忆网络），记得更久。<b>注意力在 2015 年就有了</b>，但只是给 RNN 加的外挂（后面细讲）。这篇论文的标题意思是：只留注意力，RNN 不要了。</figcaption>
   </figure>
 </section>
 
 <section>
   <div class="kicker">理清关系</div>
-  <h2>RNN 是<em>零件</em>，Seq2Seq 是<em>组装方式</em></h2>
+  <h2>Seq2Seq 是一种<em>架构</em>，RNN 是实现它的<em>网络</em></h2>
+  <dl class="defs">
+    <div><dt>架构（architecture）</dt><dd>模型由哪几个部分组成、数据按什么顺序流过它们。Seq2Seq（Sequence to Sequence，序列到序列）的架构是<b>编码器-解码器</b>（encoder-decoder）：编码器把输入句子读成向量，解码器根据这些向量逐词写出输出句子。</dd></div>
+    <div><dt>网络（network）</dt><dd>每个部分内部具体怎么计算。RNN、LSTM、GRU 都属于<b>循环网络</b>：按顺序一次处理一个词。</dd></div>
+    <div><dt>两者的关系</dt><dd>同一个架构，可以用不同的网络来实现。说“一个用 LSTM 实现的 Seq2Seq 模型”，就同时说清了架构和网络。</dd></div>
+  </dl>
   <figure>
 {{PARTS}}
-    <figcaption>Seq2Seq（Sequence to Sequence，序列到序列）规定“一个读、一个写”，里面插什么零件都行。Transformer 其实也是这种组装方式，只是把 RNN 零件整个换成了注意力。</figcaption>
+    <figcaption>Transformer 仍然是编码器-解码器架构，只是内部不再用循环网络，而是全部用注意力来实现。</figcaption>
   </figure>
 </section>
 
@@ -223,6 +236,25 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 {{GATES}}
     <figcaption>三者都是一个词一个词地读，区别在“记忆笔记本”怎么改。LSTM 用三道门：忘记门（forget gate）、输入门（input gate）、输出门（output gate），想留的就能一直留着。GRU（Gated Recurrent Unit，门控循环单元）合并成两道：更新门（update gate）、重置门（reset gate），更简单，效果通常差不多。不过它们<b>还是得排队</b>。</figcaption>
   </figure>
+</section>
+
+<section>
+  <div class="kicker">注意力外挂（2015）</div>
+  <h2>给 Seq2Seq 加上<em>注意力</em></h2>
+  <figure>
+{{ADDON}}
+    <figcaption>原版 Seq2Seq 让编码器读完整句后，只把最后一步的记忆 h₄（一个固定长度的向量）交给解码器，句子再长也得挤进这一个向量。加了注意力以后，编码器每个词的记忆 h₁…h₄ 都留着；解码器每写一个词，都重新决定该看原文哪里。写 Katze 时，80% 看 cat。</figcaption>
+  </figure>
+  <h3>具体怎么用：每写一个词，做一遍这 5 步</h3>
+  <figure>
+{{ADDON_STEP}}
+    <figcaption>① 拿解码器现在的状态 s₁；② 和原文每个词的记忆 h 逐个比对；③ 算出匹配度，换算成合计 100% 的比例，叫注意力权重（attention weights）；④ 按比例把各个 h 混合成这一步专属的上下文向量（context vector）c₂；⑤ 解码器结合 c₂ 写出 Katze。下一步写 ist 时，再重新算一遍。</figcaption>
+  </figure>
+  <div class="notes">
+    <div class="note"><h4>为什么能当“外挂”</h4><p>编码器、解码器的 RNN <b>一点都没改</b>，只是在两者之间加了一个小模块，每一步多给解码器输入一个向量 c。把它拿掉，就退回原版 Seq2Seq。这个小模块和 RNN 一起训练，不用单独教。</p></div>
+    <div class="note"><h4>还剩什么问题</h4><p>它只补救了“解码器看不清原文”这一点。编码器、解码器内部还是 RNN，<b>还得排队</b>（硬伤 ①）；原文的词和词之间，也还是靠 RNN 一格一格传话（硬伤 ②）。</p></div>
+  </div>
+  <p class="say">Transformer 的想法是：既然注意力这么好用，就<b>让它当主角</b>。原文的词和词之间也用注意力互相看，RNN 整个拿掉。</p>
 </section>
 
 <section>

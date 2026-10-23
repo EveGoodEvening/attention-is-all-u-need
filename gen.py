@@ -112,31 +112,123 @@ def before():
 
 # ---------- parts vs. assembly ----------
 def parts():
-    s = ['<svg class="fig" viewBox="0 0 860 370" role="img" aria-label="Seq2Seq 是一种组装方式：一个编码器读、一个解码器写。里面插什么零件都行：插 RNN 类（简单 RNN、LSTM、GRU）是 2014 到 2016 年的主流；插卷积就是 ConvS2S；只用注意力就是 Transformer。">']
+    s = ['<svg class="fig" viewBox="0 0 860 414" role="img" aria-label="上半部分：Seq2Seq 架构由编码器和解码器组成，编码器把英文句子读成向量，解码器根据向量逐词写出德文。下半部分：编码器和解码器内部可以用不同的网络实现：用循环网络是经典 Seq2Seq，用卷积网络是 ConvS2S，只用注意力是 Transformer。">']
     s.append('<defs><marker id="ar7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>')
-    s.append('<text class="colh" x="430" y="28" text-anchor="middle">组装方式：Seq2Seq（一个读，一个写）</text>')
-    for x, lab in [(180, "编码器 · 读"), (480, "解码器 · 写")]:
-        s.append(f'<rect class="tower" x="{x}" y="46" width="200" height="80" rx="14"/>')
-        s.append(f'<text class="subt" x="{x+100}" y="74" text-anchor="middle">{lab}</text>')
-        s.append(f'<rect class="slot" x="{x+40}" y="86" width="120" height="28" rx="7"/>')
-        s.append(f'<text class="small" x="{x+100}" y="105" text-anchor="middle">插零件</text>')
-    s.append('<line class="chain" x1="382" y1="86" x2="474" y2="86" marker-end="url(#ar7)"/>')
-    cols = [(150, "零件：RNN 类", ["简单 RNN", "LSTM", "GRU"], "Seq2Seq", "2014–2016 主流，2015 年起加注意力", False),
-            (430, "零件：卷积", ["CNN"], "ConvS2S", "2017 年 5 月", False),
-            (710, "零件：只用注意力", ["注意力"], "Transformer", "2017 年 6 月 · 本论文", True)]
+    s.append('<text class="colh" x="430" y="26" text-anchor="middle">架构（architecture）：Seq2Seq = 编码器 + 解码器</text>')
+    for x, lab, desc in [(100, "编码器（encoder）", "把输入句子读成向量"), (520, "解码器（decoder）", "根据向量逐词写出")]:
+        s.append(f'<rect class="tower" x="{x}" y="46" width="240" height="98" rx="14"/>')
+        s.append(f'<text class="subt" x="{x+120}" y="74" text-anchor="middle">{lab}</text>')
+        s.append(f'<text class="small" x="{x+120}" y="96" text-anchor="middle">{desc}</text>')
+        s.append(f'<rect class="slot" x="{x+30}" y="108" width="180" height="26" rx="7"/>')
+        s.append(f'<text class="small" x="{x+120}" y="126" text-anchor="middle">内部用什么网络实现？</text>')
+    s.append('<line class="chain" x1="342" y1="94" x2="408" y2="94" marker-end="url(#ar7)"/>')
+    s.append('<circle class="mix" cx="430" cy="94" r="14"/>')
+    s.append('<line class="chain" x1="446" y1="94" x2="514" y2="94" marker-end="url(#ar7)"/>')
+    s.append('<text class="small" x="430" y="132" text-anchor="middle">读懂的内容（向量）</text>')
+    for cx, ws in [(220, ["The", "cat", "is", "tired"]), (640, ["Die", "Katze", "ist", "müde"])]:
+        x0 = cx - (4 * 54 - 6) / 2
+        for i, w in enumerate(ws):
+            s.append(f'<rect class="wbox" x="{x0+i*54:.0f}" y="172" width="48" height="32" rx="8"/>')
+            s.append(f'<text class="wtxt en" x="{x0+i*54+24:.0f}" y="193" text-anchor="middle" style="font-size:13px">{w}</text>')
+    s.append('<line class="chain" x1="220" y1="170" x2="220" y2="150" marker-end="url(#ar7)"/>')
+    s.append('<line class="chain" x1="640" y1="146" x2="640" y2="166" marker-end="url(#ar7)"/>')
+    s.append('<text class="colh" x="430" y="238" text-anchor="middle">编码器、解码器内部，可以用不同的网络来实现：</text>')
+    cols = [(150, "循环网络（RNN 类）", ["简单 RNN", "LSTM", "GRU"], "经典 Seq2Seq", "2014–2016 主流", False),
+            (430, "卷积网络（CNN）", ["CNN"], "ConvS2S", "2017 年 5 月", False),
+            (710, "只用注意力", ["注意力"], "Transformer", "2017 年 6 月 · 本论文", True)]
     for cx, head, chips, name, sub, hot in cols:
-        s.append(f'<path class="chain" d="M{cx} 198 C{cx} 160 430 170 430 132" fill="none" marker-end="url(#ar7)"/>')
-        s.append(f'<rect class="{"card hot" if hot else "card"}" x="{cx-128}" y="200" width="256" height="156" rx="14"/>')
-        s.append(f'<text class="colh" x="{cx}" y="230" text-anchor="middle">{head}</text>')
+        s.append(f'<rect class="{"card hot" if hot else "card"}" x="{cx-128}" y="252" width="256" height="150" rx="14"/>')
+        s.append(f'<text class="colh" x="{cx}" y="282" text-anchor="middle">{head}</text>')
         cw, gap = 74, 8
         x0 = cx - (len(chips) * cw + (len(chips) - 1) * gap) / 2
         for i, c in enumerate(chips):
             x = x0 + i * (cw + gap)
-            cls = "wbox hl" if hot else "wbox"
-            s.append(f'<rect class="{cls}" x="{x:.0f}" y="246" width="{cw}" height="36" rx="8"/>')
-            s.append(f'<text class="{"small on" if hot else "small"}" x="{x+cw/2:.0f}" y="269" text-anchor="middle" style="font-weight:700">{c}</text>')
-        s.append(f'<text class="{"wtxt strong" if hot else "wtxt"}" x="{cx}" y="316" text-anchor="middle">= {name}</text>')
-        s.append(f'<text class="small" x="{cx}" y="340" text-anchor="middle">{sub}</text>')
+            s.append(f'<rect class="{"wbox hl" if hot else "wbox"}" x="{x:.0f}" y="298" width="{cw}" height="36" rx="8"/>')
+            s.append(f'<text class="{"small on" if hot else "small"}" x="{x+cw/2:.0f}" y="321" text-anchor="middle" style="font-weight:700">{c}</text>')
+        s.append(f'<text class="{"wtxt strong" if hot else "wtxt"}" x="{cx}" y="366" text-anchor="middle">= {name}</text>')
+        s.append(f'<text class="small" x="{cx}" y="390" text-anchor="middle">{sub}</text>')
+    s.append('</svg>')
+    return "\n".join(s)
+
+
+EN4 = ["The", "cat", "is", "tired"]
+DE4 = ["Die", "Katze", "ist", "müde"]
+W_KATZE = [0.10, 0.80, 0.05, 0.05]   # attention while writing "Katze"; shared by both add-on figures
+SUB = "₁₂₃₄₅₆₇₈₉"
+
+
+# ---------- attention add-on: before vs after ----------
+def addon():
+    hx = [60, 150, 240, 330]
+    sx = [530, 620, 710, 800]
+    s = ['<svg class="fig" viewBox="0 0 860 410" role="img" aria-label="上：2014 年原版 Seq2Seq，编码器读完整句后，只把最后一步的记忆 h₄ 交给解码器。下：2015 年加了注意力，解码器写 Katze 时，回头看原文全部 4 个词的记忆，其中 80% 看 cat。">']
+    s.append('<defs><marker id="ar10" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>')
+
+    def chains(yc, hot_s=None):
+        r = []
+        for xs, letter, words in [(hx, "h", EN4), (sx, "s", DE4)]:
+            for i, x in enumerate(xs):
+                cls = "mem hot" if (letter == "s" and i == hot_s) else "mem"
+                r.append(f'<circle class="{cls}" cx="{x}" cy="{yc}" r="22"/>')
+                r.append(f'<text class="wtxt en" x="{x}" y="{yc+6}" text-anchor="middle">{letter}{SUB[i]}</text>')
+                hl = letter == "s" and i == hot_s
+                r.append(f'<rect class="{"wbox hl" if hl else "wbox"}" x="{x-28}" y="{yc+32}" width="56" height="28" rx="7"/>')
+                r.append(f'<text class="{"wtxt en on" if hl else "wtxt en"}" x="{x}" y="{yc+51}" text-anchor="middle" style="font-size:13px">{words[i]}</text>')
+                if i < 3:
+                    r.append(f'<line class="chain" x1="{x+24}" y1="{yc}" x2="{xs[i+1]-26}" y2="{yc}" marker-end="url(#ar10)"/>')
+        r.append(f'<line class="chain" x1="{hx[3]+24}" y1="{yc}" x2="{sx[0]-26}" y2="{yc}" marker-end="url(#ar10)"/>')
+        return "\n".join(r)
+
+    # top: original
+    yc = 100
+    s.append('<text class="colh" x="20" y="34">2014 原版：读完整句，只交出最后一步的记忆</text>')
+    s.append(chains(yc))
+    s.append(f'<text class="small" x="430" y="{yc-12}" text-anchor="middle">整句压成 1 个向量</text>')
+    s.append(f'<text class="small" x="195" y="{yc+84}" text-anchor="middle">编码器</text>')
+    s.append(f'<text class="small" x="665" y="{yc+84}" text-anchor="middle">解码器</text>')
+    # bottom: with attention
+    yc = 320
+    s.append('<text class="colh" x="20" y="210">2015 加注意力：每写一个词，都回头看原文的每个词</text>')
+    for x, w in zip(hx, W_KATZE):
+        h = 30 + abs(sx[1] - x) * 0.07  # keep arc peaks below the row title
+        mx = (x + sx[1]) / 2
+        s.append(f'<path class="arc-a" d="M{x} {yc-24} Q{mx} {yc-24-2*h:.0f} {sx[1]} {yc-24}" stroke-width="{max(1.5, w*14):.1f}" stroke-opacity="{0.3+0.7*w/max(W_KATZE):.2f}" fill="none" stroke-linecap="round"/>')
+    s.append(chains(yc, hot_s=1))
+    for x, w in zip(hx, W_KATZE):
+        s.append(f'<text class="{"num strong" if w == max(W_KATZE) else "num"}" x="{x}" y="{yc+82}" text-anchor="middle">{int(round(w*100))}%</text>')
+    s.append(f'<text class="small" x="{sx[1]}" y="{yc+82}" text-anchor="middle">正在写这个词</text>')
+    s.append('</svg>')
+    return "\n".join(s)
+
+
+# ---------- attention add-on: one decoding step ----------
+def addon_step():
+    ys = [90, 150, 210, 270]
+    s = ['<svg class="fig" viewBox="0 0 860 310" role="img" aria-label="解码器写第 2 个词的一步：拿当前状态 s₁ 和原文 4 个词的记忆 h₁ 到 h₄ 逐个比对，得到合计 100% 的匹配度（cat 80%），按比例混合成上下文向量 c₂，再写出 Katze。">']
+    s.append('<defs><marker id="ar11" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>')
+    for x, a, b in [(110, "① 解码器现在", "s₁"), (340, "② 原文的记忆", "h₁ … h₄"), (510, "③ 匹配度", "合计 100%"), (690, "④ 混合", "上下文向量 c₂"), (808, "⑤ 写出", "")]:
+        s.append(f'<text class="colh" x="{x}" y="24" text-anchor="middle">{a}</text>')
+        if b:
+            s.append(f'<text class="colsub" x="{x}" y="44" text-anchor="middle">{b}</text>')
+    s.append('<rect class="card q" x="30" y="128" width="160" height="104" rx="14"/>')
+    s.append('<text class="wtxt big" x="110" y="172" text-anchor="middle" style="font-family:var(--mono)">s₁</text>')
+    s.append('<text class="small" x="110" y="198" text-anchor="middle">刚写完 Die</text>')
+    s.append('<text class="small" x="110" y="218" text-anchor="middle">下一个写什么？</text>')
+    top = max(W_KATZE)
+    for i, (y, w) in enumerate(zip(ys, W_KATZE)):
+        k = 0.3 + 0.7 * w / top
+        s.append(f'<path class="link" d="M190 180 C240 180 240 {y} 290 {y}" fill="none" stroke-width="{1+w*6:.1f}" stroke-opacity="{k:.2f}"/>')
+        s.append(f'<rect class="card k" x="290" y="{y-22}" width="100" height="44" rx="10"/>')
+        s.append(f'<text class="wtxt en" x="340" y="{y+5}" text-anchor="middle">h{SUB[i]} {EN4[i]}</text>')
+        s.append(f'<rect class="barbg" x="440" y="{y-9}" width="120" height="18" rx="5"/>')
+        s.append(f'<rect class="bar" x="440" y="{y-9}" width="{120*w:.1f}" height="18" rx="5"/>')
+        s.append(f'<text class="num" x="568" y="{y+5}">{int(round(w*100))}%</text>')
+        s.append(f'<line class="link" x1="608" y1="{y}" x2="656" y2="180" stroke-width="{1+w*6:.1f}" stroke-opacity="{k:.2f}"/>')
+    s.append('<circle class="mix" cx="690" cy="180" r="34"/>')
+    s.append('<text class="wtxt en" x="690" y="187" text-anchor="middle" style="fill:var(--on-accent);font-size:20px">c₂</text>')
+    s.append('<line class="chain" x1="726" y1="180" x2="766" y2="180" marker-end="url(#ar11)"/>')
+    s.append('<rect class="wbox hl" x="770" y="160" width="76" height="40" rx="9"/>')
+    s.append('<text class="wtxt en on" x="808" y="186" text-anchor="middle">Katze</text>')
     s.append('</svg>')
     return "\n".join(s)
 
@@ -472,7 +564,7 @@ def legacy():
 tpl = open(sys.argv[2], encoding="utf-8").read()
 h1, h2, h3 = heads()
 rep = {
-    "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{PARTS}}": parts(), "{{QUEUE}}": queue(), "{{RNN}}": rnn(), "{{FAR}}": far(), "{{GATES}}": gates(), "{{ATTN}}": attn(), "{{QKV}}": qkv(),
+    "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{PARTS}}": parts(), "{{QUEUE}}": queue(), "{{RNN}}": rnn(), "{{FAR}}": far(), "{{GATES}}": gates(), "{{ADDON}}": addon(), "{{ADDON_STEP}}": addon_step(), "{{ATTN}}": attn(), "{{QKV}}": qkv(),
     "{{HEAD1}}": h1, "{{HEAD2}}": h2, "{{HEAD3}}": h3, "{{POS}}": position(),
     "{{ARCH}}": arch(), "{{SPEED}}": speed(), "{{BLEU}}": bleu(), "{{LEGACY}}": legacy(),
 }
