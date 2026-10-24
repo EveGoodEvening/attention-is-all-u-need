@@ -1201,6 +1201,80 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     <figcaption>怎么“看”，和外挂的 5 步一样：比对 → 换算成比例 → 按比例混合。只是每个词准备三样东西：提问 Query、标签 Key、内容 Value。像在图书馆拿着问题对书的标签，越对得上，就越多地拿走那本书的内容。</figcaption>
   </figure>
   <div class="formula">论文里的写法：<b>softmax</b>( Q·Kᵀ / √d<sub>k</sub> ) · V</div>
+  <h3>为什么要多除一个 √d<sub>k</sub>？</h3>
+  <p class="say">d<sub>k</sub> 是 Q 和 K 向量的长度，论文里取 64。打个比方：投票时如果一个候选人的票数远远超过其他人，结果就是“赢家通吃”，你再怎么微调其他人的票，结果都不变，也就没有改进的余地了。</p>
+  <dl class="defs">
+    <div><dt>分数为什么会很大？</dt><dd>Q·K 是 64 对数字各自相乘再加起来。加的项越多，结果波动越大，标准差约为 √64 = 8，所以分数随便就差出 ±16、±24。</dd></div>
+    <div><dt>为什么恰好除以 √d<sub>k</sub>？</dt><dd>波动幅度就是 √d<sub>k</sub>，除以它，分数回到“标准差约为 1”的正常范围，不管 d<sub>k</sub> 取多大都一样。</dd></div>
+  </dl>
+  <figure>
+<svg class="fig" viewBox="0 0 860 300" role="img" aria-label="同一组注意力分数 24、16、8、0 的三种处理。不除：第一个词拿走约 100%，学习信号约 0.0003。除以 8：64%、24%、9%、3%，学习信号约 0.23。除以 64：30%、26%、23%、21%，几乎平均。">
+<rect class="card" x="10" y="8" width="270" height="284" rx="14"/>
+<text class="colh" x="145" y="38" text-anchor="middle">不除</text>
+<text class="colsub" x="145" y="62" text-anchor="middle">分数 24, 16, 8, 0</text>
+<text class="small" x="30" y="99">词 A</text>
+<rect class="bar dim" x="72" y="82" width="130" height="22" rx="5"/>
+<rect class="bar" x="72" y="82" width="130.0" height="22" rx="5"/>
+<text class="num" x="212" y="99">≈100%</text>
+<text class="small" x="30" y="135">词 B</text>
+<rect class="bar dim" x="72" y="118" width="130" height="22" rx="5"/>
+<rect class="bar" x="72" y="118" width="2.0" height="22" rx="5"/>
+<text class="num" x="212" y="135">0.03%</text>
+<text class="small" x="30" y="171">词 C</text>
+<rect class="bar dim" x="72" y="154" width="130" height="22" rx="5"/>
+<rect class="bar" x="72" y="154" width="2.0" height="22" rx="5"/>
+<text class="num" x="212" y="171">≈0%</text>
+<text class="small" x="30" y="207">词 D</text>
+<rect class="bar dim" x="72" y="190" width="130" height="22" rx="5"/>
+<rect class="bar" x="72" y="190" width="2.0" height="22" rx="5"/>
+<text class="num" x="212" y="207">≈0%</text>
+<text class="wtxt" x="145" y="248" text-anchor="middle">赢家通吃</text>
+<text class="small" x="145" y="274" text-anchor="middle">学习信号 ≈ 0.0003</text>
+<rect class="card hot" x="295" y="8" width="270" height="284" rx="14"/>
+<text class="colh" x="430" y="38" text-anchor="middle">除以 √64 = 8</text>
+<text class="colsub" x="430" y="62" text-anchor="middle">分数 3, 2, 1, 0</text>
+<text class="small" x="315" y="99">词 A</text>
+<rect class="bar dim" x="357" y="82" width="130" height="22" rx="5"/>
+<rect class="bar" x="357" y="82" width="83.7" height="22" rx="5"/>
+<text class="num" x="497" y="99">64%</text>
+<text class="small" x="315" y="135">词 B</text>
+<rect class="bar dim" x="357" y="118" width="130" height="22" rx="5"/>
+<rect class="bar" x="357" y="118" width="30.8" height="22" rx="5"/>
+<text class="num" x="497" y="135">24%</text>
+<text class="small" x="315" y="171">词 C</text>
+<rect class="bar dim" x="357" y="154" width="130" height="22" rx="5"/>
+<rect class="bar" x="357" y="154" width="11.3" height="22" rx="5"/>
+<text class="num" x="497" y="171">9%</text>
+<text class="small" x="315" y="207">词 D</text>
+<rect class="bar dim" x="357" y="190" width="130" height="22" rx="5"/>
+<rect class="bar" x="357" y="190" width="4.2" height="22" rx="5"/>
+<text class="num" x="497" y="207">3%</text>
+<text class="wtxt strong" x="430" y="248" text-anchor="middle">有重点，也能学</text>
+<text class="small" x="430" y="274" text-anchor="middle">学习信号 ≈ 0.23</text>
+<rect class="card" x="580" y="8" width="270" height="284" rx="14"/>
+<text class="colh" x="715" y="38" text-anchor="middle">除以 64</text>
+<text class="colsub" x="715" y="62" text-anchor="middle">分数 0.38, 0.25, 0.12, 0</text>
+<text class="small" x="600" y="99">词 A</text>
+<rect class="bar dim" x="642" y="82" width="130" height="22" rx="5"/>
+<rect class="bar" x="642" y="82" width="38.8" height="22" rx="5"/>
+<text class="num" x="782" y="99">30%</text>
+<text class="small" x="600" y="135">词 B</text>
+<rect class="bar dim" x="642" y="118" width="130" height="22" rx="5"/>
+<rect class="bar" x="642" y="118" width="34.3" height="22" rx="5"/>
+<text class="num" x="782" y="135">26%</text>
+<text class="small" x="600" y="171">词 C</text>
+<rect class="bar dim" x="642" y="154" width="130" height="22" rx="5"/>
+<rect class="bar" x="642" y="154" width="30.2" height="22" rx="5"/>
+<text class="num" x="782" y="171">23%</text>
+<text class="small" x="600" y="207">词 D</text>
+<rect class="bar dim" x="642" y="190" width="130" height="22" rx="5"/>
+<rect class="bar" x="642" y="190" width="26.7" height="22" rx="5"/>
+<text class="num" x="782" y="207">21%</text>
+<text class="wtxt" x="715" y="248" text-anchor="middle">太平均，没重点</text>
+<text class="small" x="715" y="274" text-anchor="middle">学习信号 ≈ 0.21</text>
+</svg>
+    <figcaption>同一组分数，三种处理。<b>不除</b>：softmax 用的是指数，差 8 分就差 e⁸ ≈ 3000 倍，几乎全部权重压在词 A 上，叫<b>饱和</b>（saturation）。这时稍微调一下分数，权重几乎不变，学习信号接近 0，和 RNN 的梯度消失是同一类病。<b>除以 64</b>：除过头了，权重差不多平均，模型没了重点。<b>除以 8</b> 刚好。图中的“学习信号”= 词 A 的分数调一点点时，它的权重跟着变多少，即 p × (1 − p)。</figcaption>
+  </figure>
 </section>
 
 <section>

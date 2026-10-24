@@ -418,6 +418,40 @@ def attn():
     return "\n".join(s)
 
 
+# ---------- why divide by sqrt(d_k) ----------
+def scale():
+    raw = [24, 16, 8, 0]   # dot products for d_k = 64: spread ~ sqrt(64) = 8
+    cases = [("不除", 1, "赢家通吃", False), ("除以 √64 = 8", 8, "有重点，也能学", True), ("除以 64", 64, "太平均，没重点", False)]
+
+    def pct(p):
+        if p >= 0.995: return "≈100%"
+        if p >= 0.01: return f"{round(p*100)}%"
+        if p >= 0.0001: return f"{p*100:.2f}%"
+        return "≈0%"
+
+    s = ['<svg class="fig" viewBox="0 0 860 300" role="img" aria-label="同一组注意力分数 24、16、8、0 的三种处理。不除：第一个词拿走约 100%，学习信号约 0.0003。除以 8：64%、24%、9%、3%，学习信号约 0.23。除以 64：30%、26%、23%、21%，几乎平均。">']
+    for c, (title, div, verdict, hot) in enumerate(cases):
+        x = 10 + c * 285
+        sc = [r / div for r in raw]
+        e = [math.exp(v - max(sc)) for v in sc]
+        w = [v / sum(e) for v in e]
+        s.append(f'<rect class="{"card hot" if hot else "card"}" x="{x}" y="8" width="270" height="284" rx="14"/>')
+        s.append(f'<text class="colh" x="{x+135}" y="38" text-anchor="middle">{title}</text>')
+        nums = ", ".join(f"{v:g}" if v == int(v) else f"{v:.2f}" for v in sc)
+        s.append(f'<text class="colsub" x="{x+135}" y="62" text-anchor="middle">分数 {nums}</text>')
+        for i, wi in enumerate(w):
+            y = 82 + i * 36
+            s.append(f'<text class="small" x="{x+20}" y="{y+17}">词 {"ABCD"[i]}</text>')
+            s.append(f'<rect class="bar dim" x="{x+62}" y="{y}" width="130" height="22" rx="5"/>')
+            s.append(f'<rect class="bar" x="{x+62}" y="{y}" width="{max(2, 130*wi):.1f}" height="22" rx="5"/>')
+            s.append(f'<text class="num" x="{x+202}" y="{y+17}">{pct(wi)}</text>')
+        s.append(f'<text class="{"wtxt strong" if hot else "wtxt"}" x="{x+135}" y="248" text-anchor="middle">{verdict}</text>')
+        g = w[0] * (1 - w[0])
+        s.append(f'<text class="small" x="{x+135}" y="274" text-anchor="middle">学习信号 ≈ {g:.4f}</text>' if g < 0.01 else f'<text class="small" x="{x+135}" y="274" text-anchor="middle">学习信号 ≈ {g:.2f}</text>')
+    s.append('</svg>')
+    return "\n".join(s)
+
+
 # ---------- QKV ----------
 def qkv():
     rows = [("小狗", "动物", 0.62), ("累", "状态", 0.10), ("马路", "地点", 0.08), ("其他词", "……", 0.20)]
@@ -670,7 +704,7 @@ def legacy():
 tpl = open(sys.argv[2], encoding="utf-8").read()
 h1, h2, h3 = heads()
 rep = {
-    "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{PARTS}}": parts(), "{{QUEUE}}": queue(), "{{FAR}}": far(), "{{GRAD}}": grad(), "{{GATES}}": gates(), "{{ADDON}}": addon(), "{{ADDON_STEP}}": addon_step(), "{{PATHS}}": paths(), "{{ATTN}}": attn(), "{{QKV}}": qkv(),
+    "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{PARTS}}": parts(), "{{QUEUE}}": queue(), "{{FAR}}": far(), "{{GRAD}}": grad(), "{{GATES}}": gates(), "{{ADDON}}": addon(), "{{ADDON_STEP}}": addon_step(), "{{PATHS}}": paths(), "{{ATTN}}": attn(), "{{QKV}}": qkv(), "{{SCALE}}": scale(),
     "{{HEAD1}}": h1, "{{HEAD2}}": h2, "{{HEAD3}}": h3, "{{POS}}": position(),
     "{{ARCH}}": arch(), "{{SPEED}}": speed(), "{{MASK}}": mask(), "{{BLEU}}": bleu(), "{{LEGACY}}": legacy(),
 }
