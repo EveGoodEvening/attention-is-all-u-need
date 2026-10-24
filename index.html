@@ -115,6 +115,8 @@ header.hero svg.fig { min-width: 0; }
 .times { fill: var(--muted); font-family: var(--mono); font-size: 15px; font-weight: 700; }
 .cross { stroke: var(--h2); stroke-width: 3; }
 .back { stroke: var(--h2); stroke-width: 2.5; }
+.seg0 { fill: var(--line); } .seg1 { fill: var(--h1); } .seg2 { fill: var(--h2); } .seg3 { fill: var(--h3); }
+.segt { fill: var(--on-accent); font-family: var(--body); font-size: 14px; font-weight: 700; }
 .crosst { fill: var(--h2); font-family: var(--body); font-size: 14px; font-weight: 700; }
 .tick { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; }
 .tick.on { fill: var(--accent); stroke: var(--accent); }
@@ -1280,6 +1282,100 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <section>
   <div class="kicker">6 · 论文的答案 ②：多头注意力</div>
   <h2>好几双眼睛，<em>各看各的</em></h2>
+  <h3>为什么一个头不够</h3>
+  <figure>
+<svg class="fig" viewBox="0 0 860 270" role="img" aria-label="左：只有 1 个头时，“它”的权重合计 100%：小狗 62%、累 10%、其他 28%，混成一个向量，“累”的信息被冲淡。右：多个头时，1 号头 80% 看小狗，2 号头 70% 看累，各自算完再拼起来，两条信息都清楚。">
+<defs><marker id="ar14" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>
+<text class="colh" x="20" y="30">1 个头：合计 100%，混成一个向量</text>
+<text class="small" x="20" y="62">“它”</text>
+<rect class="seg1" x="60.0" y="42" width="210.8" height="30"/>
+<text class="segt" x="165.4" y="62" text-anchor="middle">小狗 62%</text>
+<rect class="seg2" x="270.8" y="42" width="34.0" height="30"/>
+<rect class="seg0" x="304.8" y="42" width="95.2" height="30"/>
+<text class="small" x="288" y="92" text-anchor="middle">累 10%</text>
+<text class="small" x="352" y="92" text-anchor="middle">其他 28%</text>
+<line class="chain" x1="230" y1="102" x2="230" y2="136" marker-end="url(#ar14)"/>
+<rect class="wbox" x="110" y="142" width="240" height="44" rx="10"/>
+<text class="wtxt" x="230" y="170" text-anchor="middle" style="font-size:16px">1 个向量，小狗为主</text>
+<text class="small" x="230" y="218" text-anchor="middle">“它怎么了（累）”只占一成，被冲淡</text>
+<text class="colh" x="450" y="30">多个头：每个头各自合计 100%</text>
+<text class="small" x="450" y="62">1 号头</text>
+<rect class="seg1" x="510.0" y="42" width="240.0" height="30"/>
+<text class="segt" x="630.0" y="62" text-anchor="middle">小狗 80%</text>
+<rect class="seg0" x="750.0" y="42" width="60.0" height="30"/>
+<text class="small" x="450" y="106">2 号头</text>
+<rect class="seg2" x="510.0" y="86" width="210.0" height="30"/>
+<text class="segt" x="615.0" y="106" text-anchor="middle">累 70%</text>
+<rect class="seg0" x="720.0" y="86" width="90.0" height="30"/>
+<text class="small" x="510" y="146">……一共 8 个头，同时算</text>
+<line class="chain" x1="660" y1="154" x2="660" y2="168" marker-end="url(#ar14)"/>
+<rect class="wbox hl-head1" x="560" y="174" width="64" height="36" rx="8"/>
+<text class="wtxt" x="592" y="198" text-anchor="middle" style="font-size:15px">小狗</text>
+<rect class="wbox hl-head2" x="630" y="174" width="64" height="36" rx="8"/>
+<text class="wtxt" x="662" y="198" text-anchor="middle" style="font-size:15px">累</text>
+<rect class="wbox" x="700" y="174" width="64" height="36" rx="8"/>
+<text class="wtxt" x="732" y="198" text-anchor="middle" style="font-size:15px">……</text>
+<text class="small" x="660" y="236" text-anchor="middle">拼起来：两条信息都清清楚楚</text>
+</svg>
+    <figcaption>一个头的权重合计 100%，最后混成一个向量。“它”既要知道是谁（小狗），也要知道怎么了（累），一个头只能把两者按比例搅在一起，占比小的那条信息就被冲淡了。就像只用一个数来形容一个人，身高、体重混在一起，两样都看不清。</figcaption>
+  </figure>
+  <h3>怎么做到各看各的</h3>
+  <figure>
+<svg class="fig" viewBox="0 0 860 278" role="img" aria-label="“它”的 512 维向量交给 8 个头，每个头用自己的一套 Q、K、V 变换压成 64 维，各做一遍注意力；8 份 64 维拼回 512 维，再乘 W_O 混合，输出 512 维。">
+<defs><marker id="ar15" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>
+<text class="colh" x="58" y="34" text-anchor="middle">“它”的向量</text>
+<rect class="wbox hl" x="30" y="50" width="56" height="188" rx="8"/>
+<text class="wtxt en on" x="58" y="150" text-anchor="middle" style="font-size:15px">512</text>
+<text class="colh" x="290" y="34" text-anchor="middle">8 个头，各算各的注意力</text>
+<path class="chain" d="M86 144 C120 144 116 60.0 150 60.0" fill="none"/>
+<rect class="wbox hl-head1" x="150" y="50" width="280" height="20" rx="5"/>
+<text class="small" x="162" y="65" style="font-size:13px">头 1：自己的一套 Q、K、V，64 维</text>
+<line class="chain" x1="430" y1="60.0" x2="560" y2="60.0"/>
+<rect class="seg1" x="560" y="50" width="56" height="24"/>
+<path class="chain" d="M86 144 C120 144 116 84.0 150 84.0" fill="none"/>
+<rect class="wbox hl-head2" x="150" y="74" width="280" height="20" rx="5"/>
+<text class="small" x="162" y="89" style="font-size:13px">头 2：另一套 Q、K、V，64 维</text>
+<line class="chain" x1="430" y1="84.0" x2="560" y2="84.0"/>
+<rect class="seg2" x="560" y="74" width="56" height="24"/>
+<path class="chain" d="M86 144 C120 144 116 108.0 150 108.0" fill="none"/>
+<rect class="wbox hl-head3" x="150" y="98" width="280" height="20" rx="5"/>
+<text class="small" x="162" y="113" style="font-size:13px">头 3</text>
+<line class="chain" x1="430" y1="108.0" x2="560" y2="108.0"/>
+<rect class="seg3" x="560" y="98" width="56" height="24"/>
+<path class="chain" d="M86 144 C120 144 116 132.0 150 132.0" fill="none"/>
+<rect class="wbox" x="150" y="122" width="280" height="20" rx="5"/>
+<line class="chain" x1="430" y1="132.0" x2="560" y2="132.0"/>
+<rect class="seg0" x="560" y="122" width="56" height="24"/>
+<path class="chain" d="M86 144 C120 144 116 156.0 150 156.0" fill="none"/>
+<rect class="wbox" x="150" y="146" width="280" height="20" rx="5"/>
+<line class="chain" x1="430" y1="156.0" x2="560" y2="156.0"/>
+<rect class="seg0" x="560" y="146" width="56" height="24"/>
+<path class="chain" d="M86 144 C120 144 116 180.0 150 180.0" fill="none"/>
+<rect class="wbox" x="150" y="170" width="280" height="20" rx="5"/>
+<line class="chain" x1="430" y1="180.0" x2="560" y2="180.0"/>
+<rect class="seg0" x="560" y="170" width="56" height="24"/>
+<path class="chain" d="M86 144 C120 144 116 204.0 150 204.0" fill="none"/>
+<rect class="wbox" x="150" y="194" width="280" height="20" rx="5"/>
+<line class="chain" x1="430" y1="204.0" x2="560" y2="204.0"/>
+<rect class="seg0" x="560" y="194" width="56" height="24"/>
+<path class="chain" d="M86 144 C120 144 116 228.0 150 228.0" fill="none"/>
+<rect class="wbox" x="150" y="218" width="280" height="20" rx="5"/>
+<text class="small" x="162" y="233" style="font-size:13px">头 8</text>
+<line class="chain" x1="430" y1="228.0" x2="560" y2="228.0"/>
+<rect class="seg0" x="560" y="218" width="56" height="20"/>
+<text class="colh" x="588" y="34" text-anchor="middle">拼回 512</text>
+<line class="chain" x1="620" y1="144" x2="664" y2="144" marker-end="url(#ar15)"/>
+<rect class="card q" x="670" y="120" width="84" height="48" rx="10"/>
+<text class="wtxt en" x="712" y="151" text-anchor="middle" style="font-family:var(--mono);font-size:17px">× W_O</text>
+<line class="chain" x1="756" y1="144" x2="784" y2="144" marker-end="url(#ar15)"/>
+<text class="colh" x="818" y="34" text-anchor="middle">输出</text>
+<rect class="wbox hl" x="790" y="50" width="56" height="188" rx="8"/>
+<text class="wtxt en on" x="818" y="150" text-anchor="middle" style="font-size:15px">512</text>
+<text class="small" x="290" y="264" text-anchor="middle">8 × 64 = 512，总计算量和 1 个 512 维的头差不多</text>
+</svg>
+    <figcaption>每个头有自己的一套 Q、K、V 变换（都是训练学出来的），所以同一个词在不同的头里会提出不同的问题、贴上不同的标签。论文里词向量长 512，分给 8 个头，每个头压成 64 维，这就是上一节 d<sub>k</sub> = 64 的来历。8 份结果拼回 512 维，再乘一个矩阵 W<sub>O</sub> 把它们混合起来。</figcaption>
+  </figure>
+  <h3>8 个头里的 3 个</h3>
   <figure>
     <div class="heads">
 <svg class="fig head" viewBox="0 0 740 190" role="img" aria-label="1 号头：“它”是谁？">
@@ -1354,7 +1450,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <text class="wtxt" x="690" y="165.0" text-anchor="middle">了</text>
 </svg>
     </div>
-    <figcaption>一组注意力只能盯一种关系。论文用 8 个“头”同时看，各自关心不同的关系，最后拼起来。</figcaption>
+    <figcaption>每个头只关心一种关系。每个头各自算比例，所以 1 号头里“它”看“小狗”是 80%，和上一节单个注意力的 62% 不一样。哪个头学会看什么，是训练出来的，不是人指定的。</figcaption>
   </figure>
 </section>
 

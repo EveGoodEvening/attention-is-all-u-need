@@ -115,6 +115,8 @@ header.hero svg.fig { min-width: 0; }
 .times { fill: var(--muted); font-family: var(--mono); font-size: 15px; font-weight: 700; }
 .cross { stroke: var(--h2); stroke-width: 3; }
 .back { stroke: var(--h2); stroke-width: 2.5; }
+.seg0 { fill: var(--line); } .seg1 { fill: var(--h1); } .seg2 { fill: var(--h2); } .seg3 { fill: var(--h3); }
+.segt { fill: var(--on-accent); font-family: var(--body); font-size: 14px; font-weight: 700; }
 .crosst { fill: var(--h2); font-family: var(--body); font-size: 14px; font-weight: 700; }
 .tick { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; }
 .tick.on { fill: var(--accent); stroke: var(--accent); }
@@ -316,13 +318,24 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <section>
   <div class="kicker">6 · 论文的答案 ②：多头注意力</div>
   <h2>好几双眼睛，<em>各看各的</em></h2>
+  <h3>为什么一个头不够</h3>
+  <figure>
+{{HEADMIX}}
+    <figcaption>一个头的权重合计 100%，最后混成一个向量。“它”既要知道是谁（小狗），也要知道怎么了（累），一个头只能把两者按比例搅在一起，占比小的那条信息就被冲淡了。就像只用一个数来形容一个人，身高、体重混在一起，两样都看不清。</figcaption>
+  </figure>
+  <h3>怎么做到各看各的</h3>
+  <figure>
+{{HEADSPLIT}}
+    <figcaption>每个头有自己的一套 Q、K、V 变换（都是训练学出来的），所以同一个词在不同的头里会提出不同的问题、贴上不同的标签。论文里词向量长 512，分给 8 个头，每个头压成 64 维，这就是上一节 d<sub>k</sub> = 64 的来历。8 份结果拼回 512 维，再乘一个矩阵 W<sub>O</sub> 把它们混合起来。</figcaption>
+  </figure>
+  <h3>8 个头里的 3 个</h3>
   <figure>
     <div class="heads">
 {{HEAD1}}
 {{HEAD2}}
 {{HEAD3}}
     </div>
-    <figcaption>一组注意力只能盯一种关系。论文用 8 个“头”同时看，各自关心不同的关系，最后拼起来。</figcaption>
+    <figcaption>每个头只关心一种关系。每个头各自算比例，所以 1 号头里“它”看“小狗”是 80%，和上一节单个注意力的 62% 不一样。哪个头学会看什么，是训练出来的，不是人指定的。</figcaption>
   </figure>
 </section>
 

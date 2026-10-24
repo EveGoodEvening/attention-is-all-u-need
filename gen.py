@@ -508,6 +508,81 @@ def heads():
     return out
 
 
+# ---------- multi-head: why one head is not enough ----------
+def headmix():
+    s = ['<svg class="fig" viewBox="0 0 860 270" role="img" aria-label="左：只有 1 个头时，“它”的权重合计 100%：小狗 62%、累 10%、其他 28%，混成一个向量，“累”的信息被冲淡。右：多个头时，1 号头 80% 看小狗，2 号头 70% 看累，各自算完再拼起来，两条信息都清楚。">']
+    s.append('<defs><marker id="ar14" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>')
+
+    def stack(x, y, w, segs):
+        r, cx = [], x
+        for cls, frac, lab in segs:
+            sw = w * frac
+            r.append(f'<rect class="{cls}" x="{cx:.1f}" y="{y}" width="{sw:.1f}" height="30"/>')
+            if lab:
+                r.append(f'<text class="segt" x="{cx+sw/2:.1f}" y="{y+20}" text-anchor="middle">{lab}</text>')
+            cx += sw
+        return r
+
+    # left: one head
+    s.append('<text class="colh" x="20" y="30">1 个头：合计 100%，混成一个向量</text>')
+    s.append('<text class="small" x="20" y="62">“它”</text>')
+    s += stack(60, 42, 340, [("seg1", 0.62, "小狗 62%"), ("seg2", 0.10, ""), ("seg0", 0.28, "")])
+    s.append(f'<text class="small" x="{60+340*0.67:.0f}" y="92" text-anchor="middle">累 10%</text>')
+    s.append(f'<text class="small" x="{60+340*0.86:.0f}" y="92" text-anchor="middle">其他 28%</text>')
+    s.append('<line class="chain" x1="230" y1="102" x2="230" y2="136" marker-end="url(#ar14)"/>')
+    s.append('<rect class="wbox" x="110" y="142" width="240" height="44" rx="10"/>')
+    s.append('<text class="wtxt" x="230" y="170" text-anchor="middle" style="font-size:16px">1 个向量，小狗为主</text>')
+    s.append('<text class="small" x="230" y="218" text-anchor="middle">“它怎么了（累）”只占一成，被冲淡</text>')
+    # right: several heads
+    s.append('<text class="colh" x="450" y="30">多个头：每个头各自合计 100%</text>')
+    for k, (cls, frac, lab) in enumerate([("seg1", 0.80, "小狗 80%"), ("seg2", 0.70, "累 70%")]):
+        y = 42 + k * 44
+        s.append(f'<text class="small" x="450" y="{y+20}">{k+1} 号头</text>')
+        s += stack(510, y, 300, [(cls, frac, lab), ("seg0", 1 - frac, "")])
+    s.append('<text class="small" x="510" y="146">……一共 8 个头，同时算</text>')
+    s.append('<line class="chain" x1="660" y1="154" x2="660" y2="168" marker-end="url(#ar14)"/>')
+    for k, (cls, lab) in enumerate([("wbox hl-head1", "小狗"), ("wbox hl-head2", "累"), ("wbox", "……")]):
+        s.append(f'<rect class="{cls}" x="{560+k*70}" y="174" width="64" height="36" rx="8"/>')
+        s.append(f'<text class="wtxt" x="{592+k*70}" y="198" text-anchor="middle" style="font-size:15px">{lab}</text>')
+    s.append('<text class="small" x="660" y="236" text-anchor="middle">拼起来：两条信息都清清楚楚</text>')
+    s.append('</svg>')
+    return "\n".join(s)
+
+
+# ---------- multi-head: 512 = 8 x 64 ----------
+def headsplit():
+    rows = [("wbox hl-head1", "头 1：自己的一套 Q、K、V，64 维"), ("wbox hl-head2", "头 2：另一套 Q、K、V，64 维"), ("wbox hl-head3", "头 3")] + [("wbox", "")] * 4 + [("wbox", "头 8")]
+    segs = ["seg1", "seg2", "seg3"] + ["seg0"] * 5
+    y0, rh, gap = 50, 20, 4
+    top, bot = y0, y0 + 8 * (rh + gap) - gap
+    mid = (top + bot) / 2
+    s = [f'<svg class="fig" viewBox="0 0 860 {bot+40}" role="img" aria-label="“它”的 512 维向量交给 8 个头，每个头用自己的一套 Q、K、V 变换压成 64 维，各做一遍注意力；8 份 64 维拼回 512 维，再乘 W_O 混合，输出 512 维。">']
+    s.append('<defs><marker id="ar15" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>')
+    s.append('<text class="colh" x="58" y="34" text-anchor="middle">“它”的向量</text>')
+    s.append(f'<rect class="wbox hl" x="30" y="{top}" width="56" height="{bot-top}" rx="8"/>')
+    s.append(f'<text class="wtxt en on" x="58" y="{mid+6:.0f}" text-anchor="middle" style="font-size:15px">512</text>')
+    s.append('<text class="colh" x="290" y="34" text-anchor="middle">8 个头，各算各的注意力</text>')
+    for i, ((cls, lab), sg) in enumerate(zip(rows, segs)):
+        y = y0 + i * (rh + gap)
+        s.append(f'<path class="chain" d="M86 {mid:.0f} C120 {mid:.0f} 116 {y+rh/2} 150 {y+rh/2}" fill="none"/>')
+        s.append(f'<rect class="{cls}" x="150" y="{y}" width="280" height="{rh}" rx="5"/>')
+        if lab:
+            s.append(f'<text class="small" x="162" y="{y+15}" style="font-size:13px">{lab}</text>')
+        s.append(f'<line class="chain" x1="430" y1="{y+rh/2}" x2="560" y2="{y+rh/2}"/>')
+        s.append(f'<rect class="{sg}" x="560" y="{y}" width="56" height="{rh+gap if i < 7 else rh}"/>')
+    s.append('<text class="colh" x="588" y="34" text-anchor="middle">拼回 512</text>')
+    s.append(f'<line class="chain" x1="620" y1="{mid:.0f}" x2="664" y2="{mid:.0f}" marker-end="url(#ar15)"/>')
+    s.append(f'<rect class="card q" x="670" y="{mid-24:.0f}" width="84" height="48" rx="10"/>')
+    s.append(f'<text class="wtxt en" x="712" y="{mid+7:.0f}" text-anchor="middle" style="font-family:var(--mono);font-size:17px">× W_O</text>')
+    s.append(f'<line class="chain" x1="756" y1="{mid:.0f}" x2="784" y2="{mid:.0f}" marker-end="url(#ar15)"/>')
+    s.append('<text class="colh" x="818" y="34" text-anchor="middle">输出</text>')
+    s.append(f'<rect class="wbox hl" x="790" y="{top}" width="56" height="{bot-top}" rx="8"/>')
+    s.append(f'<text class="wtxt en on" x="818" y="{mid+6:.0f}" text-anchor="middle" style="font-size:15px">512</text>')
+    s.append(f'<text class="small" x="290" y="{bot+26}" text-anchor="middle">8 × 64 = 512，总计算量和 1 个 512 维的头差不多</text>')
+    s.append('</svg>')
+    return "\n".join(s)
+
+
 # ---------- position ----------
 def position():
     s = ['<svg class="fig" viewBox="0 0 800 380" role="img" aria-label="“狗咬人”和“人咬狗”倒进同一个袋子，看起来一模一样；给每个字贴上座位号后就能分清。座位号是在几条快慢不同的波上，各取一个读数。">']
@@ -705,7 +780,7 @@ tpl = open(sys.argv[2], encoding="utf-8").read()
 h1, h2, h3 = heads()
 rep = {
     "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{PARTS}}": parts(), "{{QUEUE}}": queue(), "{{FAR}}": far(), "{{GRAD}}": grad(), "{{GATES}}": gates(), "{{ADDON}}": addon(), "{{ADDON_STEP}}": addon_step(), "{{PATHS}}": paths(), "{{ATTN}}": attn(), "{{QKV}}": qkv(), "{{SCALE}}": scale(),
-    "{{HEAD1}}": h1, "{{HEAD2}}": h2, "{{HEAD3}}": h3, "{{POS}}": position(),
+    "{{HEADMIX}}": headmix(), "{{HEADSPLIT}}": headsplit(), "{{HEAD1}}": h1, "{{HEAD2}}": h2, "{{HEAD3}}": h3, "{{POS}}": position(),
     "{{ARCH}}": arch(), "{{SPEED}}": speed(), "{{MASK}}": mask(), "{{BLEU}}": bleu(), "{{LEGACY}}": legacy(),
 }
 for k, v in rep.items():
