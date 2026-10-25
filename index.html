@@ -181,18 +181,20 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   .hm { transition: fill-opacity .2s; }
 }
 
-/* version switch: 简易版 (simple.html) and 深入版 (index.html) are separate pages linked from this bar */
+/* version switch: 简易版 (simple.html), 深入版 (index.html) and 读·写·选 (read-write-pick.html) are separate pages linked from this bar */
 .ver { position: sticky; top: 0; z-index: 10; display: flex; justify-content: center; padding: 10px 16px; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
 .ver-seg { display: inline-flex; gap: 4px; padding: 4px; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; }
 .ver-seg a { font: 700 15px/1 var(--body); color: var(--muted); text-decoration: none; border-radius: 999px; padding: 9px 18px; }
 .ver-seg a small { font-weight: 500; font-size: 12px; margin-left: 6px; }
 .ver-seg a[aria-current="page"] { background: var(--accent); color: var(--on-accent); }
+@media (max-width: 520px) { .ver-seg a { padding: 9px 12px; } .ver-seg a small { display: none; } }
 </style>
 
 <nav class="ver" aria-label="版本">
   <div class="ver-seg">
     <a href="simple.html">简易版<small>10 分钟</small></a>
     <a href="index.html" aria-current="page">深入版<small>完整推理</small></a>
+    <a href="read-write-pick.html">读 · 写 · 选<small>流程速查</small></a>
   </div>
 </nav>
 

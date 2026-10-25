@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>读 · 写 · 选</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;900&display=swap">
+<style>
+/* 布局：单栏阅读流；顶部口诀 → 全景图 → 三段（读/写/选）按站点展开 → 包装 → 训练 vs 生成 → 自测。三种颜色只编码"读/写/选"三个阶段。 */
+:root {
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --ink: #18202c;
+  --muted: #586274;
+  --line: #d6dce5;
+  --read: #0b7f73;
+  --read-soft: #e2f3f0;
+  --write: #4b44c2;
+  --write-soft: #ebeafb;
+  --pick: #b46c00;
+  --pick-soft: #fbf0dd;
+  --code-bg: #eef1f5;
+  --font-display: "Noto Serif SC", "Songti SC", "STSong", serif;
+  --font-body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10141b; --surface: #171c25; --ink: #e5e9f0; --muted: #9ba4b4; --line: #2a3240;
+    --read: #3cc3b2; --read-soft: #13302d; --write: #9690ff; --write-soft: #23224a;
+    --pick: #f1ac45; --pick-soft: #382910; --code-bg: #1e2430; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10141b; --surface: #171c25; --ink: #e5e9f0; --muted: #9ba4b4; --line: #2a3240;
+  --read: #3cc3b2; --read-soft: #13302d; --write: #9690ff; --write-soft: #23224a;
+  --pick: #f1ac45; --pick-soft: #382910; --code-bg: #1e2430; color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.75;
+}
+.wrap {
+  max-width: 880px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 48px 72px;
+  display: grid;
+  gap: 56px;
+}
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.25; margin: 0; }
+h1 { font-size: clamp(2.6rem, 8vw, 4.2rem); font-weight: 900; letter-spacing: 0.04em; }
+h2 { font-size: 1.7rem; font-weight: 900; }
+h3 { font-size: 1.15rem; font-weight: 600; }
+p { margin: 0; }
+.prose { max-width: 65ch; display: grid; gap: 12px; }
+.muted { color: var(--muted); }
+code, .mono { font-family: var(--font-mono); font-size: 0.88em; }
+code { background: var(--code-bg); padding: 1px 6px; border-radius: 4px; }
+.eyebrow { font-size: 0.78rem; letter-spacing: 0.14em; color: var(--muted); font-weight: 500; }
+
+.r { color: var(--read); } .w { color: var(--write); } .p { color: var(--pick); }
+
+/* 开头 */
+header { display: grid; gap: 16px; }
+header h1 span { display: inline-block; }
+header h1 .dot { color: var(--line); padding-inline: 0.15em; }
+.example {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center;
+}
+.example .tok { border: 1px solid var(--line); background: var(--surface); padding: 2px 10px; border-radius: 6px; }
+.example .arrow { color: var(--muted); }
+.example .target { border-color: var(--pick); color: var(--pick); font-weight: 600; }
+
+/* 口诀 */
+.mnemonic { display: grid; gap: 0; border-top: 2px solid var(--ink); }
+.mn-row {
+  display: grid;
+  grid-template-columns: 4.2rem 1fr;
+  gap: 16px;
+  align-items: baseline;
+  padding-block: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.mn-key { font-family: var(--font-display); font-size: 2.2rem; font-weight: 900; line-height: 1; }
+.mn-flow { font-size: 1.1rem; font-weight: 500; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; min-width: 0; }
+.mn-flow .sep { color: var(--muted); }
+.mn-flow small { color: var(--muted); font-weight: 400; font-size: 0.85rem; }
+
+/* 全景图 */
+.diagram { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+.diagram svg { display: block; width: 100%; min-width: 640px; height: auto; }
+svg text { font-family: var(--font-body); fill: var(--ink); }
+svg .t-sm { font-size: 13px; fill: var(--muted); }
+svg .t-md { font-size: 15px; font-weight: 500; }
+svg .t-lg { font-size: 17px; font-weight: 700; }
+svg .t-mono { font-family: var(--font-mono); font-size: 14px; }
+svg .box { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+svg .box-r { fill: var(--read-soft); stroke: var(--read); stroke-width: 1.5; }
+svg .box-w { fill: var(--write-soft); stroke: var(--write); stroke-width: 1.5; }
+svg .box-p { fill: var(--pick-soft); stroke: var(--pick); stroke-width: 2; }
+svg .frame-r { fill: none; stroke: var(--read); stroke-width: 1.5; stroke-dasharray: 6 5; }
+svg .frame-w { fill: none; stroke: var(--write); stroke-width: 1.5; stroke-dasharray: 6 5; }
+svg .edge { stroke: var(--muted); stroke-width: 1.6; fill: none; }
+svg .edge-x { stroke: var(--read); stroke-width: 2.2; fill: none; }
+svg .head { fill: var(--muted); }
+svg .head-x { fill: var(--read); }
+svg .badge { fill: var(--ink); }
+svg .badge-t { fill: var(--bg); font-size: 12px; font-weight: 700; font-family: var(--font-mono); }
+svg .lbl-r { fill: var(--read); font-weight: 700; }
+svg .lbl-w { fill: var(--write); font-weight: 700; }
+svg .lbl-p { fill: var(--pick); font-weight: 700; }
+
+/* 阶段段落 */
+.phase { display: grid; gap: 20px; }
+.phase-head { display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; }
+.phase-head .big { font-family: var(--font-display); font-size: 3rem; font-weight: 900; line-height: 1; }
+.stations { display: grid; gap: 14px; }
+.station {
+  display: grid;
+  grid-template-columns: 2.6rem 1fr;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.station > div { min-width: 0; display: grid; gap: 8px; }
+.num {
+  font-family: var(--font-mono); font-weight: 600; font-size: 0.95rem;
+  width: 2.2rem; height: 2.2rem; border-radius: 50%;
+  display: grid; place-items: center;
+  border: 2px solid currentColor;
+}
+.station .tech { font-size: 0.85rem; color: var(--muted); }
+.kv { display: grid; grid-template-columns: 4.5em 1fr; gap: 4px 12px; font-size: 0.95rem; }
+.kv dt { color: var(--muted); font-size: 0.85rem; letter-spacing: 0.06em; padding-top: 2px; }
+.kv dd { margin: 0; min-width: 0; }
+.ref { font-size: 0.8rem; color: var(--muted); font-family: var(--font-mono); }
+
+/* 包装 & 表格 */
+.wrapper-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 8px; align-content: start; }
+.formula { font-family: var(--font-mono); background: var(--code-bg); border-radius: 6px; padding: 8px 12px; overflow-x: auto; white-space: nowrap; font-size: 0.9rem; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: 0.95rem; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 700; font-size: 0.85rem; letter-spacing: 0.06em; color: var(--muted); }
+tr:last-child td { border-bottom: 0; }
+
+/* 误解 */
+.myths { display: grid; gap: 10px; }
+.myth { display: grid; grid-template-columns: 1fr; gap: 2px; padding-block: 10px; border-bottom: 1px solid var(--line); }
+.myth .wrong { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--muted); }
+
+/* 自测 */
+.quiz { display: grid; gap: 10px; }
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; }
+summary { cursor: pointer; font-weight: 500; list-style-position: outside; margin-left: 1em; }
+summary:focus-visible { outline: 2px solid var(--write); outline-offset: 4px; border-radius: 4px; }
+details[open] summary { margin-bottom: 8px; }
+details .ans { color: var(--muted); }
+details .ans b { color: var(--ink); }
+
+footer { font-size: 0.85rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; }
+
+@media (max-width: 520px) {
+  .mn-row { grid-template-columns: 3rem 1fr; gap: 10px; }
+  .mn-key { font-size: 1.8rem; }
+  .station { grid-template-columns: 1fr; }
+  .kv { grid-template-columns: 1fr; gap: 0; }
+  .kv dd { margin-bottom: 6px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  details[open] .ans { animation: fade 0.25s ease-out; }
+  @keyframes fade { from { opacity: 0.4; } to { opacity: 1; } }
+}
+
+/* 版本切换条：简易版 (simple.html)、深入版 (index.html)、读·写·选 (read-write-pick.html) 是三个独立页面 */
+.ver { position: sticky; top: 0; z-index: 10; display: flex; justify-content: center; padding: 10px 16px; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.ver-seg { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; }
+.ver-seg a { font: 700 15px/1 var(--font-body); color: var(--muted); text-decoration: none; border-radius: 999px; padding: 9px 18px; }
+.ver-seg a small { font-weight: 500; font-size: 12px; margin-left: 6px; }
+.ver-seg a[aria-current="page"] { background: var(--ink); color: var(--bg); }
+@media (max-width: 520px) { .ver-seg a { padding: 9px 12px; } .ver-seg a small { display: none; } }
+</style>
+</head>
+<body>
+
+<nav class="ver" aria-label="版本">
+  <div class="ver-seg">
+    <a href="simple.html">简易版<small>10 分钟</small></a>
+    <a href="index.html">深入版<small>完整推理</small></a>
+    <a href="read-write-pick.html" aria-current="page">读 · 写 · 选<small>流程速查</small></a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">ATTENTION IS ALL YOU NEED · 2017 · 一次翻译的完整旅程</div>
+    <h1><span class="r">读</span><span class="dot">·</span><span class="w">写</span><span class="dot">·</span><span class="p">选</span></h1>
+    <p class="prose muted">把 Transformer 翻译一个词的全过程压缩成三个字。下面始终用同一个例子：英文原文已经读完，德文写到了一半，模型要决定下一个词。</p>
+    <div class="example" aria-label="例子">
+      <span class="tok">I love you</span>
+      <span class="arrow">→</span>
+      <span class="tok">&lt;开始&gt; Ich</span>
+      <span class="arrow">→</span>
+      <span class="tok target">liebe ?</span>
+    </div>
+  </header>
+
+  <section class="mnemonic" aria-label="口诀">
+    <div class="mn-row">
+      <div class="mn-key r">读</div>
+      <div class="mn-flow"><span>开会</span><span class="sep">→</span><span>思考</span><small>编码器：自注意力 → FFN，×6 层</small></div>
+    </div>
+    <div class="mn-row">
+      <div class="mn-key w">写</div>
+      <div class="mn-flow"><span>回顾自己</span><span class="sep">→</span><span>看原文</span><span class="sep">→</span><span>思考</span><small>解码器：掩码自注意力 → 交叉注意力 → FFN，×6 层</small></div>
+    </div>
+    <div class="mn-row">
+      <div class="mn-key p">选</div>
+      <div class="mn-flow"><span>全词表投票</span><small>向量 → 每个词的分数 → softmax → 选出 liebe</small></div>
+    </div>
+  </section>
+
+  <section class="phase">
+    <h2>全景图</h2>
+    <div class="diagram">
+      <svg viewBox="0 0 760 600" role="img" aria-label="Transformer 读写选流程图">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head" d="M0,0 L10,5 L0,10 z"/></marker>
+          <marker id="ahx" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head-x" d="M0,0 L10,5 L0,10 z"/></marker>
+        </defs>
+
+        <!-- 读 -->
+        <text x="40" y="18" class="t-lg lbl-r">读 · 编码器</text>
+        <rect x="40" y="32" width="290" height="44" rx="8" class="box"/>
+        <text x="185" y="60" text-anchor="middle" class="t-mono">I  love  you</text>
+        <line x1="185" y1="76" x2="185" y2="102" class="edge" marker-end="url(#ah)"/>
+        <rect x="40" y="104" width="290" height="52" rx="8" class="box-r"/>
+        <circle cx="62" cy="130" r="12" class="badge"/><text x="62" y="134" text-anchor="middle" class="badge-t">1</text>
+        <text x="196" y="128" text-anchor="middle" class="t-md">词向量 + 位置编码</text>
+        <text x="196" y="147" text-anchor="middle" class="t-sm">注意力不在乎顺序，要补上位置</text>
+        <line x1="185" y1="156" x2="185" y2="186" class="edge" marker-end="url(#ah)"/>
+        <rect x="28" y="188" width="314" height="200" rx="12" class="frame-r"/>
+        <text x="330" y="208" text-anchor="end" class="t-sm lbl-r">× 6 层</text>
+        <circle cx="62" cy="214" r="12" class="badge"/><text x="62" y="218" text-anchor="middle" class="badge-t">2</text>
+        <rect x="60" y="232" width="250" height="56" rx="8" class="box-r"/>
+        <text x="185" y="256" text-anchor="middle" class="t-md">开会：多头自注意力</text>
+        <text x="185" y="276" text-anchor="middle" class="t-sm">love 去看 I 和 you</text>
+        <line x1="185" y1="288" x2="185" y2="306" class="edge" marker-end="url(#ah)"/>
+        <rect x="60" y="308" width="250" height="56" rx="8" class="box-r"/>
+        <text x="185" y="332" text-anchor="middle" class="t-md">思考：FFN</text>
+        <text x="185" y="352" text-anchor="middle" class="t-sm">每个词独自加工</text>
+        <text x="185" y="420" text-anchor="middle" class="t-sm">整句英文只算一次</text>
+        <text x="185" y="440" text-anchor="middle" class="t-sm">之后每写一个德文词都复用</text>
+
+        <!-- 编码器 → 交叉注意力 -->
+        <path d="M342,300 C390,300 390,402 436,402" class="edge-x" marker-end="url(#ahx)"/>
+        <text x="392" y="334" text-anchor="middle" class="t-sm lbl-r">K、V</text>
+        <text x="392" y="352" text-anchor="middle" class="t-sm">英文的理解</text>
+
+        <!-- 写 -->
+        <text x="440" y="18" class="t-lg lbl-w">写 · 解码器</text>
+        <rect x="440" y="32" width="290" height="44" rx="8" class="box"/>
+        <text x="585" y="60" text-anchor="middle" class="t-mono">&lt;开始&gt;  Ich</text>
+        <line x1="585" y1="76" x2="585" y2="102" class="edge" marker-end="url(#ah)"/>
+        <rect x="440" y="104" width="290" height="52" rx="8" class="box-w"/>
+        <circle cx="462" cy="130" r="12" class="badge"/><text x="462" y="134" text-anchor="middle" class="badge-t">3</text>
+        <text x="596" y="128" text-anchor="middle" class="t-md">词向量 + 位置编码</text>
+        <text x="596" y="147" text-anchor="middle" class="t-sm">和第 1 站一样</text>
+        <line x1="585" y1="156" x2="585" y2="186" class="edge" marker-end="url(#ah)"/>
+        <rect x="428" y="188" width="314" height="290" rx="12" class="frame-w"/>
+        <text x="730" y="208" text-anchor="end" class="t-sm lbl-w">× 6 层</text>
+        <circle cx="462" cy="262" r="12" class="badge"/><text x="462" y="266" text-anchor="middle" class="badge-t">4</text>
+        <rect x="480" y="232" width="240" height="56" rx="8" class="box-w"/>
+        <text x="600" y="256" text-anchor="middle" class="t-md">回顾自己：掩码自注意力</text>
+        <text x="600" y="276" text-anchor="middle" class="t-sm">只看已写的德文，不看未来</text>
+        <line x1="600" y1="288" x2="600" y2="372" class="edge" marker-end="url(#ah)"/>
+        <circle cx="462" cy="402" r="12" class="badge"/><text x="462" y="406" text-anchor="middle" class="badge-t">5</text>
+        <rect x="480" y="374" width="240" height="56" rx="8" class="box-w"/>
+        <text x="600" y="398" text-anchor="middle" class="t-md">看原文：交叉注意力</text>
+        <text x="600" y="418" text-anchor="middle" class="t-sm">Q = 德文，K/V = 英文 → 看向 love</text>
+        <!-- FFN 在交叉注意力右侧下方，避免与连线交叉 -->
+        <line x1="600" y1="430" x2="600" y2="440" class="edge"/>
+        <circle cx="462" cy="460" r="12" class="badge"/><text x="462" y="464" text-anchor="middle" class="badge-t">6</text>
+        <rect x="480" y="440" width="240" height="30" rx="8" class="box-w"/>
+        <text x="600" y="461" text-anchor="middle" class="t-md">思考：FFN</text>
+        <line x1="585" y1="478" x2="585" y2="514" class="edge" marker-end="url(#ah)"/>
+
+        <!-- 选 -->
+        <rect x="440" y="516" width="290" height="68" rx="10" class="box-p"/>
+        <circle cx="462" cy="550" r="12" class="badge"/><text x="462" y="554" text-anchor="middle" class="badge-t">7</text>
+        <text x="596" y="542" text-anchor="middle" class="t-lg lbl-p">选：全词表投票</text>
+        <text x="596" y="566" text-anchor="middle" class="t-mono">liebe 0.69 · dich 0.19 · …</text>
+
+        <text x="40" y="520" class="t-sm">每个子层外面都包着：</text>
+        <text x="40" y="544" class="t-mono">LayerNorm( X + 子层(X) )</text>
+        <text x="40" y="568" class="t-sm">残差 = 梯度的高速公路；LayerNorm = 数值稳定</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- 读 -->
+  <section class="phase" aria-labelledby="h-read">
+    <div class="phase-head"><span class="big r">读</span><h2 id="h-read">编码器：把英文读懂</h2></div>
+    <div class="stations">
+      <article class="station">
+        <span class="num r">1</span>
+        <div>
+          <h3>词向量 + 位置编码</h3>
+          <p class="tech">Embedding + Positional Encoding</p>
+          <dl class="kv">
+            <dt>做什么</dt><dd>I、love、you 各自变成 512 个数的向量，再<b>加上</b>表示位置的向量。</dd>
+            <dt>为什么</dt><dd>注意力本质是加权求和，加法不在乎顺序。不补位置，“猫追狗”和“狗追猫”在模型眼里一模一样。</dd>
+            <dt>比喻</dt><dd>一只有很多根指针的钟：秒针区分相邻的词，时针区分远处的词，指针组合起来让每个位置独一无二。</dd>
+          </dl>
+          <p class="ref">对应 2.8 · sin/cos 编码，值始终在 −1 到 1 之间</p>
+        </div>
+      </article>
+      <article class="station">
+        <span class="num r">2</span>
+        <div>
+          <h3>开会 → 思考（叠 6 层）</h3>
+          <p class="tech">Multi-Head Self-Attention → Feed-Forward Network</p>
+          <dl class="kv">
+            <dt>开会</dt><dd>love 拿自己的 Q 去和每个词的 K 打分，按分数混合各词的 V，弄清“谁爱谁”。8 个头各问各的问题，避免注意力被摊平。</dd>
+            <dt>思考</dt><dd>每个词独自用 2048 条“如果……而且……就……”规则加工收集来的信息，产生原料里没有的新特征。</dd>
+            <dt>为什么</dt><dd>注意力负责<b>搬运</b>，只能混合已有的东西；FFN 带 ReLU 才能<b>推理</b>。两者缺一不可。</dd>
+          </dl>
+          <p class="ref">对应 2.2–2.5、2.9 · 整句英文只算一次，结果供解码器反复使用</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- 写 -->
+  <section class="phase" aria-labelledby="h-write">
+    <div class="phase-head"><span class="big w">写</span><h2 id="h-write">解码器：一边回顾，一边看原文</h2></div>
+    <div class="stations">
+      <article class="station">
+        <span class="num w">3</span>
+        <div>
+          <h3>词向量 + 位置编码</h3>
+          <p class="tech">和第 1 站相同，处理的是已经写出的 &lt;开始&gt; Ich</p>
+        </div>
+      </article>
+      <article class="station">
+        <span class="num w">4</span>
+        <div>
+          <h3>回顾自己：掩码自注意力</h3>
+          <p class="tech">Masked Self-Attention · Q、K、V 都来自德文</p>
+          <dl class="kv">
+            <dt>做什么</dt><dd>Ich 回看已经写出的德文，只能看自己和之前的词。</dd>
+            <dt>为什么</dt><dd>训练时整句答案一次喂进去。不遮住未来，模型会学会“抄答案”，到了真正生成时没有答案可抄就崩了。</dd>
+            <dt>怎么做</dt><dd>softmax 之前把未来位置的分数设为 −∞。e<sup>−∞</sup> = 0，剩下的权重仍然自动加起来等于 1。</dd>
+          </dl>
+          <p class="ref">对应 2.7</p>
+        </div>
+      </article>
+      <article class="station">
+        <span class="num w">5</span>
+        <div>
+          <h3>看原文：交叉注意力</h3>
+          <p class="tech">Encoder–Decoder Attention · Q 来自德文，K、V 来自编码器</p>
+          <dl class="kv">
+            <dt>做什么</dt><dd>Ich 问：“我后面该接什么？原文里对应哪里？”然后重点看向 <b>love</b>。</dd>
+            <dt>为什么</dt><dd>I 已经翻成了 Ich，下一个该译的就是 love。谁提问谁就是 Q，去哪查资料哪里就是 K、V。</dd>
+          </dl>
+          <p class="ref">对应 2.6 · 这一步就是 2014 年 Bahdanau 注意力的“翻纸条”</p>
+        </div>
+      </article>
+      <article class="station">
+        <span class="num w">6</span>
+        <div>
+          <h3>思考：FFN</h3>
+          <p class="tech">和编码器里的 FFN 作用相同。第 4 到 6 站一起叠 6 层。</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- 选 -->
+  <section class="phase" aria-labelledby="h-pick">
+    <div class="phase-head"><span class="big p">选</span><h2 id="h-pick">输出：全词表投票</h2></div>
+    <div class="stations">
+      <article class="station">
+        <span class="num p">7</span>
+        <div>
+          <h3>向量 → 分数 → 概率 → 选词</h3>
+          <p class="tech">Linear + Softmax · 词表约 37000 个词</p>
+          <dl class="kv">
+            <dt>做什么</dt><dd>Ich 位置的最终向量和<b>词表里每个德文词</b>各做一次点积得到分数，softmax 变成概率，选出 liebe（实际用 beam search 保留 4 条候选）。</dd>
+            <dt>不是</dt><dd>不是去英文原文里复制。原文是英文，而且翻译不是一词对一词。交叉注意力只搬来 love 的<b>含义</b>，选哪个词由这一步决定。</dd>
+          </dl>
+          <div class="formula">liebe 0.693 · dich 0.185 · Ich 0.043 · habe 0.034 · Hund 0.021 · love 0.015</div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="phase" aria-labelledby="h-wrap">
+    <h2 id="h-wrap">每个子层外面的包装</h2>
+    <div class="wrapper-grid">
+      <div class="panel">
+        <h3>残差连接</h3>
+        <div class="formula">X + 子层(X)</div>
+        <p>给梯度一条直通的高速公路。没有它，学习信号每过一层打一次折，10 层后只剩约 1/1000；有了它，总有一条乘以 1 的路。</p>
+        <p class="ref">也是所有子层都必须输出 512 维的原因：形状相同才能相加</p>
+      </div>
+      <div class="panel">
+        <h3>LayerNorm</h3>
+        <div class="formula">LayerNorm( X + 子层(X) )</div>
+        <p>把每个词的 512 个数拉回平均 0、波动 1 的范围，防止越加越大导致饱和与梯度不稳。</p>
+        <p class="ref">原论文用 Post-LN；后来的 GPT 类模型改成 Pre-LN：X + 子层(LN(X))</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="phase" aria-labelledby="h-train">
+    <h2 id="h-train">训练时和生成时有什么不同</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>训练</th><th>生成</th></tr></thead>
+        <tbody>
+          <tr><td><b>德文输入</b></td><td>标准答案整句一次喂入</td><td>只有已写出的部分，写一个词喂回去一次</td></tr>
+          <tr><td><b>是否并行</b></td><td>所有位置同时预测，靠掩码防偷看</td><td>一个词一个词串行</td></tr>
+          <tr><td><b>为什么</b></td><td>每个词需要的输入一开始就全部已知</td><td>后面的词还没产生，前提不成立</td></tr>
+          <tr><td><b>额外技巧</b></td><td>Dropout 0.1、标签平滑 0.1</td><td>全部关闭；用 beam search</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="phase" aria-labelledby="h-myth">
+    <h2 id="h-myth">学习中纠正过的误解</h2>
+    <div class="myths">
+      <div class="myth"><span class="wrong">多头 = 多层</span><span>多头是同一层里并排的几组注意力；多层是上下叠放。</span></div>
+      <div class="myth"><span class="wrong">多头能解决“加权平均造不出新东西”</span><span>多头解决的是“分心”；创造新特征靠 FFN。</span></div>
+      <div class="myth"><span class="wrong">交叉注意力和掩码自注意力是同一步</span><span>先回顾自己（只看德文），再看原文（Q 德文，K/V 英文）。</span></div>
+      <div class="myth"><span class="wrong">第 7 站从英文里复制词</span><span>在整个德文词表里打分投票。</span></div>
+    </div>
+  </section>
+
+  <section class="phase" aria-labelledby="h-quiz">
+    <h2 id="h-quiz">自测：先想，再点开</h2>
+    <div class="quiz">
+      <details><summary>为什么必须加位置编码？</summary><p class="ans">因为注意力是<b>加权求和</b>，不在乎词的顺序，必须把顺序信息补回来。</p></details>
+      <details><summary>编码器每层里，love 先后经过哪两个子层？</summary><p class="ans"><b>多头自注意力</b>（开会，收集 I 和 you 的信息）→ <b>FFN</b>（独自加工）。</p></details>
+      <details><summary>解码器里 Ich 先做哪种注意力？能看什么、不能看什么？</summary><p class="ans"><b>掩码自注意力</b>：能看 &lt;开始&gt; 和自己，不能看还没写的词。</p></details>
+      <details><summary>交叉注意力里 Q、K、V 各来自哪？Ich 会看向哪个词？</summary><p class="ans">Q 来自<b>德文</b>，K、V 来自<b>编码器输出的英文</b>；看向 <b>love</b>，因为 I 已经译成 Ich。</p></details>
+      <details><summary>第 7 站，最终向量要和什么打分？</summary><p class="ans">和<b>词表里的每个词</b>打分，softmax 后选出 liebe。</p></details>
+      <details><summary>子层外面的 +X 叫什么？为什么必不可少？</summary><p class="ans"><b>残差连接</b>，给梯度一条直通高速公路，网络再深也学得动。</p></details>
+      <details><summary>为什么训练能并行，生成却只能一个词一个词来？</summary><p class="ans">每个词的计算只依赖<b>本层输入 X</b>。训练时 X 全部已知；生成时后面的词还没产生。</p></details>
+    </div>
+  </section>
+
+  <footer>Vaswani et al., “Attention Is All You Need”, NeurIPS 2017 · 例句中的概率来自课上的玩具实验，仅作示意</footer>
+</div>
+</body>
+</html>
