@@ -184,11 +184,11 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     <h1><span class="r">读</span><span class="dot">·</span><span class="w">写</span><span class="dot">·</span><span class="p">选</span></h1>
     <p class="prose muted">把 Transformer 翻译一个词的全过程压缩成三个字。下面始终用同一个例子：英文原文已经读完，德文写到了一半，模型要决定下一个词。</p>
     <div class="example" aria-label="例子">
-      <span class="tok">I love you</span>
+      <span class="tok">The cat is tired</span>
       <span class="arrow">→</span>
-      <span class="tok">&lt;开始&gt; Ich</span>
+      <span class="tok">&lt;开始&gt; Die Katze ist</span>
       <span class="arrow">→</span>
-      <span class="tok target">liebe ?</span>
+      <span class="tok target">müde ?</span>
     </div>
   </header>
 
@@ -203,7 +203,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     </div>
     <div class="mn-row">
       <div class="mn-key p">选</div>
-      <div class="mn-flow"><span>全词表投票</span><small>向量 → 每个词的分数 → softmax → 选出 liebe</small></div>
+      <div class="mn-flow"><span>全词表投票</span><small>向量 → 每个词的分数 → softmax → 选出 müde</small></div>
     </div>
   </section>
 
@@ -219,7 +219,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
         <!-- 读 -->
         <text x="40" y="18" class="t-lg lbl-r">读 · 编码器</text>
         <rect x="40" y="32" width="290" height="44" rx="8" class="box"/>
-        <text x="185" y="60" text-anchor="middle" class="t-mono">I  love  you</text>
+        <text x="185" y="60" text-anchor="middle" class="t-mono">The  cat  is  tired</text>
         <line x1="185" y1="76" x2="185" y2="102" class="edge" marker-end="url(#ah)"/>
         <rect x="40" y="104" width="290" height="52" rx="8" class="box-r"/>
         <circle cx="62" cy="130" r="12" class="badge"/><text x="62" y="134" text-anchor="middle" class="badge-t">1</text>
@@ -231,7 +231,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
         <circle cx="62" cy="214" r="12" class="badge"/><text x="62" y="218" text-anchor="middle" class="badge-t">2</text>
         <rect x="60" y="232" width="250" height="56" rx="8" class="box-r"/>
         <text x="185" y="256" text-anchor="middle" class="t-md">开会：多头自注意力</text>
-        <text x="185" y="276" text-anchor="middle" class="t-sm">love 去看 I 和 you</text>
+        <text x="185" y="276" text-anchor="middle" class="t-sm">tired 去看 cat</text>
         <line x1="185" y1="288" x2="185" y2="306" class="edge" marker-end="url(#ah)"/>
         <rect x="60" y="308" width="250" height="56" rx="8" class="box-r"/>
         <text x="185" y="332" text-anchor="middle" class="t-md">思考：FFN</text>
@@ -247,7 +247,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
         <!-- 写 -->
         <text x="440" y="18" class="t-lg lbl-w">写 · 解码器</text>
         <rect x="440" y="32" width="290" height="44" rx="8" class="box"/>
-        <text x="585" y="60" text-anchor="middle" class="t-mono">&lt;开始&gt;  Ich</text>
+        <text x="585" y="60" text-anchor="middle" class="t-mono">&lt;开始&gt;  Die  Katze  ist</text>
         <line x1="585" y1="76" x2="585" y2="102" class="edge" marker-end="url(#ah)"/>
         <rect x="440" y="104" width="290" height="52" rx="8" class="box-w"/>
         <circle cx="462" cy="130" r="12" class="badge"/><text x="462" y="134" text-anchor="middle" class="badge-t">3</text>
@@ -264,7 +264,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
         <circle cx="462" cy="402" r="12" class="badge"/><text x="462" y="406" text-anchor="middle" class="badge-t">5</text>
         <rect x="480" y="374" width="240" height="56" rx="8" class="box-w"/>
         <text x="600" y="398" text-anchor="middle" class="t-md">看原文：交叉注意力</text>
-        <text x="600" y="418" text-anchor="middle" class="t-sm">Q = 德文，K/V = 英文 → 看向 love</text>
+        <text x="600" y="418" text-anchor="middle" class="t-sm">Q = 德文，K/V = 英文 → 看向 tired</text>
         <!-- FFN 在交叉注意力右侧下方，避免与连线交叉 -->
         <line x1="600" y1="430" x2="600" y2="440" class="edge"/>
         <circle cx="462" cy="460" r="12" class="badge"/><text x="462" y="464" text-anchor="middle" class="badge-t">6</text>
@@ -276,7 +276,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
         <rect x="440" y="516" width="290" height="68" rx="10" class="box-p"/>
         <circle cx="462" cy="550" r="12" class="badge"/><text x="462" y="554" text-anchor="middle" class="badge-t">7</text>
         <text x="596" y="542" text-anchor="middle" class="t-lg lbl-p">选：全词表投票</text>
-        <text x="596" y="566" text-anchor="middle" class="t-mono">liebe 0.69 · dich 0.19 · …</text>
+        <text x="596" y="566" text-anchor="middle" class="t-mono">müde 0.70 · schläfrig 0.17 · …</text>
 
         <text x="40" y="520" class="t-sm">每个子层外面都包着：</text>
         <text x="40" y="544" class="t-mono">LayerNorm( X + 子层(X) )</text>
@@ -295,7 +295,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
           <h3>词向量 + 位置编码</h3>
           <p class="tech">Embedding + Positional Encoding</p>
           <dl class="kv">
-            <dt>做什么</dt><dd>I、love、you 各自变成 512 个数的向量，再<b>加上</b>表示位置的向量。</dd>
+            <dt>做什么</dt><dd>The、cat、is、tired 各自变成 512 个数的向量，再<b>加上</b>表示位置的向量。</dd>
             <dt>为什么</dt><dd>注意力本质是加权求和，加法不在乎顺序。不补位置，“猫追狗”和“狗追猫”在模型眼里一模一样。</dd>
             <dt>比喻</dt><dd>一只有很多根指针的钟：秒针区分相邻的词，时针区分远处的词，指针组合起来让每个位置独一无二。</dd>
           </dl>
@@ -308,7 +308,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
           <h3>开会 → 思考（叠 6 层）</h3>
           <p class="tech">Multi-Head Self-Attention → Feed-Forward Network</p>
           <dl class="kv">
-            <dt>开会</dt><dd>love 拿自己的 Q 去和每个词的 K 打分，按分数混合各词的 V，弄清“谁爱谁”。8 个头各问各的问题，避免注意力被摊平。</dd>
+            <dt>开会</dt><dd>tired 拿自己的 Q 去和每个词的 K 打分，按分数混合各词的 V，弄清“谁累了”：重点看向 cat。8 个头各问各的问题，避免注意力被摊平。</dd>
             <dt>思考</dt><dd>每个词独自用 2048 条“如果……而且……就……”规则加工收集来的信息，产生原料里没有的新特征。</dd>
             <dt>为什么</dt><dd>注意力负责<b>搬运</b>：输出是各词 V 的加权平均，只能按比例混合已有的东西，头再多也一样。FFN 带 ReLU，才能把收集来的信息组合成<b>新特征</b>。两者缺一不可。</dd>
             <dt>叠 6 层</dt><dd>8 个头是同一层里<b>并排</b>的几组注意力，同时看同一份输入；6 层是<b>上下叠放</b>，每层在上一层的结果上再开会、再思考。为什么两样都要，见深入版第 6 节 ④。</dd>
@@ -327,7 +327,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
         <span class="num w">3</span>
         <div>
           <h3>词向量 + 位置编码</h3>
-          <p class="tech">和第 1 站相同，处理的是已经写出的 &lt;开始&gt; Ich</p>
+          <p class="tech">和第 1 站相同，处理的是已经写出的 &lt;开始&gt; Die Katze ist</p>
         </div>
       </article>
       <article class="station">
@@ -336,7 +336,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
           <h3>回顾自己：掩码自注意力</h3>
           <p class="tech">Masked Self-Attention · Q、K、V 都来自德文</p>
           <dl class="kv">
-            <dt>做什么</dt><dd>Ich 回看已经写出的德文，只能看自己和之前的词。</dd>
+            <dt>做什么</dt><dd>ist 回看已经写出的德文 &lt;开始&gt; Die Katze ist，只能看自己和之前的词。</dd>
             <dt>为什么</dt><dd>训练时整句答案一次喂进去。不遮住未来，模型会学会“抄答案”，到了真正生成时没有答案可抄就崩了。</dd>
             <dt>怎么做</dt><dd>softmax 之前把未来位置的分数设为 −∞。e<sup>−∞</sup> = 0，剩下的权重仍然自动加起来等于 1。</dd>
           </dl>
@@ -348,8 +348,8 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
           <h3>看原文：交叉注意力</h3>
           <p class="tech">Encoder–Decoder Attention · Q 来自德文，K、V 来自编码器</p>
           <dl class="kv">
-            <dt>做什么</dt><dd>Ich 问：“我后面该接什么？原文里对应哪里？”然后重点看向 <b>love</b>。</dd>
-            <dt>为什么</dt><dd>I 已经翻成了 Ich，下一个该译的就是 love。谁提问谁就是 Q，去哪查资料哪里就是 K、V。</dd>
+            <dt>做什么</dt><dd>ist 问：“我后面该接什么？原文里对应哪里？”然后重点看向 <b>tired</b>。</dd>
+            <dt>为什么</dt><dd>The cat is 已经翻成了 Die Katze ist，下一个该译的就是 tired。谁提问谁就是 Q，去哪查资料哪里就是 K、V。</dd>
           </dl>
           <p class="ref">这一步就是 2014 年 Bahdanau 注意力的“翻纸条”</p>
         </div>
@@ -374,10 +374,10 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
           <h3>向量 → 分数 → 概率 → 选词</h3>
           <p class="tech">Linear + Softmax · 词表约 37000 个词</p>
           <dl class="kv">
-            <dt>做什么</dt><dd>Ich 位置的最终向量和<b>词表里每个德文词</b>各做一次点积得到分数，softmax 变成概率，选出 liebe（实际用 beam search 保留 4 条候选）。</dd>
-            <dt>不是</dt><dd>不是去英文原文里复制。原文是英文，而且翻译不是一词对一词。交叉注意力只搬来 love 的<b>含义</b>，选哪个词由这一步决定。</dd>
+            <dt>做什么</dt><dd>ist 位置的最终向量和<b>词表里每个德文词</b>各做一次点积得到分数，softmax 变成概率，选出 müde（实际用 beam search 保留 4 条候选）。</dd>
+            <dt>不是</dt><dd>不是去英文原文里复制。原文是英文，而且翻译不是一词对一词。交叉注意力只搬来 tired 的<b>含义</b>，选哪个词由这一步决定。</dd>
           </dl>
-          <div class="formula">liebe 0.693 · dich 0.185 · Ich 0.043 · habe 0.034 · Hund 0.021 · love 0.015</div>
+          <div class="formula">müde 0.702 · schläfrig 0.171 · erschöpft 0.052 · krank 0.031 · Hund 0.019 · tired 0.012</div>
         </div>
       </article>
     </div>
@@ -421,10 +421,10 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     <h2 id="h-quiz">自测：先想，再点开</h2>
     <div class="quiz">
       <details><summary>为什么必须加位置编码？</summary><p class="ans">因为注意力是<b>加权求和</b>，不在乎词的顺序，必须把顺序信息补回来。</p></details>
-      <details><summary>编码器每层里，love 先后经过哪两个子层？</summary><p class="ans"><b>多头自注意力</b>（开会，收集 I 和 you 的信息）→ <b>FFN</b>（独自加工）。</p></details>
-      <details><summary>解码器里 Ich 先做哪种注意力？能看什么、不能看什么？</summary><p class="ans"><b>掩码自注意力</b>：能看 &lt;开始&gt; 和自己，不能看还没写的词。</p></details>
-      <details><summary>交叉注意力里 Q、K、V 各来自哪？Ich 会看向哪个词？</summary><p class="ans">Q 来自<b>德文</b>，K、V 来自<b>编码器输出的英文</b>；看向 <b>love</b>，因为 I 已经译成 Ich。</p></details>
-      <details><summary>第 7 站，最终向量要和什么打分？</summary><p class="ans">和<b>词表里的每个词</b>打分，softmax 后选出 liebe。</p></details>
+      <details><summary>编码器每层里，tired 先后经过哪两个子层？</summary><p class="ans"><b>多头自注意力</b>（开会，收集 cat 等词的信息）→ <b>FFN</b>（独自加工）。</p></details>
+      <details><summary>解码器里 ist 先做哪种注意力？能看什么、不能看什么？</summary><p class="ans"><b>掩码自注意力</b>：能看 &lt;开始&gt;、Die、Katze 和自己，不能看还没写的词。</p></details>
+      <details><summary>交叉注意力里 Q、K、V 各来自哪？ist 会看向哪个词？</summary><p class="ans">Q 来自<b>德文</b>，K、V 来自<b>编码器输出的英文</b>；看向 <b>tired</b>，因为 The cat is 已经译成 Die Katze ist。</p></details>
+      <details><summary>第 7 站，最终向量要和什么打分？</summary><p class="ans">和<b>词表里的每个词</b>打分，softmax 后选出 müde。</p></details>
       <details><summary>子层外面的 +X 叫什么？为什么必不可少？</summary><p class="ans"><b>残差连接</b>，给梯度一条直通高速公路，网络再深也学得动。</p></details>
       <details><summary>为什么训练能并行，生成却只能一个词一个词来？</summary><p class="ans">每个词的计算只依赖<b>本层输入 X</b>。训练时 X 全部已知；生成时后面的词还没产生。</p></details>
     </div>
