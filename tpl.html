@@ -416,22 +416,35 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   </figure>
   <div class="stats">
     <div class="stat"><div class="v">41.8</div><div class="l">英译法也是当时第一</div></div>
-    <div class="stat"><div class="v">3.5 天</div><div class="l">大模型训练时间（8 块显卡）</div></div>
+    <div class="stat"><div class="v">3.5 天</div><div class="l">大号模型训练时间（8 块显卡）</div></div>
   </div>
 </section>
 
 <section>
   <div class="kicker">8 · 后来</div>
-  <h2>一整个家族<em>从这里长出来</em></h2>
+  <h2>能做大，<em>才长出一整个家族</em></h2>
+  <h3><span class="n">①</span> 为什么是它：训练能同时算，模型就能做大</h3>
+  <p class="say">第 5 节问的是能不能“又快、又直连”。直连让翻译更准，第 7 节已经看到了；快带来的回报更大。RNN 训练时，同一句话里的词要排队一个个算，句子越长越慢，模型很难做大。Transformer 训练时整句同时算，显卡几千个计算单元一起干活：同样的显卡、同样的时间，能读多得多的文字，模型也能做得大得多。而且这套“互相看”的积木不挑任务，翻译、写文章、写代码，只要是一串词都能用。</p>
+  <p class="say">模型有多大，用参数（parameter）来量：参数就是模型里靠训练学出来的那些数，比如 Q、K、V 变换、W<sub>O</sub> 和 FFN 里的数字。</p>
+  <div class="stats">
+    <div class="stat"><div class="v">2.13 亿</div><div class="l">2017 · 本论文大号模型的参数</div></div>
+    <div class="stat"><div class="v">1750 亿</div><div class="l">2020 · GPT-3 的参数，约 800 倍</div></div>
+  </div>
+  <h3><span class="n">②</span> 拆成两半：BERT 用编码器，GPT 用解码器</h3>
+  <figure>
+{{SPLIT}}
+    <figcaption>两种练习都不用人出题：把普通文字遮掉一个词，答案就是原文。翻译要人工译好的成对句子（英译德约 450 万对）；这两种练习可以直接拿网上的文章、书当教材，数据一下子多了几个数量级。GPT 去掉了解码器里“回头看原文”那一层，因为它没有原文可看。</figcaption>
+  </figure>
+  <h3><span class="n">③</span> 从 GPT 到今天</h3>
   <figure>
 {{LEGACY}}
-    <figcaption>GPT 里的 “T”，就是 Transformer。</figcaption>
+    <figcaption>GPT-3 和最早的 GPT 结构基本一样，主要是更大、读的文字更多。ChatGPT 在 GPT 的基础上再练习按对话回答：人给它的回答打分，它照着分数改。GPT 里的 “T”，就是 Transformer。</figcaption>
   </figure>
 </section>
 
 
 <footer>
-  <div>一句话记住它：<b>训练时不排队，大家同时互相看，看谁和自己最有关。</b></div>
+  <div>一句话记住它：<b>每个词同时看所有词，训练时就不用排队；不排队，模型才做得大，后来的 GPT、ChatGPT、Claude 都从这里来。</b></div>
   <div>原文：Vaswani 等，<a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a>，NeurIPS 2017。图中的注意力比例是为了说明而画的示意。</div>
 </footer>
 

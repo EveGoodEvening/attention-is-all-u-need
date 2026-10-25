@@ -756,22 +756,65 @@ def bleu():
     return "\n".join(s)
 
 
+def split():
+    # BERT keeps the encoder (fill in a blank, sees both sides); GPT keeps the decoder (guess the next word, sees only the left)
+    s = ['<svg class="fig" viewBox="0 0 860 444" role="img" aria-label="Transformer 拆成两半。BERT 只留编码器，练习填空：遮掉“马路”，用前后的词一起猜。GPT 只留解码器，练习猜下一个词：只看前面的“小狗没有过马路因为它太”，猜出“累”。">']
+    s.append('<defs><marker id="ar15" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>')
+    s.append('<text class="colh" x="430" y="26" text-anchor="middle">Transformer（本论文）</text>')
+    s.append('<rect class="tower" x="250" y="40" width="360" height="64" rx="14"/>')
+    s.append('<rect class="sub sa" x="264" y="52" width="158" height="40" rx="9"/>')
+    s.append('<text class="subt" x="343" y="78" text-anchor="middle">编码器</text>')
+    s.append('<rect class="sub sa" x="438" y="52" width="158" height="40" rx="9"/>')
+    s.append('<text class="subt" x="517" y="78" text-anchor="middle">解码器</text>')
+    s.append('<line class="chain" x1="343" y1="104" x2="230" y2="146" marker-end="url(#ar15)"/>')
+    s.append('<line class="chain" x1="517" y1="104" x2="630" y2="146" marker-end="url(#ar15)"/>')
+    cards = [
+        (20, "BERT：只留编码器", "练习：遮掉一个词，用前后文猜", 3, range(9), "前后都能看，擅长读懂一句话"),
+        (440, "GPT：只留解码器", "练习：猜下一个词", 7, range(7), "只看前面（遮挡），猜完接着猜，能一直写下去"),
+    ]
+    cy = 150
+    for cx, title, sub, hole, seen, note in cards:
+        s.append(f'<rect class="card" x="{cx}" y="{cy}" width="400" height="280" rx="14"/>')
+        s.append(f'<text class="colh" x="{cx+20}" y="{cy+32}">{title}</text>')
+        s.append(f'<text class="small" x="{cx+20}" y="{cy+56}">{sub}</text>')
+        xs = [cx + 32 + i * 42 for i in range(9)]
+        wy = cy + 136
+        s.append(arcs(hole, {j: 0.1 for j in seen if j != hole}, wy - 4, "arc-a", xs=xs, scale=20, hmul=0.08))
+        for i in seen:
+            if i == hole:
+                continue
+            s.append(f'<rect class="wbox" x="{xs[i]-19}" y="{wy}" width="38" height="36" rx="8"/>')
+            s.append(f'<text class="wtxt" x="{xs[i]}" y="{wy+23}" text-anchor="middle" style="font-size:14px">{W9[i]}</text>')
+        hx = xs[hole]
+        s.append(f'<rect class="slot" x="{hx-19}" y="{wy}" width="38" height="36" rx="8"/>')
+        s.append(f'<text class="wtxt" x="{hx}" y="{wy+24}" text-anchor="middle" style="font-size:16px">?</text>')
+        s.append(f'<line class="chain" x1="{hx}" y1="{wy+40}" x2="{hx}" y2="{wy+68}" marker-end="url(#ar15)"/>')
+        s.append(f'<rect class="wbox hl" x="{hx-26}" y="{wy+74}" width="52" height="34" rx="8"/>')
+        s.append(f'<text class="wtxt on" x="{hx}" y="{wy+97}" text-anchor="middle" style="font-size:15px">{W9[hole]}</text>')
+        s.append(f'<text class="small" x="{hx-34}" y="{wy+96}" text-anchor="end">猜出</text>')
+        s.append(f'<text class="small" x="{cx+20}" y="{cy+262}">{note}</text>')
+    s.append('</svg>')
+    return "\n".join(s)
+
+
 def legacy():
-    items = [(2017, "Transformer", "本论文"), (2018, "GPT", "会写文字"), (2018, "BERT", "会读懂文字"),
-             (2020, "GPT-3", "大很多"), (2022, "ChatGPT", "会聊天"), (2023, "Claude 等", "你正在用的")]
-    s = ['<svg class="fig" viewBox="0 0 860 240" role="img" aria-label="从 2017 年的 Transformer 出发，长出了 GPT、BERT、ChatGPT、Claude 等一大家子。">']
+    items = [(2017, "Transformer", "本论文", "翻译"), (2018, "GPT", "只用解码器", "猜下一个词"),
+             (2018, "BERT", "只用编码器", "做填空"), (2020, "GPT-3", "结构没大改", "只是大得多"),
+             (2022, "ChatGPT", "在 GPT 上", "再教它对话"), (2023, "Claude", "也是 Transformer", "你正在用的")]
+    s = ['<svg class="fig" viewBox="0 0 860 256" role="img" aria-label="时间线：2017 Transformer（本论文，翻译）；2018 GPT（只用解码器，猜下一个词）；2018 BERT（只用编码器，做填空）；2020 GPT-3（结构没大改，只是大得多）；2022 ChatGPT（在 GPT 上再教它对话）；2023 Claude（也是 Transformer）。">']
     s.append('<line class="spine" x1="60" y1="120" x2="820" y2="120"/>')
-    for i, (yr, name, sub) in enumerate(items):
+    for i, (yr, name, sub, sub2) in enumerate(items):
         x = 80 + i * 145
         up = i % 2 == 0
         first = i == 0
         r = 16 if first else 10
         s.append(f'<circle class="{"node first" if first else "node"}" cx="{x}" cy="120" r="{r}"/>')
-        ty = 58 if up else 172
-        s.append(f'<line class="grid" x1="{x}" y1="{120-r if up else 120+r}" x2="{x}" y2="{ty+28 if up else ty-22}"/>')
+        ty = 46 if up else 172
+        s.append(f'<line class="grid" x1="{x}" y1="{120-r if up else 120+r}" x2="{x}" y2="{ty+48 if up else ty-22}"/>')
         s.append(f'<text class="yr" x="{x}" y="{ty-20 if up else ty+4}" text-anchor="middle">{yr}</text>')
         s.append(f'<text class="{"wtxt strong" if first else "wtxt"}" x="{x}" y="{ty+2 if up else ty+28}" text-anchor="middle">{name}</text>')
         s.append(f'<text class="small" x="{x}" y="{ty+22 if up else ty+48}" text-anchor="middle">{sub}</text>')
+        s.append(f'<text class="small" x="{x}" y="{ty+40 if up else ty+66}" text-anchor="middle">{sub2}</text>')
     s.append('</svg>')
     return "\n".join(s)
 
@@ -781,7 +824,7 @@ h1, h2, h3 = heads()
 rep = {
     "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{PARTS}}": parts(), "{{QUEUE}}": queue(), "{{FAR}}": far(), "{{GRAD}}": grad(), "{{GATES}}": gates(), "{{ADDON}}": addon(), "{{ADDON_STEP}}": addon_step(), "{{PATHS}}": paths(), "{{ATTN}}": attn(), "{{QKV}}": qkv(), "{{SCALE}}": scale(),
     "{{HEADMIX}}": headmix(), "{{HEADSPLIT}}": headsplit(), "{{HEAD1}}": h1, "{{HEAD2}}": h2, "{{HEAD3}}": h3, "{{POS}}": position(),
-    "{{ARCH}}": arch(), "{{SPEED}}": speed(), "{{MASK}}": mask(), "{{BLEU}}": bleu(), "{{LEGACY}}": legacy(),
+    "{{ARCH}}": arch(), "{{SPEED}}": speed(), "{{MASK}}": mask(), "{{BLEU}}": bleu(), "{{SPLIT}}": split(), "{{LEGACY}}": legacy(),
 }
 for k, v in rep.items():
     tpl = tpl.replace(k, v)

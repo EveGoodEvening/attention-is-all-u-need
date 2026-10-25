@@ -1834,54 +1834,148 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   </figure>
   <div class="stats">
     <div class="stat"><div class="v">41.8</div><div class="l">英译法也是当时第一</div></div>
-    <div class="stat"><div class="v">3.5 天</div><div class="l">大模型训练时间（8 块显卡）</div></div>
+    <div class="stat"><div class="v">3.5 天</div><div class="l">大号模型训练时间（8 块显卡）</div></div>
   </div>
 </section>
 
 <section>
   <div class="kicker">8 · 后来</div>
-  <h2>一整个家族<em>从这里长出来</em></h2>
+  <h2>能做大，<em>才长出一整个家族</em></h2>
+  <h3><span class="n">①</span> 为什么是它：训练能同时算，模型就能做大</h3>
+  <p class="say">第 5 节问的是能不能“又快、又直连”。直连让翻译更准，第 7 节已经看到了；快带来的回报更大。RNN 训练时，同一句话里的词要排队一个个算，句子越长越慢，模型很难做大。Transformer 训练时整句同时算，显卡几千个计算单元一起干活：同样的显卡、同样的时间，能读多得多的文字，模型也能做得大得多。而且这套“互相看”的积木不挑任务，翻译、写文章、写代码，只要是一串词都能用。</p>
+  <p class="say">模型有多大，用参数（parameter）来量：参数就是模型里靠训练学出来的那些数，比如 Q、K、V 变换、W<sub>O</sub> 和 FFN 里的数字。</p>
+  <div class="stats">
+    <div class="stat"><div class="v">2.13 亿</div><div class="l">2017 · 本论文大号模型的参数</div></div>
+    <div class="stat"><div class="v">1750 亿</div><div class="l">2020 · GPT-3 的参数，约 800 倍</div></div>
+  </div>
+  <h3><span class="n">②</span> 拆成两半：BERT 用编码器，GPT 用解码器</h3>
   <figure>
-<svg class="fig" viewBox="0 0 860 240" role="img" aria-label="从 2017 年的 Transformer 出发，长出了 GPT、BERT、ChatGPT、Claude 等一大家子。">
+<svg class="fig" viewBox="0 0 860 444" role="img" aria-label="Transformer 拆成两半。BERT 只留编码器，练习填空：遮掉“马路”，用前后的词一起猜。GPT 只留解码器，练习猜下一个词：只看前面的“小狗没有过马路因为它太”，猜出“累”。">
+<defs><marker id="ar15" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>
+<text class="colh" x="430" y="26" text-anchor="middle">Transformer（本论文）</text>
+<rect class="tower" x="250" y="40" width="360" height="64" rx="14"/>
+<rect class="sub sa" x="264" y="52" width="158" height="40" rx="9"/>
+<text class="subt" x="343" y="78" text-anchor="middle">编码器</text>
+<rect class="sub sa" x="438" y="52" width="158" height="40" rx="9"/>
+<text class="subt" x="517" y="78" text-anchor="middle">解码器</text>
+<line class="chain" x1="343" y1="104" x2="230" y2="146" marker-end="url(#ar15)"/>
+<line class="chain" x1="517" y1="104" x2="630" y2="146" marker-end="url(#ar15)"/>
+<rect class="card" x="20" y="150" width="400" height="280" rx="14"/>
+<text class="colh" x="40" y="182">BERT：只留编码器</text>
+<text class="small" x="40" y="206">练习：遮掉一个词，用前后文猜</text>
+<path class="arc-a" d="M178 282 Q115.0 201.84 52 282" stroke-width="2.0" stroke-opacity="1.00" fill="none" stroke-linecap="round"/>
+<path class="arc-a" d="M178 282 Q136.0 208.56 94 282" stroke-width="2.0" stroke-opacity="1.00" fill="none" stroke-linecap="round"/>
+<path class="arc-a" d="M178 282 Q157.0 215.28 136 282" stroke-width="2.0" stroke-opacity="1.00" fill="none" stroke-linecap="round"/>
+<path class="arc-a" d="M178 282 Q199.0 215.28 220 282" stroke-width="2.0" stroke-opacity="1.00" fill="none" stroke-linecap="round"/>
+<path class="arc-a" d="M178 282 Q220.0 208.56 262 282" stroke-width="2.0" stroke-opacity="1.00" fill="none" stroke-linecap="round"/>
+<path class="arc-a" d="M178 282 Q241.0 201.84 304 282" stroke-width="2.0" stroke-opacity="1.00" fill="none" stroke-linecap="round"/>
+<path class="arc-a" d="M178 282 Q262.0 195.12 346 282" stroke-width="2.0" stroke-opacity="1.00" fill="none" stroke-linecap="round"/>
+<path class="arc-a" d="M178 282 Q283.0 188.4 388 282" stroke-width="2.0" stroke-opacity="1.00" fill="none" stroke-linecap="round"/>
+<rect class="wbox" x="33" y="286" width="38" height="36" rx="8"/>
+<text class="wtxt" x="52" y="309" text-anchor="middle" style="font-size:14px">小狗</text>
+<rect class="wbox" x="75" y="286" width="38" height="36" rx="8"/>
+<text class="wtxt" x="94" y="309" text-anchor="middle" style="font-size:14px">没有</text>
+<rect class="wbox" x="117" y="286" width="38" height="36" rx="8"/>
+<text class="wtxt" x="136" y="309" text-anchor="middle" style="font-size:14px">过</text>
+<rect class="wbox" x="201" y="286" width="38" height="36" rx="8"/>
+<text class="wtxt" x="220" y="309" text-anchor="middle" style="font-size:14px">因为</text>
+<rect class="wbox" x="243" y="286" width="38" height="36" rx="8"/>
+<text class="wtxt" x="262" y="309" text-anchor="middle" style="font-size:14px">它</text>
+<rect class="wbox" x="285" y="286" width="38" height="36" rx="8"/>
+<text class="wtxt" x="304" y="309" text-anchor="middle" style="font-size:14px">太</text>
+<rect class="wbox" x="327" y="286" width="38" height="36" rx="8"/>
+<text class="wtxt" x="346" y="309" text-anchor="middle" style="font-size:14px">累</text>
+<rect class="wbox" x="369" y="286" width="38" height="36" rx="8"/>
+<text class="wtxt" x="388" y="309" text-anchor="middle" style="font-size:14px">了</text>
+<rect class="slot" x="159" y="286" width="38" height="36" rx="8"/>
+<text class="wtxt" x="178" y="310" text-anchor="middle" style="font-size:16px">?</text>
+<line class="chain" x1="178" y1="326" x2="178" y2="354" marker-end="url(#ar15)"/>
+<rect class="wbox hl" x="152" y="360" width="52" height="34" rx="8"/>
+<text class="wtxt on" x="178" y="383" text-anchor="middle" style="font-size:15px">马路</text>
+<text class="small" x="144" y="382" text-anchor="end">猜出</text>
+<text class="small" x="40" y="412">前后都能看，擅长读懂一句话</text>
+<rect class="card" x="440" y="150" width="400" height="280" rx="14"/>
+<text class="colh" x="460" y="182">GPT：只留解码器</text>
+<text class="small" x="460" y="206">练习：猜下一个词</text>
+<path class="arc-a" d="M766 282 Q619.0 174.96 472 282" stroke-width="2.0" stroke-opacity="1.00" fill="none" stroke-linecap="round"/>
+<path class="arc-a" d="M766 282 Q640.0 181.68 514 282" stroke-width="2.0" stroke-opacity="1.00" fill="none" stroke-linecap="round"/>
+<path class="arc-a" d="M766 282 Q661.0 188.4 556 282" stroke-width="2.0" stroke-opacity="1.00" fill="none" stroke-linecap="round"/>
+<path class="arc-a" d="M766 282 Q682.0 195.12 598 282" stroke-width="2.0" stroke-opacity="1.00" fill="none" stroke-linecap="round"/>
+<path class="arc-a" d="M766 282 Q703.0 201.84 640 282" stroke-width="2.0" stroke-opacity="1.00" fill="none" stroke-linecap="round"/>
+<path class="arc-a" d="M766 282 Q724.0 208.56 682 282" stroke-width="2.0" stroke-opacity="1.00" fill="none" stroke-linecap="round"/>
+<path class="arc-a" d="M766 282 Q745.0 215.28 724 282" stroke-width="2.0" stroke-opacity="1.00" fill="none" stroke-linecap="round"/>
+<rect class="wbox" x="453" y="286" width="38" height="36" rx="8"/>
+<text class="wtxt" x="472" y="309" text-anchor="middle" style="font-size:14px">小狗</text>
+<rect class="wbox" x="495" y="286" width="38" height="36" rx="8"/>
+<text class="wtxt" x="514" y="309" text-anchor="middle" style="font-size:14px">没有</text>
+<rect class="wbox" x="537" y="286" width="38" height="36" rx="8"/>
+<text class="wtxt" x="556" y="309" text-anchor="middle" style="font-size:14px">过</text>
+<rect class="wbox" x="579" y="286" width="38" height="36" rx="8"/>
+<text class="wtxt" x="598" y="309" text-anchor="middle" style="font-size:14px">马路</text>
+<rect class="wbox" x="621" y="286" width="38" height="36" rx="8"/>
+<text class="wtxt" x="640" y="309" text-anchor="middle" style="font-size:14px">因为</text>
+<rect class="wbox" x="663" y="286" width="38" height="36" rx="8"/>
+<text class="wtxt" x="682" y="309" text-anchor="middle" style="font-size:14px">它</text>
+<rect class="wbox" x="705" y="286" width="38" height="36" rx="8"/>
+<text class="wtxt" x="724" y="309" text-anchor="middle" style="font-size:14px">太</text>
+<rect class="slot" x="747" y="286" width="38" height="36" rx="8"/>
+<text class="wtxt" x="766" y="310" text-anchor="middle" style="font-size:16px">?</text>
+<line class="chain" x1="766" y1="326" x2="766" y2="354" marker-end="url(#ar15)"/>
+<rect class="wbox hl" x="740" y="360" width="52" height="34" rx="8"/>
+<text class="wtxt on" x="766" y="383" text-anchor="middle" style="font-size:15px">累</text>
+<text class="small" x="732" y="382" text-anchor="end">猜出</text>
+<text class="small" x="460" y="412">只看前面（遮挡），猜完接着猜，能一直写下去</text>
+</svg>
+    <figcaption>两种练习都不用人出题：把普通文字遮掉一个词，答案就是原文。翻译要人工译好的成对句子（英译德约 450 万对）；这两种练习可以直接拿网上的文章、书当教材，数据一下子多了几个数量级。GPT 去掉了解码器里“回头看原文”那一层，因为它没有原文可看。</figcaption>
+  </figure>
+  <h3><span class="n">③</span> 从 GPT 到今天</h3>
+  <figure>
+<svg class="fig" viewBox="0 0 860 256" role="img" aria-label="时间线：2017 Transformer（本论文，翻译）；2018 GPT（只用解码器，猜下一个词）；2018 BERT（只用编码器，做填空）；2020 GPT-3（结构没大改，只是大得多）；2022 ChatGPT（在 GPT 上再教它对话）；2023 Claude（也是 Transformer）。">
 <line class="spine" x1="60" y1="120" x2="820" y2="120"/>
 <circle class="node first" cx="80" cy="120" r="16"/>
-<line class="grid" x1="80" y1="104" x2="80" y2="86"/>
-<text class="yr" x="80" y="38" text-anchor="middle">2017</text>
-<text class="wtxt strong" x="80" y="60" text-anchor="middle">Transformer</text>
-<text class="small" x="80" y="80" text-anchor="middle">本论文</text>
+<line class="grid" x1="80" y1="104" x2="80" y2="94"/>
+<text class="yr" x="80" y="26" text-anchor="middle">2017</text>
+<text class="wtxt strong" x="80" y="48" text-anchor="middle">Transformer</text>
+<text class="small" x="80" y="68" text-anchor="middle">本论文</text>
+<text class="small" x="80" y="86" text-anchor="middle">翻译</text>
 <circle class="node" cx="225" cy="120" r="10"/>
 <line class="grid" x1="225" y1="130" x2="225" y2="150"/>
 <text class="yr" x="225" y="176" text-anchor="middle">2018</text>
 <text class="wtxt" x="225" y="200" text-anchor="middle">GPT</text>
-<text class="small" x="225" y="220" text-anchor="middle">会写文字</text>
+<text class="small" x="225" y="220" text-anchor="middle">只用解码器</text>
+<text class="small" x="225" y="238" text-anchor="middle">猜下一个词</text>
 <circle class="node" cx="370" cy="120" r="10"/>
-<line class="grid" x1="370" y1="110" x2="370" y2="86"/>
-<text class="yr" x="370" y="38" text-anchor="middle">2018</text>
-<text class="wtxt" x="370" y="60" text-anchor="middle">BERT</text>
-<text class="small" x="370" y="80" text-anchor="middle">会读懂文字</text>
+<line class="grid" x1="370" y1="110" x2="370" y2="94"/>
+<text class="yr" x="370" y="26" text-anchor="middle">2018</text>
+<text class="wtxt" x="370" y="48" text-anchor="middle">BERT</text>
+<text class="small" x="370" y="68" text-anchor="middle">只用编码器</text>
+<text class="small" x="370" y="86" text-anchor="middle">做填空</text>
 <circle class="node" cx="515" cy="120" r="10"/>
 <line class="grid" x1="515" y1="130" x2="515" y2="150"/>
 <text class="yr" x="515" y="176" text-anchor="middle">2020</text>
 <text class="wtxt" x="515" y="200" text-anchor="middle">GPT-3</text>
-<text class="small" x="515" y="220" text-anchor="middle">大很多</text>
+<text class="small" x="515" y="220" text-anchor="middle">结构没大改</text>
+<text class="small" x="515" y="238" text-anchor="middle">只是大得多</text>
 <circle class="node" cx="660" cy="120" r="10"/>
-<line class="grid" x1="660" y1="110" x2="660" y2="86"/>
-<text class="yr" x="660" y="38" text-anchor="middle">2022</text>
-<text class="wtxt" x="660" y="60" text-anchor="middle">ChatGPT</text>
-<text class="small" x="660" y="80" text-anchor="middle">会聊天</text>
+<line class="grid" x1="660" y1="110" x2="660" y2="94"/>
+<text class="yr" x="660" y="26" text-anchor="middle">2022</text>
+<text class="wtxt" x="660" y="48" text-anchor="middle">ChatGPT</text>
+<text class="small" x="660" y="68" text-anchor="middle">在 GPT 上</text>
+<text class="small" x="660" y="86" text-anchor="middle">再教它对话</text>
 <circle class="node" cx="805" cy="120" r="10"/>
 <line class="grid" x1="805" y1="130" x2="805" y2="150"/>
 <text class="yr" x="805" y="176" text-anchor="middle">2023</text>
-<text class="wtxt" x="805" y="200" text-anchor="middle">Claude 等</text>
-<text class="small" x="805" y="220" text-anchor="middle">你正在用的</text>
+<text class="wtxt" x="805" y="200" text-anchor="middle">Claude</text>
+<text class="small" x="805" y="220" text-anchor="middle">也是 Transformer</text>
+<text class="small" x="805" y="238" text-anchor="middle">你正在用的</text>
 </svg>
-    <figcaption>GPT 里的 “T”，就是 Transformer。</figcaption>
+    <figcaption>GPT-3 和最早的 GPT 结构基本一样，主要是更大、读的文字更多。ChatGPT 在 GPT 的基础上再练习按对话回答：人给它的回答打分，它照着分数改。GPT 里的 “T”，就是 Transformer。</figcaption>
   </figure>
 </section>
 
 
 <footer>
-  <div>一句话记住它：<b>训练时不排队，大家同时互相看，看谁和自己最有关。</b></div>
+  <div>一句话记住它：<b>每个词同时看所有词，训练时就不用排队；不排队，模型才做得大，后来的 GPT、ChatGPT、Claude 都从这里来。</b></div>
   <div>原文：Vaswani 等，<a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a>，NeurIPS 2017。图中的注意力比例是为了说明而画的示意。</div>
 </footer>
 
