@@ -130,11 +130,6 @@ td { color: var(--muted); }
 td:first-child { white-space: nowrap; }
 tr:last-child td { border-bottom: 0; }
 
-/* 误解：划掉的旧说法 + 正确说法，与 .note 卡片同样式 */
-.myths { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-.myth { display: grid; gap: 4px; align-content: start; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; min-width: 0; font-size: 15px; color: var(--ink); }
-.myth .wrong { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--accent); }
-
 /* 自测 */
 .quiz { display: grid; gap: 12px; }
 details { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; }
@@ -150,7 +145,6 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 @media (max-width: 720px) {
   section { padding-block: 40px; }
   section.mnemonic { padding-block: 0 40px; }
-  .myths { grid-template-columns: 1fr; }
 }
 @media (max-width: 520px) {
   .mn-row { grid-template-columns: 3rem 1fr; gap: 10px; }
@@ -241,7 +235,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
         <line x1="185" y1="288" x2="185" y2="306" class="edge" marker-end="url(#ah)"/>
         <rect x="60" y="308" width="250" height="56" rx="8" class="box-r"/>
         <text x="185" y="332" text-anchor="middle" class="t-md">思考：FFN</text>
-        <text x="185" y="352" text-anchor="middle" class="t-sm">每个词独自加工</text>
+        <text x="185" y="352" text-anchor="middle" class="t-sm">每个词独自加工，造出新特征</text>
         <text x="185" y="420" text-anchor="middle" class="t-sm">整句英文只算一次</text>
         <text x="185" y="440" text-anchor="middle" class="t-sm">之后每写一个德文词都复用</text>
 
@@ -316,7 +310,8 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
           <dl class="kv">
             <dt>开会</dt><dd>love 拿自己的 Q 去和每个词的 K 打分，按分数混合各词的 V，弄清“谁爱谁”。8 个头各问各的问题，避免注意力被摊平。</dd>
             <dt>思考</dt><dd>每个词独自用 2048 条“如果……而且……就……”规则加工收集来的信息，产生原料里没有的新特征。</dd>
-            <dt>为什么</dt><dd>注意力负责<b>搬运</b>，只能混合已有的东西；FFN 带 ReLU 才能<b>推理</b>。两者缺一不可。</dd>
+            <dt>为什么</dt><dd>注意力负责<b>搬运</b>：输出是各词 V 的加权平均，只能按比例混合已有的东西，头再多也一样。FFN 带 ReLU，才能把收集来的信息组合成<b>新特征</b>。两者缺一不可。</dd>
+            <dt>叠 6 层</dt><dd>8 个头是同一层里<b>并排</b>的几组注意力，同时看同一份输入；6 层是<b>上下叠放</b>，每层在上一层的结果上再开会、再思考。为什么两样都要，见深入版第 6 节 ④。</dd>
           </dl>
           <p class="ref">对应 2.2–2.5、2.9 · 整句英文只算一次，结果供解码器反复使用</p>
         </div>
@@ -364,7 +359,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
         <span class="num w">6</span>
         <div>
           <h3>思考：FFN</h3>
-          <p class="tech">和编码器里的 FFN 作用相同。第 4 到 6 站一起叠 6 层。</p>
+          <p class="tech">和编码器里的 FFN 作用相同：把注意力搬来的信息加工成新特征。第 4 到 6 站一起叠 6 层。</p>
         </div>
       </article>
     </div>
@@ -422,15 +417,6 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     </div>
   </section>
 
-  <section class="phase" aria-labelledby="h-myth">
-    <h2 id="h-myth">学习中纠正过的误解</h2>
-    <div class="myths">
-      <div class="myth"><span class="wrong">多头 = 多层</span><span>多头是同一层里并排的几组注意力；多层是上下叠放。</span></div>
-      <div class="myth"><span class="wrong">多头能解决“加权平均造不出新东西”</span><span>多头解决的是“分心”；创造新特征靠 FFN。</span></div>
-      <div class="myth"><span class="wrong">交叉注意力和掩码自注意力是同一步</span><span>先回顾自己（只看德文），再看原文（Q 德文，K/V 英文）。</span></div>
-      <div class="myth"><span class="wrong">第 7 站从英文里复制词</span><span>在整个德文词表里打分投票。</span></div>
-    </div>
-  </section>
 
   <section class="phase" aria-labelledby="h-quiz">
     <h2 id="h-quiz">自测：先想，再点开</h2>
