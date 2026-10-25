@@ -1,0 +1,266 @@
+<title>注意力就是全部</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@700;900&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: one narrow reading column; each idea = one giant headline + one full-width picture + one line of caption. */
+:root {
+  --bg: #F2F3F8;
+  --panel: #FFFFFF;
+  --ink: #171B30;
+  --muted: #5A6080;
+  --line: #CDD1E0;
+  --accent: #D6336C;      /* attention glow */
+  --on-accent: #FFFFFF;
+  --h1: #D6336C; --h2: #1C6FD1; --h3: #2B8A3E;
+  --display: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1220; --panel: #181C2E; --ink: #E9EBF4; --muted: #9CA2BE; --line: #2F3552;
+    --accent: #FF6B9A; --on-accent: #1A0710; --h1: #FF6B9A; --h2: #5EA8FF; --h3: #63C77A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1220; --panel: #181C2E; --ink: #E9EBF4; --muted: #9CA2BE; --line: #2F3552;
+  --accent: #FF6B9A; --on-accent: #1A0710; --h1: #FF6B9A; --h2: #5EA8FF; --h3: #63C77A;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.7; }
+.wrap { max-width: 920px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 48px 96px; }
+
+header.hero { display: grid; grid-template-columns: 1.1fr 1fr; gap: 32px; align-items: center; padding-block: 24px 40px; }
+.hero > * { min-width: 0; }
+.eyebrow { font-family: var(--mono); font-size: 13px; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
+h1 { font-family: var(--display); font-weight: 900; font-size: clamp(40px, 7vw, 72px); line-height: 1.12; margin: 12px 0 16px; text-wrap: balance; }
+h1 .en { display: block; font-family: var(--mono); font-weight: 700; font-size: .32em; letter-spacing: .02em; color: var(--accent); margin-bottom: 10px; }
+.lede { font-size: 20px; color: var(--muted); margin: 0; max-width: 28em; }
+.lede b { color: var(--ink); }
+
+section { padding-block: 56px; border-top: 1px solid var(--line); display: grid; gap: 20px; }
+.kicker { font-family: var(--mono); font-size: 13px; letter-spacing: .08em; color: var(--accent); }
+h2 { font-family: var(--display); font-weight: 900; font-size: clamp(28px, 4.6vw, 44px); line-height: 1.25; margin: 0; text-wrap: balance; }
+h2 em { font-style: normal; color: var(--accent); }
+p.say { margin: 0; font-size: 18px; color: var(--muted); max-width: 36em; }
+p.say b { color: var(--ink); }
+
+figure { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 20px; overflow-x: auto; }
+figure.bare { background: none; border: 0; padding: 0; }
+figcaption { font-size: 15px; color: var(--muted); margin-top: 12px; }
+svg.fig { display: block; width: 100%; height: auto; max-width: 100%; min-width: 520px; }
+header.hero svg.fig { min-width: 0; }
+.heads { display: grid; gap: 4px; }
+.heads svg.fig { min-width: 480px; }
+
+/* svg vocabulary */
+.wbox { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; }
+.wbox.hl { fill: var(--accent); stroke: var(--accent); }
+.wbox.hl2 { fill: var(--panel); stroke: var(--ink); stroke-width: 2.5; }
+.wtxt.on, .vt.on, .small.on { fill: var(--on-accent); }
+.wtxt { fill: var(--ink); font-family: var(--body); font-size: 19px; font-weight: 700; }
+.wtxt.big { font-size: 34px; font-family: var(--display); }
+.wtxt.en { font-family: var(--mono); font-size: 15px; }
+.wtxt.strong { fill: var(--accent); }
+.small, .tag, .step { fill: var(--muted); font-family: var(--body); font-size: 14px; }
+.tag { font-size: 12px; }
+.colh { fill: var(--ink); font-family: var(--body); font-size: 17px; font-weight: 700; }
+.colsub { fill: var(--muted); font-family: var(--mono); font-size: 13px; }
+.cap-in { fill: var(--muted); font-family: var(--body); font-size: 15px; }
+.num { fill: var(--ink); font-family: var(--mono); font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.num.strong { fill: var(--accent); }
+.pct { fill: var(--accent); font-family: var(--mono); font-size: 22px; font-weight: 700; }
+.mk { fill: var(--muted); }
+.mk2 { fill: var(--h2); }
+.loop { stroke: var(--muted); stroke-width: 2; stroke-dasharray: 6 5; }
+.mem { fill: var(--panel); stroke: var(--line); stroke-width: 2; }
+.memdot { fill: var(--accent); }
+.up, .chain { stroke: var(--muted); stroke-width: 2; }
+.arc-a { stroke: var(--accent); }
+.arc-head1 { stroke: var(--h1); } .arc-head2 { stroke: var(--h2); } .arc-head3 { stroke: var(--h3); }
+.wbox.hl-head1 { fill: var(--panel); stroke: var(--h1); stroke-width: 3; }
+.wbox.hl-head2 { fill: var(--panel); stroke: var(--h2); stroke-width: 3; }
+.wbox.hl-head3 { fill: var(--panel); stroke: var(--h3); stroke-width: 3; }
+.hm { fill: var(--accent); }
+.hm-ring { stroke: var(--ink); stroke-width: 2.5; }
+.hm-lab { fill: var(--muted); font-family: var(--body); font-size: 14px; }
+.hm-axis { fill: var(--ink); font-family: var(--body); font-size: 13px; font-weight: 700; }
+.hm-note { fill: var(--muted); font-family: var(--body); font-size: 15px; }
+.card { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; }
+.card.q { stroke: var(--ink); stroke-width: 2.5; }
+.card.v { fill: var(--accent); stroke: none; }
+.vt { fill: var(--ink); font-family: var(--body); font-size: 15px; font-weight: 700; }
+.link { stroke: var(--accent); }
+.barbg { fill: var(--bg); }
+.bar { fill: var(--accent); }
+.bar.dim { fill: var(--line); }
+.mix { fill: var(--accent); }
+.seat2 { fill: var(--ink); }
+.seatn2 { fill: var(--bg); font-family: var(--mono); font-size: 13px; font-weight: 700; }
+.seatline { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.dot-wave1 { fill: var(--h1); } .dot-wave2 { fill: var(--h2); } .dot-wave3 { fill: var(--h3); }
+.bag { fill: var(--bg); stroke: var(--muted); stroke-width: 2; stroke-dasharray: 6 5; }
+.wave1, .wave2, .wave3 { stroke-width: 3; }
+.wave1 { stroke: var(--h1); } .wave2 { stroke: var(--h2); } .wave3 { stroke: var(--h3); }
+.plate { fill: var(--panel); stroke: var(--line); stroke-width: 1.5; }
+.tower { fill: var(--panel); stroke: var(--ink); stroke-width: 2; }
+.sub { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; }
+.sub.sa { stroke: var(--accent); stroke-width: 2.5; }
+.sub.ca { stroke: var(--h2); stroke-width: 2.5; }
+.subt { fill: var(--ink); font-family: var(--body); font-size: 16px; font-weight: 700; }
+.times { fill: var(--muted); font-family: var(--mono); font-size: 15px; font-weight: 700; }
+.cross { stroke: var(--h2); stroke-width: 3; }
+.crosst { fill: var(--h2); font-family: var(--body); font-size: 14px; font-weight: 700; }
+.tick { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; }
+.tick.on { fill: var(--accent); stroke: var(--accent); }
+.bracket { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 5 4; }
+.grid { stroke: var(--line); stroke-width: 1; }
+.axis { fill: var(--muted); font-family: var(--mono); font-size: 13px; }
+.blab { fill: var(--muted); font-family: var(--body); font-size: 15px; }
+.blab.strong { fill: var(--ink); font-weight: 700; }
+.spine { stroke: var(--line); stroke-width: 3; }
+.node { fill: var(--panel); stroke: var(--muted); stroke-width: 2.5; }
+.node.first { fill: var(--accent); stroke: var(--accent); }
+.yr { fill: var(--muted); font-family: var(--mono); font-size: 13px; }
+
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; min-width: 0; }
+.stat .v { font-family: var(--mono); font-weight: 700; font-size: 30px; color: var(--accent); font-variant-numeric: tabular-nums; }
+.stat .l { font-size: 14px; color: var(--muted); }
+.formula { font-family: var(--mono); font-size: 15px; color: var(--muted); background: var(--panel); border: 1px dashed var(--line); border-radius: 10px; padding: 10px 14px; justify-self: start; max-width: 100%; overflow-x: auto; }
+.formula b { color: var(--accent); }
+
+footer { border-top: 1px solid var(--line); padding-top: 28px; color: var(--muted); font-size: 14px; display: grid; gap: 6px; }
+footer a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+@media (max-width: 720px) {
+  header.hero { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: 1fr; }
+  section { padding-block: 40px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hm { transition: fill-opacity .2s; }
+}
+
+/* version switch: 简易版 (simple.html) and 深入版 (index.html) are separate pages linked from this bar */
+.ver { position: sticky; top: 0; z-index: 10; display: flex; justify-content: center; padding: 10px 16px; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.ver-seg { display: inline-flex; gap: 4px; padding: 4px; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; }
+.ver-seg a { font: 700 15px/1 var(--body); color: var(--muted); text-decoration: none; border-radius: 999px; padding: 9px 18px; }
+.ver-seg a small { font-weight: 500; font-size: 12px; margin-left: 6px; }
+.ver-seg a[aria-current="page"] { background: var(--accent); color: var(--on-accent); }
+</style>
+
+<nav class="ver" aria-label="版本">
+  <div class="ver-seg">
+    <a href="simple.html" aria-current="page">简易版<small>10 分钟</small></a>
+    <a href="index.html">深入版<small>完整推理</small></a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<header class="hero">
+  <div>
+    <div class="eyebrow">2017 · Google · 一篇 15 页的论文</div>
+    <h1><span class="en">Attention Is All You Need</span>注意力<br>就是全部</h1>
+    <p class="lede">它教会电脑：读一句话时，<b>每个词同时看一眼其他所有词</b>，找出谁跟自己最有关。这个设计叫 <b>Transformer</b>，今天的 ChatGPT、Claude 都是从它长出来的。</p>
+  </div>
+  <figure class="bare">
+{{HERO}}
+  </figure>
+</header>
+
+<section>
+  <div class="kicker">以前</div>
+  <h2>旧方法像<em>传话游戏</em></h2>
+  <figure>
+{{RNN}}
+    <figcaption>一个词一个词往后传。句子一长，前面的就记不清了；而且必须排队，没法加速。</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="kicker">新点子</div>
+  <h2>每个词<em>同时</em>看所有词</h2>
+  <figure>
+{{ATTN}}
+    <figcaption>“它”指的是谁？“它”一眼扫过整句话，发现和“小狗”最相关。线越粗 = 越注意。</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="kicker">怎么“看”</div>
+  <h2>提问、对标签、<em>按比例混合</em></h2>
+  <figure>
+{{QKV}}
+    <figcaption>像在图书馆找书：拿着问题去对每本书的标签，越对得上，就越多地拿走那本书的内容。</figcaption>
+  </figure>
+  <div class="formula">论文里的写法：<b>softmax</b>( Q·Kᵀ / √d<sub>k</sub> ) · V</div>
+</section>
+
+<section>
+  <div class="kicker">多头注意力</div>
+  <h2>好几双眼睛，<em>各看各的</em></h2>
+  <figure>
+    <div class="heads">
+{{HEAD1}}
+{{HEAD2}}
+{{HEAD3}}
+    </div>
+    <figcaption>一双眼睛只能盯一件事。论文用了 8 个“头”同时看，各自关心不同的关系，最后把看到的拼起来。</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="kicker">位置编码</div>
+  <h2>大家一起看，就得<em>贴座位号</em></h2>
+  <figure>
+{{POS}}
+    <figcaption>同时看所有词，顺序就丢了。所以在几条快慢不同的波上，给每个位置各读一个数，这组数独一无二，就是它的座位号。</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="kicker">整台机器</div>
+  <h2>一边<em>读懂</em>，一边<em>写出</em></h2>
+  <figure>
+{{ARCH}}
+    <figcaption>论文拿翻译做实验：英文进，德文出。左边一次读懂整句英文；右边看着已写好的词，再回头看原文，写出下一个词。</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="kicker">结果</div>
+  <h2>更<em>快</em>，也更<em>准</em></h2>
+  <figure>
+{{SPEED}}
+    <figcaption>不用排队，显卡可以同时算所有词，所以训练快得多。</figcaption>
+  </figure>
+  <figure>
+{{BLEU}}
+    <figcaption>2014 年英译德翻译比赛的数据，比以前最好的还高 2 分。</figcaption>
+  </figure>
+  <div class="stats">
+    <div class="stat"><div class="v">41.8</div><div class="l">英译法也是当时第一</div></div>
+    <div class="stat"><div class="v">3.5 天</div><div class="l">大模型训练时间（8 块显卡）</div></div>
+  </div>
+</section>
+
+<section>
+  <div class="kicker">后来</div>
+  <h2>一整个家族<em>从这里长出来</em></h2>
+  <figure>
+{{LEGACY}}
+    <figcaption>GPT 里的 “T”，就是 Transformer。</figcaption>
+  </figure>
+</section>
+
+<footer>
+  <div>一句话记住它：<b>不排队，大家同时互相看，看谁和自己最有关。</b></div>
+  <div>原文：Vaswani 等，<a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a>，NeurIPS 2017。图中的注意力比例是为了说明而画的示意。</div>
+</footer>
+
+</div>
