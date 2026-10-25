@@ -299,7 +299,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
             <dt>为什么</dt><dd>注意力本质是加权求和，加法不在乎顺序。不补位置，“猫追狗”和“狗追猫”在模型眼里一模一样。</dd>
             <dt>比喻</dt><dd>一只有很多根指针的钟：秒针区分相邻的词，时针区分远处的词，指针组合起来让每个位置独一无二。</dd>
           </dl>
-          <p class="ref">对应 2.8 · sin/cos 编码，值始终在 −1 到 1 之间</p>
+          <p class="ref">sin/cos 编码，值始终在 −1 到 1 之间</p>
         </div>
       </article>
       <article class="station">
@@ -313,7 +313,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
             <dt>为什么</dt><dd>注意力负责<b>搬运</b>：输出是各词 V 的加权平均，只能按比例混合已有的东西，头再多也一样。FFN 带 ReLU，才能把收集来的信息组合成<b>新特征</b>。两者缺一不可。</dd>
             <dt>叠 6 层</dt><dd>8 个头是同一层里<b>并排</b>的几组注意力，同时看同一份输入；6 层是<b>上下叠放</b>，每层在上一层的结果上再开会、再思考。为什么两样都要，见深入版第 6 节 ④。</dd>
           </dl>
-          <p class="ref">对应 2.2–2.5、2.9 · 整句英文只算一次，结果供解码器反复使用</p>
+          <p class="ref">整句英文只算一次，结果供解码器反复使用</p>
         </div>
       </article>
     </div>
@@ -340,7 +340,6 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
             <dt>为什么</dt><dd>训练时整句答案一次喂进去。不遮住未来，模型会学会“抄答案”，到了真正生成时没有答案可抄就崩了。</dd>
             <dt>怎么做</dt><dd>softmax 之前把未来位置的分数设为 −∞。e<sup>−∞</sup> = 0，剩下的权重仍然自动加起来等于 1。</dd>
           </dl>
-          <p class="ref">对应 2.7</p>
         </div>
       </article>
       <article class="station">
@@ -352,7 +351,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
             <dt>做什么</dt><dd>Ich 问：“我后面该接什么？原文里对应哪里？”然后重点看向 <b>love</b>。</dd>
             <dt>为什么</dt><dd>I 已经翻成了 Ich，下一个该译的就是 love。谁提问谁就是 Q，去哪查资料哪里就是 K、V。</dd>
           </dl>
-          <p class="ref">对应 2.6 · 这一步就是 2014 年 Bahdanau 注意力的“翻纸条”</p>
+          <p class="ref">这一步就是 2014 年 Bahdanau 注意力的“翻纸条”</p>
         </div>
       </article>
       <article class="station">
@@ -431,7 +430,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     </div>
   </section>
 
-  <footer>Vaswani et al., “Attention Is All You Need”, NeurIPS 2017 · 例句中的概率来自课上的玩具实验，仅作示意</footer>
+  <footer>Vaswani et al., “Attention Is All You Need”, NeurIPS 2017 · 例句中的概率仅作示意</footer>
 </div>
 </body>
 </html>
