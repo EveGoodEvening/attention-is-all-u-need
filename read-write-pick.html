@@ -389,7 +389,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
       <div class="panel">
         <h3>残差连接</h3>
         <div class="formula">X + 子层(X)</div>
-        <p>给梯度一条直通的高速公路。没有它，学习信号每过一层打一次折，10 层后只剩约 1/1000；有了它，总有一条乘以 1 的路。</p>
+        <p>给梯度一条直通的高速公路。没有它，学习信号每过一层都要乘一个小于 1 的系数，越乘越小（和 RNN 一样：每次 ×0.9，50 次后只剩 0.005）；有了它，总有一条乘以 1 的路。</p>
         <p class="ref">也是所有子层都必须输出 512 维的原因：形状相同才能相加</p>
       </div>
       <div class="panel">

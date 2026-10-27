@@ -155,7 +155,7 @@ def heads():
 
 # ---------- position ----------
 def position():
-    s = ['<svg class="fig" viewBox="0 0 800 380" role="img" aria-label="“狗咬人”和“人咬狗”倒进同一个袋子，看起来一模一样；给每个字贴上座位号后就能分清。座位号是在几条快慢不同的波上，各取一个读数。">']
+    s = ['<svg class="fig" viewBox="0 0 800 380" role="img" aria-label="“狗咬人”和“人咬狗”倒进同一个袋子，看起来一模一样；给每个字贴上座位号后就能分清。座位号像一只有几根指针的钟，每个座位上几根指针的角度组合都不一样。">']
     s.append('<defs><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>')
     def word(x, y, w, badge=None):
         hl = w == "狗"
@@ -180,21 +180,27 @@ def position():
         for i, w in enumerate(ws):
             s.append(word(460 + i * 62, y, w, badge=str(i + 1)))
         s.append(f'<text class="small" x="660" y="{y+29}">{"狗在 1 号 → 狗咬人" if k==0 else "狗在 3 号 → 人咬狗"}</text>')
-    # waves, stacked
-    s.append('<text class="colh" x="40" y="222">座位号怎么来？在几条快慢不同的波上各读一个数</text>')
-    seats = [(160, "1"), (400, "2"), (640, "3")]
-    for x, lab in seats:
-        s.append(f'<line class="seatline" x1="{x}" y1="240" x2="{x}" y2="352"/>')
+    # clocks: one hand per speed; each hand's angle is one sin/cos pair
+    s.append('<text class="colh" x="40" y="222">座位号怎么来？像一只有几根指针的钟</text>')
+    hands = [(1.0, 40, 3, "wave1", "秒针 转得快"), (0.35, 31, 4, "wave2", "分针"), (0.1, 22, 6, "wave3", "时针 转得慢")]
+    for k, (_, _, w, cls, lab) in enumerate(hands):
+        y = 268 + k * 30
+        s.append(f'<line class="{cls}" x1="40" y1="{y}" x2="66" y2="{y}" style="stroke-width:{w};stroke-linecap:round"/>')
+        s.append(f'<text class="small" x="76" y="{y+5}">{lab}</text>')
+    seats = [(320, 1), (500, 2), (680, 3)]
+    cy = 300
+    for x, p in seats:
+        s.append(f'<circle class="grid" cx="{x}" cy="{cy}" r="46" fill="none" style="stroke-width:2"/>')
+        for t in range(12):
+            a = t * math.pi / 6
+            r0 = 40 if t % 3 else 36
+            s.append(f'<line class="grid" x1="{x + r0*math.sin(a):.1f}" y1="{cy - r0*math.cos(a):.1f}" x2="{x + 46*math.sin(a):.1f}" y2="{cy - 46*math.cos(a):.1f}"/>')
+        for om, L, w, cls, _ in reversed(hands):
+            a = om * p
+            s.append(f'<line class="{cls}" x1="{x}" y1="{cy}" x2="{x + L*math.sin(a):.1f}" y2="{cy - L*math.cos(a):.1f}" style="stroke-width:{w};stroke-linecap:round"/>')
+        s.append(f'<circle class="seat2" cx="{x}" cy="{cy}" r="4"/>')
         s.append(f'<circle class="seat2" cx="{x}" cy="364" r="12"/>')
-        s.append(f'<text class="seatn2" x="{x}" y="369" text-anchor="middle">{lab}</text>')
-    waves = [(0.05, "wave1"), (0.022, "wave2"), (0.009, "wave3")]
-    for k, (freq, cls) in enumerate(waves):
-        yc = 260 + k * 36
-        s.append(f'<line class="grid" x1="40" y1="{yc}" x2="760" y2="{yc}"/>')
-        pts = [f"{px},{yc - 13*math.sin(freq*(px-40) + k):.1f}" for px in range(40, 761, 4)]
-        s.append(f'<polyline class="{cls}" points="{" ".join(pts)}" fill="none"/>')
-        for x, _ in seats:
-            s.append(f'<circle class="dot-{cls}" cx="{x}" cy="{yc - 13*math.sin(freq*(x-40) + k):.1f}" r="5"/>')
+        s.append(f'<text class="seatn2" x="{x}" y="369" text-anchor="middle">{p}</text>')
     s.append('</svg>')
     return "\n".join(s)
 

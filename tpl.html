@@ -368,7 +368,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   <h2>大家一起看，就得<em>贴座位号</em></h2>
   <figure>
 {{POS}}
-    <figcaption>RNN 按顺序读，天然知道谁先谁后；所有词同时看，顺序就丢了。所以给每个位置一组独一无二的数当座位号：在几条快慢不同的波上各读一个数。</figcaption>
+    <figcaption>RNN 按顺序读，天然知道谁先谁后；所有词同时看，顺序就丢了。所以给每个位置一组独一无二的数当座位号，像一只有几根指针的钟：秒针转得快，区分相邻的座位；时针转得慢，区分远处的座位。几根指针的角度合起来，每个座位都不一样。论文里每根指针的角度用一对 sin、cos 数记下，512 个数就是 256 根转速不同的指针。</figcaption>
   </figure>
 </section>
 
