@@ -921,199 +921,171 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <section>
   <div class="kicker">5 · 论文的核心问题</div>
   <h2>能不能<em>又快</em>、<em>又直连</em>？</h2>
+  <p class="say">除了 RNN，当时还有第三种选择：CNN（Convolutional Neural Network，卷积神经网络）。2017 年 5 月的 ConvS2S 就是把 Seq2Seq 里的 RNN 换成了它。</p>
   <figure>
-<svg class="fig" viewBox="0 0 860 490" role="img" aria-label="同一句 8 个词，第 1 个词的信息怎么到第 8 个词。RNN：一格一格传，7 步。CNN：每层只看相邻 3 个，一层层往上叠，4 层才连上。注意力：一条线直连，1 步。">
+<svg class="fig" viewBox="0 0 860 160" role="img" aria-label="一层卷积：每个位置把自己和左右邻居共 3 个词混成一个新向量。例如词 5 上方的点混合了词 4、词 5、词 6。8 个位置同时算。">
+<line class="grid" x1="150" y1="52" x2="150" y2="110"/>
+<line class="grid" x1="150" y1="52" x2="230" y2="110"/>
+<line class="grid" x1="230" y1="52" x2="150" y2="110"/>
+<line class="grid" x1="230" y1="52" x2="230" y2="110"/>
+<line class="grid" x1="230" y1="52" x2="310" y2="110"/>
+<line class="grid" x1="310" y1="52" x2="230" y2="110"/>
+<line class="grid" x1="310" y1="52" x2="310" y2="110"/>
+<line class="grid" x1="310" y1="52" x2="390" y2="110"/>
+<line class="grid" x1="390" y1="52" x2="310" y2="110"/>
+<line class="grid" x1="390" y1="52" x2="390" y2="110"/>
+<line class="grid" x1="390" y1="52" x2="470" y2="110"/>
+<line class="grid" x1="550" y1="52" x2="470" y2="110"/>
+<line class="grid" x1="550" y1="52" x2="550" y2="110"/>
+<line class="grid" x1="550" y1="52" x2="630" y2="110"/>
+<line class="grid" x1="630" y1="52" x2="550" y2="110"/>
+<line class="grid" x1="630" y1="52" x2="630" y2="110"/>
+<line class="grid" x1="630" y1="52" x2="710" y2="110"/>
+<line class="grid" x1="710" y1="52" x2="630" y2="110"/>
+<line class="grid" x1="710" y1="52" x2="710" y2="110"/>
+<line class="arc-a" x1="470" y1="52" x2="390" y2="110" stroke-width="3"/>
+<line class="arc-a" x1="470" y1="52" x2="470" y2="110" stroke-width="3"/>
+<line class="arc-a" x1="470" y1="52" x2="550" y2="110" stroke-width="3"/>
+<circle class="dotoff" cx="150" cy="52" r="5"/>
+<circle class="dotoff" cx="230" cy="52" r="5"/>
+<circle class="dotoff" cx="310" cy="52" r="5"/>
+<circle class="dotoff" cx="390" cy="52" r="5"/>
+<circle class="memdot" cx="470" cy="52" r="7"/>
+<circle class="dotoff" cx="550" cy="52" r="5"/>
+<circle class="dotoff" cx="630" cy="52" r="5"/>
+<circle class="dotoff" cx="710" cy="52" r="5"/>
+<text class="step" x="20" y="57">第 1 层</text>
+<text class="small" x="470" y="36" text-anchor="middle">词 5 的新向量 = 词 4、5、6 混在一起</text>
+<rect class="wbox" x="118" y="110" width="64" height="32" rx="8"/>
+<text class="small" x="150" y="131" text-anchor="middle" style="font-weight:700">词 1</text>
+<rect class="wbox" x="198" y="110" width="64" height="32" rx="8"/>
+<text class="small" x="230" y="131" text-anchor="middle" style="font-weight:700">词 2</text>
+<rect class="wbox" x="278" y="110" width="64" height="32" rx="8"/>
+<text class="small" x="310" y="131" text-anchor="middle" style="font-weight:700">词 3</text>
+<rect class="wbox hl2" x="358" y="110" width="64" height="32" rx="8"/>
+<text class="small" x="390" y="131" text-anchor="middle" style="font-weight:700">词 4</text>
+<rect class="wbox hl2" x="438" y="110" width="64" height="32" rx="8"/>
+<text class="small" x="470" y="131" text-anchor="middle" style="font-weight:700">词 5</text>
+<rect class="wbox hl2" x="518" y="110" width="64" height="32" rx="8"/>
+<text class="small" x="550" y="131" text-anchor="middle" style="font-weight:700">词 6</text>
+<rect class="wbox" x="598" y="110" width="64" height="32" rx="8"/>
+<text class="small" x="630" y="131" text-anchor="middle" style="font-weight:700">词 7</text>
+<rect class="wbox" x="678" y="110" width="64" height="32" rx="8"/>
+<text class="small" x="710" y="131" text-anchor="middle" style="font-weight:700">词 8</text>
+<text class="num strong" x="840" y="57" text-anchor="end">8 个点</text>
+<text class="num strong" x="840" y="77" text-anchor="end">同时算</text>
+</svg>
+    <figcaption><b>卷积</b>（convolution）：每个位置只把自己和左右邻居共 3 个词混成一个新向量，一次看几个词叫卷积核宽度 k（这里 k = 3）。每个点只用下面一层的数，互相不等，所以训练时可以同时算。代价是一层只能看到身边 1 格。</figcaption>
+  </figure>
+  <figure>
+<svg class="fig" viewBox="0 0 860 500" role="img" aria-label="同一句 8 个词，词 1 和词 8 要几步才碰面。RNN：一格一格传，7 步。CNN：每层往两边各多看 1 个词，能看到 3、5、7、9 个词，第 4 层在词 5 上方碰面，4 步。注意力：一条线直连，1 步。">
 <defs><marker id="ar12" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>
-<text class="colh" x="20" y="24">RNN：一格一格往后传</text>
-<path class="arc-a" d="M120 62 Q155 38 188 62" stroke-width="2.5" fill="none" marker-end="url(#ar12)"/>
-<path class="arc-a" d="M210 62 Q245 38 278 62" stroke-width="2.5" fill="none" marker-end="url(#ar12)"/>
-<path class="arc-a" d="M300 62 Q335 38 368 62" stroke-width="2.5" fill="none" marker-end="url(#ar12)"/>
-<path class="arc-a" d="M390 62 Q425 38 458 62" stroke-width="2.5" fill="none" marker-end="url(#ar12)"/>
-<path class="arc-a" d="M480 62 Q515 38 548 62" stroke-width="2.5" fill="none" marker-end="url(#ar12)"/>
-<path class="arc-a" d="M570 62 Q605 38 638 62" stroke-width="2.5" fill="none" marker-end="url(#ar12)"/>
-<path class="arc-a" d="M660 62 Q695 38 728 62" stroke-width="2.5" fill="none" marker-end="url(#ar12)"/>
-<rect class="wbox hl" x="78" y="64" width="64" height="32" rx="8"/>
-<text class="small on" x="110" y="85" text-anchor="middle" style="font-weight:700">词 1</text>
-<rect class="wbox" x="168" y="64" width="64" height="32" rx="8"/>
-<text class="small" x="200" y="85" text-anchor="middle" style="font-weight:700">词 2</text>
-<rect class="wbox" x="258" y="64" width="64" height="32" rx="8"/>
-<text class="small" x="290" y="85" text-anchor="middle" style="font-weight:700">词 3</text>
-<rect class="wbox" x="348" y="64" width="64" height="32" rx="8"/>
-<text class="small" x="380" y="85" text-anchor="middle" style="font-weight:700">词 4</text>
+<text class="colh" x="20" y="24">RNN：一格一格往后传，每步读一个词</text>
+<path class="arc-a" d="M160 62 Q190 38 218 62" stroke-width="2.5" fill="none" marker-end="url(#ar12)"/>
+<path class="arc-a" d="M240 62 Q270 38 298 62" stroke-width="2.5" fill="none" marker-end="url(#ar12)"/>
+<path class="arc-a" d="M320 62 Q350 38 378 62" stroke-width="2.5" fill="none" marker-end="url(#ar12)"/>
+<path class="arc-a" d="M400 62 Q430 38 458 62" stroke-width="2.5" fill="none" marker-end="url(#ar12)"/>
+<path class="arc-a" d="M480 62 Q510 38 538 62" stroke-width="2.5" fill="none" marker-end="url(#ar12)"/>
+<path class="arc-a" d="M560 62 Q590 38 618 62" stroke-width="2.5" fill="none" marker-end="url(#ar12)"/>
+<path class="arc-a" d="M640 62 Q670 38 698 62" stroke-width="2.5" fill="none" marker-end="url(#ar12)"/>
+<rect class="wbox hl" x="118" y="64" width="64" height="32" rx="8"/>
+<text class="small on" x="150" y="85" text-anchor="middle" style="font-weight:700">词 1</text>
+<rect class="wbox" x="198" y="64" width="64" height="32" rx="8"/>
+<text class="small" x="230" y="85" text-anchor="middle" style="font-weight:700">词 2</text>
+<rect class="wbox" x="278" y="64" width="64" height="32" rx="8"/>
+<text class="small" x="310" y="85" text-anchor="middle" style="font-weight:700">词 3</text>
+<rect class="wbox" x="358" y="64" width="64" height="32" rx="8"/>
+<text class="small" x="390" y="85" text-anchor="middle" style="font-weight:700">词 4</text>
 <rect class="wbox" x="438" y="64" width="64" height="32" rx="8"/>
 <text class="small" x="470" y="85" text-anchor="middle" style="font-weight:700">词 5</text>
-<rect class="wbox" x="528" y="64" width="64" height="32" rx="8"/>
-<text class="small" x="560" y="85" text-anchor="middle" style="font-weight:700">词 6</text>
-<rect class="wbox" x="618" y="64" width="64" height="32" rx="8"/>
-<text class="small" x="650" y="85" text-anchor="middle" style="font-weight:700">词 7</text>
-<rect class="wbox hl" x="708" y="64" width="64" height="32" rx="8"/>
-<text class="small on" x="740" y="85" text-anchor="middle" style="font-weight:700">词 8</text>
+<rect class="wbox" x="518" y="64" width="64" height="32" rx="8"/>
+<text class="small" x="550" y="85" text-anchor="middle" style="font-weight:700">词 6</text>
+<rect class="wbox" x="598" y="64" width="64" height="32" rx="8"/>
+<text class="small" x="630" y="85" text-anchor="middle" style="font-weight:700">词 7</text>
+<rect class="wbox hl" x="678" y="64" width="64" height="32" rx="8"/>
+<text class="small on" x="710" y="85" text-anchor="middle" style="font-weight:700">词 8</text>
 <text class="num strong" x="840" y="85" text-anchor="end">7 步</text>
-<text class="colh" x="20" y="134">CNN（卷积）：每层只看相邻 3 个，一层层往上叠</text>
-<line class="grid" x1="110" y1="256" x2="110" y2="286"/>
-<line class="grid" x1="110" y1="256" x2="200" y2="286"/>
-<line class="grid" x1="200" y1="256" x2="110" y2="286"/>
-<line class="grid" x1="200" y1="256" x2="200" y2="286"/>
-<line class="grid" x1="200" y1="256" x2="290" y2="286"/>
-<line class="grid" x1="290" y1="256" x2="200" y2="286"/>
-<line class="grid" x1="290" y1="256" x2="290" y2="286"/>
-<line class="grid" x1="290" y1="256" x2="380" y2="286"/>
-<line class="grid" x1="380" y1="256" x2="290" y2="286"/>
-<line class="grid" x1="380" y1="256" x2="380" y2="286"/>
-<line class="grid" x1="380" y1="256" x2="470" y2="286"/>
-<line class="grid" x1="470" y1="256" x2="380" y2="286"/>
-<line class="grid" x1="470" y1="256" x2="470" y2="286"/>
-<line class="grid" x1="470" y1="256" x2="560" y2="286"/>
-<line class="grid" x1="560" y1="256" x2="470" y2="286"/>
-<line class="grid" x1="560" y1="256" x2="560" y2="286"/>
-<line class="grid" x1="560" y1="256" x2="650" y2="286"/>
-<line class="grid" x1="650" y1="256" x2="560" y2="286"/>
-<line class="grid" x1="650" y1="256" x2="650" y2="286"/>
-<line class="grid" x1="650" y1="256" x2="740" y2="286"/>
-<line class="grid" x1="740" y1="256" x2="650" y2="286"/>
-<line class="grid" x1="740" y1="256" x2="740" y2="286"/>
-<line class="grid" x1="110" y1="224" x2="110" y2="256"/>
-<line class="grid" x1="110" y1="224" x2="200" y2="256"/>
-<line class="grid" x1="200" y1="224" x2="110" y2="256"/>
-<line class="grid" x1="200" y1="224" x2="200" y2="256"/>
-<line class="grid" x1="200" y1="224" x2="290" y2="256"/>
-<line class="grid" x1="290" y1="224" x2="200" y2="256"/>
-<line class="grid" x1="290" y1="224" x2="290" y2="256"/>
-<line class="grid" x1="290" y1="224" x2="380" y2="256"/>
-<line class="grid" x1="380" y1="224" x2="290" y2="256"/>
-<line class="grid" x1="380" y1="224" x2="380" y2="256"/>
-<line class="grid" x1="380" y1="224" x2="470" y2="256"/>
-<line class="grid" x1="470" y1="224" x2="380" y2="256"/>
-<line class="grid" x1="470" y1="224" x2="470" y2="256"/>
-<line class="grid" x1="470" y1="224" x2="560" y2="256"/>
-<line class="grid" x1="560" y1="224" x2="470" y2="256"/>
-<line class="grid" x1="560" y1="224" x2="560" y2="256"/>
-<line class="grid" x1="560" y1="224" x2="650" y2="256"/>
-<line class="grid" x1="650" y1="224" x2="560" y2="256"/>
-<line class="grid" x1="650" y1="224" x2="650" y2="256"/>
-<line class="grid" x1="650" y1="224" x2="740" y2="256"/>
-<line class="grid" x1="740" y1="224" x2="650" y2="256"/>
-<line class="grid" x1="740" y1="224" x2="740" y2="256"/>
-<line class="grid" x1="110" y1="192" x2="110" y2="224"/>
-<line class="grid" x1="110" y1="192" x2="200" y2="224"/>
-<line class="grid" x1="200" y1="192" x2="110" y2="224"/>
-<line class="grid" x1="200" y1="192" x2="200" y2="224"/>
-<line class="grid" x1="200" y1="192" x2="290" y2="224"/>
-<line class="grid" x1="290" y1="192" x2="200" y2="224"/>
-<line class="grid" x1="290" y1="192" x2="290" y2="224"/>
-<line class="grid" x1="290" y1="192" x2="380" y2="224"/>
-<line class="grid" x1="380" y1="192" x2="290" y2="224"/>
-<line class="grid" x1="380" y1="192" x2="380" y2="224"/>
-<line class="grid" x1="380" y1="192" x2="470" y2="224"/>
-<line class="grid" x1="470" y1="192" x2="380" y2="224"/>
-<line class="grid" x1="470" y1="192" x2="470" y2="224"/>
-<line class="grid" x1="470" y1="192" x2="560" y2="224"/>
-<line class="grid" x1="560" y1="192" x2="470" y2="224"/>
-<line class="grid" x1="560" y1="192" x2="560" y2="224"/>
-<line class="grid" x1="560" y1="192" x2="650" y2="224"/>
-<line class="grid" x1="650" y1="192" x2="560" y2="224"/>
-<line class="grid" x1="650" y1="192" x2="650" y2="224"/>
-<line class="grid" x1="650" y1="192" x2="740" y2="224"/>
-<line class="grid" x1="740" y1="192" x2="650" y2="224"/>
-<line class="grid" x1="740" y1="192" x2="740" y2="224"/>
-<line class="grid" x1="110" y1="160" x2="110" y2="192"/>
-<line class="grid" x1="110" y1="160" x2="200" y2="192"/>
-<line class="grid" x1="200" y1="160" x2="110" y2="192"/>
-<line class="grid" x1="200" y1="160" x2="200" y2="192"/>
-<line class="grid" x1="200" y1="160" x2="290" y2="192"/>
-<line class="grid" x1="290" y1="160" x2="200" y2="192"/>
-<line class="grid" x1="290" y1="160" x2="290" y2="192"/>
-<line class="grid" x1="290" y1="160" x2="380" y2="192"/>
-<line class="grid" x1="380" y1="160" x2="290" y2="192"/>
-<line class="grid" x1="380" y1="160" x2="380" y2="192"/>
-<line class="grid" x1="380" y1="160" x2="470" y2="192"/>
-<line class="grid" x1="470" y1="160" x2="380" y2="192"/>
-<line class="grid" x1="470" y1="160" x2="470" y2="192"/>
-<line class="grid" x1="470" y1="160" x2="560" y2="192"/>
-<line class="grid" x1="560" y1="160" x2="470" y2="192"/>
-<line class="grid" x1="560" y1="160" x2="560" y2="192"/>
-<line class="grid" x1="560" y1="160" x2="650" y2="192"/>
-<line class="grid" x1="650" y1="160" x2="560" y2="192"/>
-<line class="grid" x1="650" y1="160" x2="650" y2="192"/>
-<line class="grid" x1="650" y1="160" x2="740" y2="192"/>
-<line class="grid" x1="740" y1="160" x2="650" y2="192"/>
-<line class="grid" x1="740" y1="160" x2="740" y2="192"/>
-<polyline class="arc-a" points="110,286 200,256 290,224 380,192 470,160" stroke-width="3" fill="none" stroke-linejoin="round"/>
-<polyline class="arc-a" points="740,286 650,256 560,224 470,192 470,160" stroke-width="3" fill="none" stroke-linejoin="round"/>
-<circle class="dotoff" cx="110" cy="256" r="4"/>
-<circle class="memdot" cx="200" cy="256" r="6"/>
-<circle class="dotoff" cx="290" cy="256" r="4"/>
-<circle class="dotoff" cx="380" cy="256" r="4"/>
-<circle class="dotoff" cx="470" cy="256" r="4"/>
-<circle class="dotoff" cx="560" cy="256" r="4"/>
-<circle class="memdot" cx="650" cy="256" r="6"/>
-<circle class="dotoff" cx="740" cy="256" r="4"/>
-<text class="step" x="40" y="261">第 1 层</text>
-<circle class="dotoff" cx="110" cy="224" r="4"/>
-<circle class="dotoff" cx="200" cy="224" r="4"/>
-<circle class="memdot" cx="290" cy="224" r="6"/>
-<circle class="dotoff" cx="380" cy="224" r="4"/>
-<circle class="dotoff" cx="470" cy="224" r="4"/>
-<circle class="memdot" cx="560" cy="224" r="6"/>
-<circle class="dotoff" cx="650" cy="224" r="4"/>
-<circle class="dotoff" cx="740" cy="224" r="4"/>
-<text class="step" x="40" y="229">第 2 层</text>
-<circle class="dotoff" cx="110" cy="192" r="4"/>
-<circle class="dotoff" cx="200" cy="192" r="4"/>
-<circle class="dotoff" cx="290" cy="192" r="4"/>
-<circle class="memdot" cx="380" cy="192" r="6"/>
-<circle class="memdot" cx="470" cy="192" r="6"/>
-<circle class="dotoff" cx="560" cy="192" r="4"/>
-<circle class="dotoff" cx="650" cy="192" r="4"/>
-<circle class="dotoff" cx="740" cy="192" r="4"/>
-<text class="step" x="40" y="197">第 3 层</text>
-<circle class="dotoff" cx="110" cy="160" r="4"/>
-<circle class="dotoff" cx="200" cy="160" r="4"/>
-<circle class="dotoff" cx="290" cy="160" r="4"/>
-<circle class="dotoff" cx="380" cy="160" r="4"/>
-<circle class="memdot" cx="470" cy="160" r="6"/>
-<circle class="dotoff" cx="560" cy="160" r="4"/>
-<circle class="dotoff" cx="650" cy="160" r="4"/>
-<circle class="dotoff" cx="740" cy="160" r="4"/>
-<text class="step" x="40" y="165">第 4 层</text>
-<rect class="wbox hl" x="78" y="286" width="64" height="32" rx="8"/>
-<text class="small on" x="110" y="307" text-anchor="middle" style="font-weight:700">词 1</text>
-<rect class="wbox" x="168" y="286" width="64" height="32" rx="8"/>
-<text class="small" x="200" y="307" text-anchor="middle" style="font-weight:700">词 2</text>
-<rect class="wbox" x="258" y="286" width="64" height="32" rx="8"/>
-<text class="small" x="290" y="307" text-anchor="middle" style="font-weight:700">词 3</text>
-<rect class="wbox" x="348" y="286" width="64" height="32" rx="8"/>
-<text class="small" x="380" y="307" text-anchor="middle" style="font-weight:700">词 4</text>
-<rect class="wbox" x="438" y="286" width="64" height="32" rx="8"/>
-<text class="small" x="470" y="307" text-anchor="middle" style="font-weight:700">词 5</text>
-<rect class="wbox" x="528" y="286" width="64" height="32" rx="8"/>
-<text class="small" x="560" y="307" text-anchor="middle" style="font-weight:700">词 6</text>
-<rect class="wbox" x="618" y="286" width="64" height="32" rx="8"/>
-<text class="small" x="650" y="307" text-anchor="middle" style="font-weight:700">词 7</text>
-<rect class="wbox hl" x="708" y="286" width="64" height="32" rx="8"/>
-<text class="small on" x="740" y="307" text-anchor="middle" style="font-weight:700">词 8</text>
-<text class="num strong" x="840" y="229" text-anchor="end">4 层</text>
-<text class="colh" x="20" y="364">只用注意力：任意两个词直接连线</text>
-<path class="arc-a" d="M110 438 Q425 330 740 438" stroke-width="4" fill="none" stroke-linecap="round"/>
-<rect class="wbox hl" x="78" y="440" width="64" height="32" rx="8"/>
-<text class="small on" x="110" y="461" text-anchor="middle" style="font-weight:700">词 1</text>
-<rect class="wbox" x="168" y="440" width="64" height="32" rx="8"/>
-<text class="small" x="200" y="461" text-anchor="middle" style="font-weight:700">词 2</text>
-<rect class="wbox" x="258" y="440" width="64" height="32" rx="8"/>
-<text class="small" x="290" y="461" text-anchor="middle" style="font-weight:700">词 3</text>
-<rect class="wbox" x="348" y="440" width="64" height="32" rx="8"/>
-<text class="small" x="380" y="461" text-anchor="middle" style="font-weight:700">词 4</text>
-<rect class="wbox" x="438" y="440" width="64" height="32" rx="8"/>
-<text class="small" x="470" y="461" text-anchor="middle" style="font-weight:700">词 5</text>
-<rect class="wbox" x="528" y="440" width="64" height="32" rx="8"/>
-<text class="small" x="560" y="461" text-anchor="middle" style="font-weight:700">词 6</text>
-<rect class="wbox" x="618" y="440" width="64" height="32" rx="8"/>
-<text class="small" x="650" y="461" text-anchor="middle" style="font-weight:700">词 7</text>
-<rect class="wbox hl" x="708" y="440" width="64" height="32" rx="8"/>
-<text class="small on" x="740" y="461" text-anchor="middle" style="font-weight:700">词 8</text>
-<text class="num strong" x="840" y="410" text-anchor="end">1 步</text>
+<text class="colh" x="20" y="134">CNN：每层往两边各多看 1 个词，一层算一步</text>
+<polyline class="arc-a" points="150,296 230,264 310,230 390,196 470,162" stroke-width="3" fill="none" stroke-linejoin="round"/>
+<polyline class="arc-a" points="710,296 710,264 630,230 550,196 470,162" stroke-width="3" fill="none" stroke-linejoin="round"/>
+<circle class="dotoff" cx="150" cy="264" r="4"/>
+<circle class="memdot" cx="230" cy="264" r="6"/>
+<circle class="dotoff" cx="310" cy="264" r="4"/>
+<circle class="dotoff" cx="390" cy="264" r="4"/>
+<circle class="dotoff" cx="470" cy="264" r="4"/>
+<circle class="dotoff" cx="550" cy="264" r="4"/>
+<circle class="dotoff" cx="630" cy="264" r="4"/>
+<circle class="memdot" cx="710" cy="264" r="6"/>
+<text class="step" x="20" y="269">第 1 层</text>
+<text class="small" x="840" y="269" text-anchor="end">看到 3 个词</text>
+<circle class="dotoff" cx="150" cy="230" r="4"/>
+<circle class="dotoff" cx="230" cy="230" r="4"/>
+<circle class="memdot" cx="310" cy="230" r="6"/>
+<circle class="dotoff" cx="390" cy="230" r="4"/>
+<circle class="dotoff" cx="470" cy="230" r="4"/>
+<circle class="dotoff" cx="550" cy="230" r="4"/>
+<circle class="memdot" cx="630" cy="230" r="6"/>
+<circle class="dotoff" cx="710" cy="230" r="4"/>
+<text class="step" x="20" y="235">第 2 层</text>
+<text class="small" x="840" y="235" text-anchor="end">看到 5 个词</text>
+<circle class="dotoff" cx="150" cy="196" r="4"/>
+<circle class="dotoff" cx="230" cy="196" r="4"/>
+<circle class="dotoff" cx="310" cy="196" r="4"/>
+<circle class="memdot" cx="390" cy="196" r="6"/>
+<circle class="dotoff" cx="470" cy="196" r="4"/>
+<circle class="memdot" cx="550" cy="196" r="6"/>
+<circle class="dotoff" cx="630" cy="196" r="4"/>
+<circle class="dotoff" cx="710" cy="196" r="4"/>
+<text class="step" x="20" y="201">第 3 层</text>
+<text class="small" x="840" y="201" text-anchor="end">看到 7 个词</text>
+<circle class="dotoff" cx="150" cy="162" r="4"/>
+<circle class="dotoff" cx="230" cy="162" r="4"/>
+<circle class="dotoff" cx="310" cy="162" r="4"/>
+<circle class="dotoff" cx="390" cy="162" r="4"/>
+<circle class="memdot" cx="470" cy="162" r="9"/>
+<circle class="dotoff" cx="550" cy="162" r="4"/>
+<circle class="dotoff" cx="630" cy="162" r="4"/>
+<circle class="dotoff" cx="710" cy="162" r="4"/>
+<text class="step" x="20" y="167">第 4 层</text>
+<text class="num strong" x="840" y="167" text-anchor="end">看到 9 个词</text>
+<text class="small" x="470" y="146" text-anchor="middle" style="font-weight:700">碰面：4 步</text>
+<rect class="wbox hl" x="118" y="296" width="64" height="32" rx="8"/>
+<text class="small on" x="150" y="317" text-anchor="middle" style="font-weight:700">词 1</text>
+<rect class="wbox" x="198" y="296" width="64" height="32" rx="8"/>
+<text class="small" x="230" y="317" text-anchor="middle" style="font-weight:700">词 2</text>
+<rect class="wbox" x="278" y="296" width="64" height="32" rx="8"/>
+<text class="small" x="310" y="317" text-anchor="middle" style="font-weight:700">词 3</text>
+<rect class="wbox" x="358" y="296" width="64" height="32" rx="8"/>
+<text class="small" x="390" y="317" text-anchor="middle" style="font-weight:700">词 4</text>
+<rect class="wbox" x="438" y="296" width="64" height="32" rx="8"/>
+<text class="small" x="470" y="317" text-anchor="middle" style="font-weight:700">词 5</text>
+<rect class="wbox" x="518" y="296" width="64" height="32" rx="8"/>
+<text class="small" x="550" y="317" text-anchor="middle" style="font-weight:700">词 6</text>
+<rect class="wbox" x="598" y="296" width="64" height="32" rx="8"/>
+<text class="small" x="630" y="317" text-anchor="middle" style="font-weight:700">词 7</text>
+<rect class="wbox hl" x="678" y="296" width="64" height="32" rx="8"/>
+<text class="small on" x="710" y="317" text-anchor="middle" style="font-weight:700">词 8</text>
+<text class="colh" x="20" y="374">只用注意力：任意两个词直接连线，一层算一步</text>
+<path class="arc-a" d="M150 448 Q430 340 710 448" stroke-width="4" fill="none" stroke-linecap="round"/>
+<rect class="wbox hl" x="118" y="450" width="64" height="32" rx="8"/>
+<text class="small on" x="150" y="471" text-anchor="middle" style="font-weight:700">词 1</text>
+<rect class="wbox" x="198" y="450" width="64" height="32" rx="8"/>
+<text class="small" x="230" y="471" text-anchor="middle" style="font-weight:700">词 2</text>
+<rect class="wbox" x="278" y="450" width="64" height="32" rx="8"/>
+<text class="small" x="310" y="471" text-anchor="middle" style="font-weight:700">词 3</text>
+<rect class="wbox" x="358" y="450" width="64" height="32" rx="8"/>
+<text class="small" x="390" y="471" text-anchor="middle" style="font-weight:700">词 4</text>
+<rect class="wbox" x="438" y="450" width="64" height="32" rx="8"/>
+<text class="small" x="470" y="471" text-anchor="middle" style="font-weight:700">词 5</text>
+<rect class="wbox" x="518" y="450" width="64" height="32" rx="8"/>
+<text class="small" x="550" y="471" text-anchor="middle" style="font-weight:700">词 6</text>
+<rect class="wbox" x="598" y="450" width="64" height="32" rx="8"/>
+<text class="small" x="630" y="471" text-anchor="middle" style="font-weight:700">词 7</text>
+<rect class="wbox hl" x="678" y="450" width="64" height="32" rx="8"/>
+<text class="small on" x="710" y="471" text-anchor="middle" style="font-weight:700">词 8</text>
+<text class="num strong" x="840" y="420" text-anchor="end">1 步</text>
 </svg>
-    <figcaption>词 1 的信息要经过几步才能到词 8，叫<b>路径长度</b>（path length）。路径短有两层好处：信息不被冲淡；更关键的是，学习信号只乘一次，不会消失。卷积（convolution）每层只看相邻几个词，要一层层叠才能连到远处；改成“跳着看”的空洞卷积（dilated convolution）层数会少很多，但仍然不是 1。</figcaption>
+    <figcaption>词 1 和词 8 要经过几步，才第一次出现在同一个向量里，叫<b>路径长度</b>（path length）。CNN 每叠一层，两头各往中间走 1 格，能看到的词数 3 → 5 → 7 → 9，到第 4 层，词 5 上方的点才同时看到词 1 和词 8。路径短有两层好处：信息不被冲淡；更关键的是，学习信号只乘一次，不会消失。改成“跳着看”的空洞卷积（dilated convolution），层数会少很多，但仍然不是 1。</figcaption>
   </figure>
   <div class="tbl">
     <table class="cmp">

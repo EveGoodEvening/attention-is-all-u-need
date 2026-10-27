@@ -351,57 +351,79 @@ def grad():
 
 
 # ---------- path length: RNN vs CNN vs attention ----------
+PX = [150 + i * 80 for i in range(8)]
+
+
+def word8(y, hl=(0, 7), hl2=()):
+    r = []
+    for i, x in enumerate(PX):
+        cls = "wbox hl" if i in hl else "wbox hl2" if i in hl2 else "wbox"
+        r.append(f'<rect class="{cls}" x="{x-32}" y="{y}" width="64" height="32" rx="8"/>')
+        r.append(f'<text class="{"small on" if i in hl else "small"}" x="{x}" y="{y+21}" text-anchor="middle" style="font-weight:700">词 {i+1}</text>')
+    return "\n".join(r)
+
+
+# one convolution layer: every dot mixes the 3 words under it, all at once
+def conv():
+    wy, dy = 110, 52
+    s = ['<svg class="fig" viewBox="0 0 860 160" role="img" aria-label="一层卷积：每个位置把自己和左右邻居共 3 个词混成一个新向量。例如词 5 上方的点混合了词 4、词 5、词 6。8 个位置同时算。">']
+    for i, x in enumerate(PX):
+        for d in (-1, 0, 1):
+            j = i + d
+            if 0 <= j < 8 and i != 4:
+                s.append(f'<line class="grid" x1="{x}" y1="{dy}" x2="{PX[j]}" y2="{wy}"/>')
+    for j in (3, 4, 5):
+        s.append(f'<line class="arc-a" x1="{PX[4]}" y1="{dy}" x2="{PX[j]}" y2="{wy}" stroke-width="3"/>')
+    for i, x in enumerate(PX):
+        s.append(f'<circle class="{"memdot" if i == 4 else "dotoff"}" cx="{x}" cy="{dy}" r="{7 if i == 4 else 5}"/>')
+    s.append(f'<text class="step" x="20" y="{dy+5}">第 1 层</text>')
+    s.append(f'<text class="small" x="{PX[4]}" y="{dy-16}" text-anchor="middle">词 5 的新向量 = 词 4、5、6 混在一起</text>')
+    s.append(word8(wy, hl=(), hl2=(3, 4, 5)))
+    s.append(f'<text class="num strong" x="840" y="{dy+5}" text-anchor="end">8 个点</text>')
+    s.append(f'<text class="num strong" x="840" y="{dy+25}" text-anchor="end">同时算</text>')
+    s.append('</svg>')
+    return "\n".join(s)
+
+
 def paths():
     n = 8
-    xs = [110 + i * 90 for i in range(n)]
-    s = ['<svg class="fig" viewBox="0 0 860 490" role="img" aria-label="同一句 8 个词，第 1 个词的信息怎么到第 8 个词。RNN：一格一格传，7 步。CNN：每层只看相邻 3 个，一层层往上叠，4 层才连上。注意力：一条线直连，1 步。">']
+    xs = PX
+    s = ['<svg class="fig" viewBox="0 0 860 500" role="img" aria-label="同一句 8 个词，词 1 和词 8 要几步才碰面。RNN：一格一格传，7 步。CNN：每层往两边各多看 1 个词，能看到 3、5、7、9 个词，第 4 层在词 5 上方碰面，4 步。注意力：一条线直连，1 步。">']
     s.append('<defs><marker id="ar12" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" class="mk"/></marker></defs>')
 
-    def words(y):
-        r = []
-        for i, x in enumerate(xs):
-            hl = i in (0, n - 1)
-            r.append(f'<rect class="{"wbox hl" if hl else "wbox"}" x="{x-32}" y="{y}" width="64" height="32" rx="8"/>')
-            r.append(f'<text class="{"small on" if hl else "small"}" x="{x}" y="{y+21}" text-anchor="middle" style="font-weight:700">词 {i+1}</text>')
-        return "\n".join(r)
-
     # RNN
-    s.append('<text class="colh" x="20" y="24">RNN：一格一格往后传</text>')
+    s.append('<text class="colh" x="20" y="24">RNN：一格一格往后传，每步读一个词</text>')
     y = 64
     for i in range(n - 1):
         s.append(f'<path class="arc-a" d="M{xs[i]+10} {y-2} Q{(xs[i]+xs[i+1])/2:.0f} {y-26} {xs[i+1]-12} {y-2}" stroke-width="2.5" fill="none" marker-end="url(#ar12)"/>')
-    s.append(words(y))
+    s.append(word8(y))
     s.append(f'<text class="num strong" x="840" y="{y+21}" text-anchor="end">7 步</text>')
 
-    # CNN: kernel 3, stacked layers; highlight the two paths that meet at the top
-    s.append('<text class="colh" x="20" y="134">CNN（卷积）：每层只看相邻 3 个，一层层往上叠</text>')
-    wy = 286
-    ly = [wy - 30, wy - 62, wy - 94, wy - 126]   # layer 1..4 dot rows
-    for L in range(4):
-        below = wy if L == 0 else ly[L - 1]
-        for i, x in enumerate(xs):
-            for d in (-1, 0, 1):
-                j = i + d
-                if 0 <= j < n:
-                    s.append(f'<line class="grid" x1="{x}" y1="{ly[L]}" x2="{xs[j]}" y2="{below}"/>')
+    # CNN: kernel 3, so each layer reaches 1 more word on each side;
+    # the two ends walk toward the middle and first share a dot at layer 4
+    s.append('<text class="colh" x="20" y="134">CNN：每层往两边各多看 1 个词，一层算一步</text>')
+    wy = 296
+    ly = [wy - 32, wy - 66, wy - 100, wy - 134]   # layer 1..4 dot rows
     up_left = [0, 1, 2, 3, 4]
-    up_right = [7, 6, 5, 4, 4]
+    up_right = [7, 7, 6, 5, 4]
     for path in (up_left, up_right):
         pts = [(xs[path[0]], wy)] + [(xs[path[L + 1]], ly[L]) for L in range(4)]
         s.append('<polyline class="arc-a" points="' + " ".join(f"{a},{b}" for a, b in pts) + '" stroke-width="3" fill="none" stroke-linejoin="round"/>')
     for L in range(4):
         for i, x in enumerate(xs):
             on = (i == up_left[L + 1]) or (i == up_right[L + 1])
-            s.append(f'<circle class="{"memdot" if on else "dotoff"}" cx="{x}" cy="{ly[L]}" r="{6 if on else 4}"/>')
-        s.append(f'<text class="step" x="40" y="{ly[L]+5}">第 {L+1} 层</text>')
-    s.append(words(wy))
-    s.append(f'<text class="num strong" x="840" y="{ly[1]+5}" text-anchor="end">4 层</text>')
+            top = L == 3 and i == 4
+            s.append(f'<circle class="{"memdot" if on else "dotoff"}" cx="{x}" cy="{ly[L]}" r="{9 if top else 6 if on else 4}"/>')
+        s.append(f'<text class="step" x="20" y="{ly[L]+5}">第 {L+1} 层</text>')
+        s.append(f'<text class="{"num strong" if L == 3 else "small"}" x="840" y="{ly[L]+5}" text-anchor="end">看到 {2*L+3} 个词</text>')
+    s.append(f'<text class="small" x="{xs[4]}" y="{ly[3]-16}" text-anchor="middle" style="font-weight:700">碰面：4 步</text>')
+    s.append(word8(wy))
 
     # attention
-    s.append('<text class="colh" x="20" y="364">只用注意力：任意两个词直接连线</text>')
-    y = 440
+    s.append('<text class="colh" x="20" y="374">只用注意力：任意两个词直接连线，一层算一步</text>')
+    y = 450
     s.append(f'<path class="arc-a" d="M{xs[0]} {y-2} Q{(xs[0]+xs[-1])/2:.0f} {y-110} {xs[-1]} {y-2}" stroke-width="4" fill="none" stroke-linecap="round"/>')
-    s.append(words(y))
+    s.append(word8(y))
     s.append(f'<text class="num strong" x="840" y="{y-30}" text-anchor="end">1 步</text>')
     s.append('</svg>')
     return "\n".join(s)
@@ -828,7 +850,7 @@ def legacy():
 tpl = open(sys.argv[2], encoding="utf-8").read()
 h1, h2, h3 = heads()
 rep = {
-    "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{PARTS}}": parts(), "{{QUEUE}}": queue(), "{{FAR}}": far(), "{{GRAD}}": grad(), "{{GATES}}": gates(), "{{ADDON}}": addon(), "{{ADDON_STEP}}": addon_step(), "{{PATHS}}": paths(), "{{ATTN}}": attn(), "{{QKV}}": qkv(), "{{SCALE}}": scale(),
+    "{{HERO}}": hero(), "{{TASK}}": task(), "{{BEFORE}}": before(), "{{PARTS}}": parts(), "{{QUEUE}}": queue(), "{{FAR}}": far(), "{{GRAD}}": grad(), "{{GATES}}": gates(), "{{ADDON}}": addon(), "{{ADDON_STEP}}": addon_step(), "{{CONV}}": conv(), "{{PATHS}}": paths(), "{{ATTN}}": attn(), "{{QKV}}": qkv(), "{{SCALE}}": scale(),
     "{{HEADMIX}}": headmix(), "{{HEADSPLIT}}": headsplit(), "{{HEAD1}}": h1, "{{HEAD2}}": h2, "{{HEAD3}}": h3, "{{POS}}": position(),
     "{{ARCH}}": arch(), "{{SPEED}}": speed(), "{{MASK}}": mask(), "{{BLEU}}": bleu(), "{{SPLIT}}": split(), "{{LEGACY}}": legacy(),
 }

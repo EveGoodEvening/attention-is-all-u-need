@@ -296,9 +296,14 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 <section>
   <div class="kicker">5 · 论文的核心问题</div>
   <h2>能不能<em>又快</em>、<em>又直连</em>？</h2>
+  <p class="say">除了 RNN，当时还有第三种选择：CNN（Convolutional Neural Network，卷积神经网络）。2017 年 5 月的 ConvS2S 就是把 Seq2Seq 里的 RNN 换成了它。</p>
+  <figure>
+{{CONV}}
+    <figcaption><b>卷积</b>（convolution）：每个位置只把自己和左右邻居共 3 个词混成一个新向量，一次看几个词叫卷积核宽度 k（这里 k = 3）。每个点只用下面一层的数，互相不等，所以训练时可以同时算。代价是一层只能看到身边 1 格。</figcaption>
+  </figure>
   <figure>
 {{PATHS}}
-    <figcaption>词 1 的信息要经过几步才能到词 8，叫<b>路径长度</b>（path length）。路径短有两层好处：信息不被冲淡；更关键的是，学习信号只乘一次，不会消失。卷积（convolution）每层只看相邻几个词，要一层层叠才能连到远处；改成“跳着看”的空洞卷积（dilated convolution）层数会少很多，但仍然不是 1。</figcaption>
+    <figcaption>词 1 和词 8 要经过几步，才第一次出现在同一个向量里，叫<b>路径长度</b>（path length）。CNN 每叠一层，两头各往中间走 1 格，能看到的词数 3 → 5 → 7 → 9，到第 4 层，词 5 上方的点才同时看到词 1 和词 8。路径短有两层好处：信息不被冲淡；更关键的是，学习信号只乘一次，不会消失。改成“跳着看”的空洞卷积（dilated convolution），层数会少很多，但仍然不是 1。</figcaption>
   </figure>
   <div class="tbl">
     <table class="cmp">
