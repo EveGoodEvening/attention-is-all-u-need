@@ -296,7 +296,7 @@ def bleu():
 def legacy():
     items = [(2017, "Transformer", "本论文"), (2018, "GPT", "会写文字"), (2018, "BERT", "会读懂文字"),
              (2020, "GPT-3", "大很多"), (2022, "ChatGPT", "会聊天"), (2023, "Claude 等", "你正在用的")]
-    s = ['<svg class="fig" viewBox="0 0 860 240" role="img" aria-label="从 2017 年的 Transformer 出发，长出了 GPT、BERT、ChatGPT、Claude 等一大家子。">']
+    s = ['<svg class="fig" viewBox="0 0 860 240" role="img" aria-label="GPT、BERT、ChatGPT、Claude 等模型在 2017 年的 Transformer 基础上发展起来。">']
     s.append('<line class="spine" x1="60" y1="120" x2="820" y2="120"/>')
     for i, (yr, name, sub) in enumerate(items):
         x = 80 + i * 145
